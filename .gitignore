@@ -1,0 +1,6 @@
+node_modules
+.next
+.env.local
+.DS_Store
+# image backups from compress-images.mjs (large, not needed live)
+public/images/_originals/
