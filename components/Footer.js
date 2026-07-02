@@ -11,7 +11,7 @@ export default function Footer() {
           <div>
             <span className="font-display text-xl font-bold tracking-tight">{site.brand}</span>
             <p className="mt-3 max-w-sm font-body text-sm leading-relaxed text-mortar">
-              {site.shortDescription} We&apos;re a free service — you deal directly with
+              {site.shortDescription} We&apos;re a free service Ã¢â‚¬â€ you deal directly with
               the roofer on any quote or work.
             </p>
             <a
@@ -55,7 +55,11 @@ export default function Footer() {
               ? "Work is performed by licensed third-party contractors."
               : "Roofing work is performed by independent licensed contractors, not by Adelaide Roofers."}
           </p>
-          <p className="mt-2">© {new Date().getFullYear()} {site.brand}. All rights reserved.</p>
+          <p className="mt-2">
+            AdelaideRoofers.com.au is owned and operated by Roofing Digital, a registered business name of NETLOCAL CONSULTING PTY LTD (ABN 69 607 380 638), an Australian
+            business specialising in roofing lead generation and customer referral services.
+          </p>
+          <p className="mt-2">Ã‚Â© {new Date().getFullYear()} {site.brand}. All rights reserved.</p>
         </div>
       </div>
     </footer>
