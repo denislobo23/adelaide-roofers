@@ -1,5 +1,6 @@
 // app/sitemap.js
 import { regions, suburbs } from "@/data/locations";
+import { serviceSlugs } from "@/data/services-data";
 import { site } from "@/data/config";
 
 export default function sitemap() {
@@ -11,8 +12,17 @@ export default function sitemap() {
   const staticPages = [
     { url: `${site.url}/about`, lastModified: now, priority: 0.6 },
     { url: `${site.url}/services`, lastModified: now, priority: 0.7 },
+    { url: `${site.url}/faq`, lastModified: now, priority: 0.6 },
   ];
 
+  // Dedicated service landing pages.
+  const servicePagesList = serviceSlugs.map((slug) => ({
+    url: `${site.url}/services/${slug}`,
+    lastModified: now,
+    priority: 0.8,
+  }));
+
+  // Region hubs.
   const hubs = Object.keys(regions).map((slug) => ({
     url: `${site.url}/${slug}`,
     lastModified: now,
@@ -28,5 +38,5 @@ export default function sitemap() {
       priority: 0.7,
     }));
 
-  return [home, ...staticPages, ...hubs, ...spokes];
+  return [home, ...staticPages, ...servicePagesList, ...hubs, ...spokes];
 }

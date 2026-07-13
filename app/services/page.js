@@ -8,51 +8,87 @@ import RidgeDivider from "@/components/RidgeDivider";
 export const metadata = {
   title: `Roofing Services in Adelaide | ${site.brand}`,
   description:
-    "Roof restoration, repairs, re-roofing, leak detection, gutters, metal and heritage roofing — across metropolitan Adelaide. We connect you with a local roofer who does the work.",
+    "Roof restoration, repairs, re-roofing, ridge capping, painting, gutters, leaf guards, ventilation, cleaning and inspections across Adelaide. We connect you with a local roofer who does the work.",
   alternates: { canonical: `${site.url}/services` },
   openGraph: {
     title: `Roofing Services in Adelaide | ${site.brand}`,
     description:
-      "The roofing services the local contractors we connect you with provide, right across Adelaide.",
+      "The full range of roofing work the local contractors we connect you with provide, right across Adelaide.",
     url: `${site.url}/services`,
     type: "website",
   },
 };
 
-const services = [
+// Grouped so the page reads clearly and each service is a real search term.
+// `href` links to a dedicated service page where one exists.
+const serviceGroups = [
   {
-    t: "Roof restoration",
-    d: "Cleaning, re-bedding and re-pointing ridge capping, replacing broken tiles and re-coating — the most common job on Adelaide's many ageing tile roofs, bringing a tired roof back to watertight and tidy.",
+    heading: "Repairs & restoration",
+    items: [
+      { t: "Roof restoration", href: "/services/roof-restoration", d: "Cleaning, re-bedding and re-pointing ridge capping, replacing broken tiles and re-coating — bringing a tired roof back to watertight and tidy. The most common job on Adelaide's ageing tile roofs." },
+      { t: "Roof repairs", href: "/services/roof-repairs", d: "Fixing the specific problem: a slipped or cracked tile, a failed flashing, a perished valley, or a leak that's started showing on the ceiling. Targeted work, not a wholesale replacement." },
+      { t: "Re-roofing & replacement", href: "/services/roof-replacement", d: "When a roof is past restoring, replacing it — including switching from old concrete tile to lighter, modern Colorbond steel where it suits the home." },
+      { t: "Roof leak repair", href: "/services/roof-leak-repair", d: "Tracking a leak back to its real source — often nowhere near the ceiling stain — then sealing it properly around flashings, valleys, chimneys and penetrations." },
+      { t: "Ridge capping (re-bed & re-point)", href: "/services/ridge-capping", d: "Re-bedding and re-pointing the ridge caps along the roof's peaks and hips, where old cement mortar cracks over time and lets water in. Flexible pointing lasts far longer." },
+      { t: "Roof painting & re-coating", href: "/services/roof-painting", d: "Cleaning, sealing and re-coating a tile or metal roof — restoring weather protection and appearance, and giving a faded roof a fresh, uniform finish." },
+    ],
   },
   {
-    t: "Roof repairs",
-    d: "Fixing the specific problem: a slipped or cracked tile, a failed flashing, a perished valley or a leak that's started showing on the ceiling. Targeted work, not a wholesale replacement.",
+    heading: "Gutters & drainage",
+    items: [
+      { t: "Gutters, downpipes & valleys", href: "/services/gutter-repairs", d: "Replacing rusted or undersized gutters, and sorting the valleys and downpipes that cause most water to back up under a roof." },
+      { t: "Gutter guard & leaf screen", href: "/services/gutter-repairs", d: "Fitting mesh guards that keep leaves and debris out of gutters and valleys — important near trees, and for reducing ember risk in bushfire-prone foothills suburbs." },
+      { t: "Gutter & roof cleaning", d: "Clearing leaf litter from gutters and valleys, and pressure-cleaning moss, lichen and grime off the roof surface before it does damage." },
+    ],
   },
   {
-    t: "Re-roofing & replacement",
-    d: "When a roof is past restoring, replacing it — including switching from old concrete tile to lighter, modern Colorbond steel where it suits the home.",
+    heading: "Maintenance & protection",
+    items: [
+      { t: "Roof ventilation", d: "Installing whirlybirds and roof vents to move hot, moist air out of the roof space — helping with summer heat and reducing condensation and moisture build-up." },
+      { t: "Solar panel mesh & bird-proofing", d: "Fitting mesh around solar panels and blocking gaps under the roofline to keep pigeons and pests out, without damaging the panels or roof." },
+      { t: "Roof inspection & report", d: "A thorough check of tiles, flashings, valleys, ridge capping and gutters, with an honest write-up of what's fine, what needs attention now, and what can wait." },
+    ],
   },
   {
-    t: "Leak detection & repair",
-    d: "Tracking a leak back to its real source, which is often nowhere near the stain on the ceiling, then sealing it properly around flashings, valleys, chimneys and penetrations.",
-  },
-  {
-    t: "Gutters, downpipes & valleys",
-    d: "Replacing rusted or undersized gutters, clearing and protecting them against leaf litter, and sorting the valleys and downpipes that cause most water to back up under a roof.",
-  },
-  {
-    t: "Metal & Colorbond roofing",
-    d: "Metal re-roofs and repairs, including coastal-grade materials for salt-exposed suburbs where standard sheeting and fasteners corrode faster.",
-  },
-  {
-    t: "Heritage, slate & iron",
-    d: "Specialist, sympathetic work on slate, traditional galvanised iron and heritage roofs — common across Adelaide's older eastern and inner suburbs, where preserving the original matters.",
-  },
-  {
-    t: "Storm & emergency repairs",
-    d: "Making a damaged roof safe and watertight after a storm, and helping you get the right evidence and quotes together for an insurance claim.",
+    heading: "Specialist work",
+    items: [
+      { t: "Metal & Colorbond roofing", href: "/services/colorbond-roofing", d: "Metal re-roofs and repairs, including coastal-grade materials for salt-exposed suburbs where standard sheeting and fasteners corrode faster." },
+      { t: "Heritage, slate & iron", d: "Specialist, sympathetic work on slate, traditional galvanised iron and heritage roofs — common across Adelaide's older eastern and inner suburbs, where preserving the original matters." },
+      { t: "Storm & emergency repairs", href: "/services/roof-repairs", d: "Making a damaged roof safe and watertight after a storm, and helping you get the right evidence and quotes together for an insurance claim." },
+    ],
   },
 ];
+
+function RoofIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true" className="mt-0.5 shrink-0">
+      <path d="M16 4 4 16h4v10h6v-6h4v6h6V16h4L16 4Z" fill="#BC5B3A" />
+    </svg>
+  );
+}
+
+function ServiceCard({ s }) {
+  const inner = (
+    <div className="flex items-start gap-3.5">
+      <RoofIcon />
+      <div>
+        <h3 className="font-display text-lg font-bold tracking-tight text-ink">
+          {s.t}
+          {s.href && <span className="text-clay"> →</span>}
+        </h3>
+        <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
+      </div>
+    </div>
+  );
+  if (s.href) {
+    return (
+      <Link href={s.href} className="block rounded-2xl border border-mortar bg-paper p-7 transition hover:border-clay">
+        {inner}
+      </Link>
+    );
+  }
+  return <div className="rounded-2xl border border-mortar bg-paper p-7">{inner}</div>;
+}
 
 export default function ServicesPage() {
   return (
@@ -70,35 +106,33 @@ export default function ServicesPage() {
         </h1>
         <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-ink/70">
           Below is the range of roofing work the local contractors we connect you with provide
-          across metropolitan Adelaide. Tell us the problem and your suburb, and we&apos;ll connect
-          you with a roofer who handles it in your area — free, and with no obligation.
+          across metropolitan Adelaide. Tell us the problem and your suburb, and we&apos;ll
+          connect you with a roofer who handles it in your area — free, and with no obligation.
         </p>
       </section>
 
       <RidgeDivider />
 
-      {/* ── SERVICES GRID ──────────────────────────────────── */}
+      {/* ── GROUPED SERVICES ───────────────────────────────── */}
       <section className="border-y border-mortar bg-white">
-        <div className="mx-auto max-w-wrap px-5 py-20">
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
-            {services.map((s) => (
-              <div key={s.t} className="rounded-2xl border border-mortar bg-paper p-7">
-                <div className="flex items-start gap-3.5">
-                  <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true" className="mt-0.5 shrink-0">
-                    <path d="M16 4 4 16h4v10h6v-6h4v6h6V16h4L16 4Z" fill="#BC5B3A" />
-                  </svg>
-                  <div>
-                    <h2 className="font-display text-xl font-bold tracking-tight text-ink">{s.t}</h2>
-                    <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
-                  </div>
-                </div>
+        <div className="mx-auto max-w-wrap px-5 py-16">
+          {serviceGroups.map((group) => (
+            <div key={group.heading} className="mb-14 last:mb-0">
+              <h2 className="mb-6 font-display text-2xl font-bold tracking-tight text-ink">{group.heading}</h2>
+              <div className="grid gap-6 sm:grid-cols-2">
+                {group.items.map((s) => (
+                  <ServiceCard key={s.t} s={s} />
+                ))}
               </div>
-            ))}
-          </div>
-          <p className="mt-8 max-w-2xl font-body text-sm leading-relaxed text-ink/55">
-            Specialist work — like slate or heritage roofing — depends on the contractor we connect
-            you with. Tell us what you need and we&apos;ll point you to a roofer suited to that
-            particular job.
+            </div>
+          ))}
+          <p className="mt-10 max-w-2xl font-body text-sm leading-relaxed text-ink/55">
+            Specialist work — like slate, heritage or coastal roofing — depends on the contractor
+            we connect you with. Tell us what you need and we&apos;ll point you to a roofer suited
+            to that particular job. Not sure what your roof needs?{" "}
+            <Link href="/faq" className="font-semibold text-clay hover:text-clay-deep">
+              Read our common roofing questions
+            </Link>.
           </p>
         </div>
       </section>
