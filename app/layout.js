@@ -1,6 +1,7 @@
 // app/layout.js
 import "./globals.css";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { OrganizationSchema } from "@/components/SchemaMarkup";
@@ -51,6 +52,9 @@ export default function RootLayout({ children }) {
         {children}
         <Footer />
       </body>
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+      )}
     </html>
   );
 }
