@@ -42,6 +42,8 @@ export default function Footer() {
               <li><Link href="/services" className="text-paper/80 transition hover:text-clay">Services</Link></li>
               <li><Link href="/#how-it-works" className="text-paper/80 transition hover:text-clay">How it works</Link></li>
               <li><Link href="/#regions" className="text-paper/80 transition hover:text-clay">Find your suburb</Link></li>
+              <li><Link href="/privacy" className="text-paper/80 transition hover:text-clay">Privacy Policy</Link></li>
+   <li><Link href="/terms" className="text-paper/80 transition hover:text-clay">Terms of Use</Link></li>
             </ul>
           </div>
         </div>
@@ -59,7 +61,7 @@ export default function Footer() {
             AdelaideRoofers.com.au is owned and operated by Roofing Digital, a registered business name of NETLOCAL CONSULTING PTY LTD (ABN 69 607 380 638), an Australian
             business specialising in roofing lead generation and customer referral services.
           </p>
-          <p className="mt-2">Ã‚Â© {new Date().getFullYear()} {site.brand}. All rights reserved.</p>
+          <p className="mt-2">&copy; {new Date().getFullYear()} {site.brand}. All rights reserved.</p>
         </div>
       </div>
     </footer>
