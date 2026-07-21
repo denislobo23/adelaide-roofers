@@ -13,7 +13,7 @@
 
 import { subscribeToEbookList } from "@/lib/mailerlite";
 
-const EBOOK_URL = "/before-you-call-a-roofer.pdf";
+const EBOOK_URL = "/images/before-you-call-a-roofer.pdf";
 
 export async function POST(request) {
   try {
