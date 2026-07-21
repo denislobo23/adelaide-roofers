@@ -2,8 +2,7 @@
 import "./globals.css";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import SiteChrome from "@/components/SiteChrome";
 import { OrganizationSchema } from "@/components/SchemaMarkup";
 import { site } from "@/data/config";
 
@@ -48,9 +47,7 @@ export default function RootLayout({ children }) {
     <html lang="en-AU" className={`${display.variable} ${body.variable}`}>
       <body className="font-body">
         <OrganizationSchema />
-        <Header />
-        {children}
-        <Footer />
+        <SiteChrome>{children}</SiteChrome>
       </body>
       {process.env.NEXT_PUBLIC_GA_ID && (
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />

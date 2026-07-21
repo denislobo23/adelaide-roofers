@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Interactive Roofing Estimator</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+body { font-family: 'Inter', sans-serif; }
+.leaflet-container { background-color: #0f172a; }
+.step-inactive { display: none; }
+@keyframes pinPulse { 0% { transform: scale(0.9); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 0.9; } 100% { transform: scale(0.9); opacity: 0.5; } }
+.map-crosshair { animation: pinPulse 2s infinite ease-in-out; }
+@media print {
+  body * { visibility: hidden; }
+  #printable-brief, #printable-brief * { visibility: visible; }
+  #printable-brief { position: absolute; left: 0; top: 0; width: 100%; }
+}
+</style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col items-center justify-start p-4 md:p-8">
+<div class="w-full max-w-5xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden">
+<div class="p-6 bg-slate-900 border-b border-slate-700/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div>
+<h1 class="text-xl md:text-2xl font-bold tracking-tight text-white flex items-center gap-2">🏠 Instant Roof Replacement Estimator</h1>
+<p class="text-xs md:text-sm text-slate-400 mt-1">Free, zero-obligation ballpark estimate for Australian homeowners.</p>
+</div>
+<div class="flex items-center gap-2 self-start md:self-auto">
+<div id="prog-dot-1" class="w-8 h-8 rounded-full bg-teal-500 text-white flex items-center justify-center font-bold text-sm transition-all duration-300">1</div>
+<div class="w-8 h-[2px] bg-slate-700" id="prog-line-1"></div>
+<div id="prog-dot-2" class="w-8 h-8 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm transition-all duration-300">2</div>
+<div class="w-8 h-[2px] bg-slate-700" id="prog-line-2"></div>
+<div id="prog-dot-3" class="w-8 h-8 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm transition-all duration-300">3</div>
+</div>
+</div>
+<div id="ui-notification" class="hidden bg-amber-500/10 border-b border-amber-500/20 px-6 py-3 text-sm text-amber-400 flex items-center justify-between">
+<span id="notification-text">Address not found. Please try a different spelling.</span>
+<button onclick="hideNotification()" class="text-amber-400 hover:text-amber-200 font-bold">✕</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 min-h-[500px]">
+<div class="lg:col-span-5 p-6 md:p-8 flex flex-col justify-between border-r border-slate-700/30">
+<div id="stage-1" class="space-y-5">
+<div>
+<h2 class="text-lg font-semibold text-white mb-2">Step 1: Contact Details &amp; Address</h2>
+<p class="text-xs text-slate-400 leading-relaxed">Provide your mobile number to instantly receive your estimate by SMS. This ensures only genuine property owners receive a direct price range download.</p>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Full Name</label>
+<input type="text" id="cust-name" placeholder="e.g. John Citizen" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-all">
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Mobile Number (For Instant SMS Estimate)</label>
+<input type="tel" id="cust-phone" placeholder="e.g. 0412 345 678" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-all">
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Property Address</label>
+<div class="relative flex gap-2">
+<div class="relative flex-1">
+<input type="text" id="cust-address" placeholder="Type Australian Address..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-teal-500 transition-all" autocomplete="off">
+<div id="address-suggestions" class="hidden absolute left-0 right-0 top-full mt-1 bg-slate-800 border border-slate-700 rounded-lg shadow-2xl max-h-40 overflow-y-auto z-50"></div>
+</div>
+<button onclick="locateAddress()" class="bg-teal-600 hover:bg-teal-500 text-white font-medium text-xs px-4 rounded-lg transition-all flex items-center justify-center gap-1.5">🔍 <span class="hidden sm:inline">Verify</span></button>
+</div>
+<p class="text-[10px] text-slate-500 mt-1">Try any real address (e.g. 4 Tintern Crescent, Toorak) to lock satellite view.</p>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-700/50">
+<button onclick="goToStage2()" class="w-full bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2">Proceed to Specifications →</button>
+</div>
+</div>
+<div id="stage-2" class="step-inactive space-y-6">
+<div>
+<h2 class="text-lg font-semibold text-white mb-2">Step 2: Compare with Map &amp; Define Size</h2>
+<p class="text-xs text-slate-400 leading-relaxed">Look at your roof's footprint on the live satellite view. Use it to estimate your home's total area below:</p>
+</div>
+<div class="space-y-4">
+<div>
+<div class="flex items-center justify-between mb-1.5">
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Estimated Footprint Size</label>
+<span class="text-xs text-teal-400 italic font-medium" id="size-helper">~220m² Area Covered</span>
+</div>
+<select id="home-size" onchange="updateSizeLabel()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500 transition-all">
+<option value="130">Small Home / Unit / Townhouse (Under 150m²)</option>
+<option value="220" selected>Medium Home / Standard 3-4 Bed (150m² - 250m²)</option>
+<option value="320">Large Home / Multi-Car Garage / 4-5 Bed (Over 250m²)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Stories &amp; Elevation Height</label>
+<select id="home-stories" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500 transition-all">
+<option value="1" selected>Single Story Roof Layout</option>
+<option value="2">Two Stories (Requires Safety Scaffold / Rail)</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Desired Material Swap</label>
+<select id="roof-swap" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-teal-500 transition-all">
+<option value="tile-to-colorbond" selected>Tiles ➔ Premium Colorbond Steel</option>
+<option value="metal-to-colorbond">Old Metal Sheet ➔ Premium Colorbond Steel</option>
+<option value="tile-to-tile">Old Tiles ➔ New Concrete Tiles</option>
+</select>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-700/50 flex flex-col sm:flex-row gap-4">
+<button onclick="goToStage1()" class="w-full sm:w-auto bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold px-5 py-3 rounded-lg transition-all order-2 sm:order-1">← Back</button>
+<button onclick="goToStage3()" class="w-full sm:flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2">Select Roof Shape →</button>
+</div>
+</div>
+<div id="stage-3" class="step-inactive space-y-5">
+<div>
+<h2 class="text-lg font-semibold text-white mb-2">Step 3: Match Your Roof Shape</h2>
+<p class="text-xs text-slate-400 leading-relaxed">Look closely at your satellite map on the right. How many slopes, hips, or ridges can you see? Choose the closest match:</p>
+</div>
+<div class="space-y-3">
+<div onclick="selectShape('skillion')" id="shape-card-skillion" class="shape-card border-2 border-slate-700 bg-slate-900 hover:border-teal-500/50 p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between">
+<div class="flex items-center gap-3"><span class="text-xl">📐</span><div><h3 class="text-xs font-bold text-white">Flat / Skillion</h3><p class="text-[10px] text-slate-400">Single flat slope. Very low waste.</p></div></div>
+<div id="badge-skillion" class="w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center"></div>
+</div>
+<div onclick="selectShape('gable')" id="shape-card-gable" class="shape-card border-2 border-slate-700 bg-slate-900 hover:border-teal-500/50 p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between">
+<div class="flex items-center gap-3"><span class="text-xl">🏠</span><div><h3 class="text-xs font-bold text-white">Classic Gable</h3><p class="text-[10px] text-slate-400">Two sides meeting at a center peak.</p></div></div>
+<div id="badge-gable" class="w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center"></div>
+</div>
+<div onclick="selectShape('hip')" id="shape-card-hip" class="shape-card border-2 border-teal-500 bg-slate-900 hover:border-teal-400 p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between">
+<div class="flex items-center gap-3"><span class="text-xl">🏘️</span><div><h3 class="text-xs font-bold text-white">Standard Hip</h3><p class="text-[10px] text-slate-400">Four slopes with diagonal ridges.</p></div></div>
+<div id="badge-hip" class="w-4 h-4 rounded-full border border-teal-500 bg-teal-500 text-slate-950 flex items-center justify-center text-[10px]">✓</div>
+</div>
+<div onclick="selectShape('complex')" id="shape-card-complex" class="shape-card border-2 border-slate-700 bg-slate-900 hover:border-teal-500/50 p-3 rounded-xl cursor-pointer transition-all flex items-center justify-between">
+<div class="flex items-center gap-3"><span class="text-xl">🏢</span><div><h3 class="text-xs font-bold text-white">Complex / Multi-Level</h3><p class="text-[10px] text-slate-400">Many angles, valleys &amp; levels.</p></div></div>
+<div id="badge-complex" class="w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center"></div>
+</div>
+</div>
+<div class="bg-teal-950/40 border border-teal-500/20 p-3.5 rounded-lg flex items-start gap-2.5">
+<span class="text-base">💡</span>
+<div><h4 class="text-[11px] font-bold text-teal-400 uppercase tracking-wider">How Shape Impacts Cost</h4><p class="text-[10px] text-slate-300 leading-relaxed mt-0.5">Complex roofs require diagonal steel sheeting cuts, creating scrap. They also need extra ridge capping and valley metals, increasing labor and wastage rates.</p></div>
+</div>
+<div class="pt-4 border-t border-slate-700/50 flex flex-col sm:flex-row gap-4">
+<button onclick="goToStage2()" class="w-full sm:w-auto bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold px-5 py-3 rounded-lg transition-all order-2 sm:order-1">← Back</button>
+<button onclick="calculateAndShowResults()" class="w-full sm:flex-1 bg-teal-500 hover:bg-teal-400 text-slate-950 font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 order-1 sm:order-2">Get Quote! 🚀</button>
+</div>
+</div>
+<div id="stage-results" class="step-inactive space-y-4">
+<div class="text-center">
+<div class="w-10 h-10 bg-teal-500/10 border border-teal-500/30 text-teal-400 rounded-full flex items-center justify-center text-lg mx-auto mb-1.5 animate-bounce">✓</div>
+<h2 class="text-base font-bold text-white">Calculations Ready!</h2>
+<p id="results-lead-congrats" class="text-xs text-slate-400">We have completed our system analysis against Australian construction rates.</p>
+</div>
+<div class="bg-slate-900/90 rounded-xl p-4 border border-slate-700/60 space-y-4">
+<div class="flex items-center justify-between border-b border-slate-800 pb-2">
+<span class="text-xs font-bold text-teal-400 flex items-center gap-1">🛠️ Estimate Sandbox</span>
+<span class="text-[10px] text-slate-500 italic">Adjust values below to see real-time updates</span>
+</div>
+<div class="space-y-1.5">
+<label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Select Material &amp; Warranty Grade</label>
+<div class="grid grid-cols-3 gap-2">
+<button onclick="selectTier('budget')" id="tier-btn-budget" class="px-2 py-1.5 rounded-lg border text-center text-xs font-medium transition-all bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700"><div class="font-bold">Standard</div><div class="text-[9px] text-slate-500">Standard Steel</div></button>
+<button onclick="selectTier('premium')" id="tier-btn-premium" class="px-2 py-1.5 rounded-lg border text-center text-xs font-medium transition-all bg-teal-950/40 border-teal-500/50 text-teal-300"><div class="font-bold">Premium</div><div class="text-[9px] text-teal-400">Colorbond®</div></button>
+<button onclick="selectTier('marine')" id="tier-btn-marine" class="px-2 py-1.5 rounded-lg border text-center text-xs font-medium transition-all bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700"><div class="font-bold">Ultra</div><div class="text-[9px] text-slate-500">Marine-Grade</div></button>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
+<span>Adjust Exact Roof Size</span>
+<span id="sandbox-size-label" class="text-teal-400 font-bold font-mono">220m²</span>
+</div>
+<input type="range" id="sandbox-size-slider" min="80" max="450" step="5" value="220" oninput="runSandboxCalculation()" class="w-full accent-teal-500 bg-slate-800 rounded-lg h-2 cursor-pointer">
+<div class="flex justify-between text-[9px] text-slate-600"><span>80 m²</span><span>250 m²</span><span>450 m²</span></div>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-1">
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Elevation Levels</label>
+<select id="sandbox-stories" onchange="runSandboxCalculation()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-teal-500">
+<option value="1">Single Story</option>
+<option value="2">Two Stories (+ Safety Rail)</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Roof Profile Shape</label>
+<select id="sandbox-shape" onchange="runSandboxCalculation()" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-300 focus:outline-none focus:border-teal-500">
+<option value="skillion">Skillion / Flat</option>
+<option value="gable">Classic Gable</option>
+<option value="hip">Standard Hip</option>
+<option value="complex">Architectural Complex</option>
+</select>
+</div>
+</div>
+</div>
+<div class="space-y-3.5">
+<div class="bg-gradient-to-br from-slate-900 to-slate-950 p-4 rounded-xl border border-slate-700 text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-teal-500/5 opacity-50 blur-xl pointer-events-none"></div>
+<span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">Calculated Ballpark Estimate Range</span>
+<div class="text-2xl sm:text-3xl font-black text-teal-400 tracking-tight" id="calc-range-output">$18,400 - $22,500</div>
+</div>
+<div class="bg-slate-900/60 rounded-xl p-3.5 border border-slate-700/50 space-y-3">
+<h4 class="text-[10px] font-bold text-slate-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">📊 Estimated Cost Allocation Breakdown</h4>
+<div class="space-y-1">
+<div class="flex justify-between text-xs"><span class="text-slate-400 flex items-center gap-1">🏗️ Base Materials &amp; Steel</span><span class="font-bold text-white text-xs" id="breakdown-materials">$0</span></div>
+<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden"><div id="bar-materials" class="bg-teal-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div></div>
+<p class="text-[9px] text-slate-500 leading-tight">Includes heavy Australian-made Colorbond® steel sheeting, customized flashings, and fastners.</p>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs"><span class="text-slate-400 flex items-center gap-1">🔨 Removal, Labor &amp; Local Disposal</span><span class="font-bold text-white text-xs" id="breakdown-labor">$0</span></div>
+<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden"><div id="bar-labor" class="bg-teal-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div></div>
+<p class="text-[9px] text-slate-500 leading-tight">Covers old tile/metal stripout, council-compliant local tip levies, and specialized trade installation labor.</p>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-xs"><span class="text-slate-400 flex items-center gap-1">📐 Layout Cutting &amp; Wastage</span><span class="font-bold text-white text-xs" id="breakdown-wastage">$0</span></div>
+<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden"><div id="bar-wastage" class="bg-teal-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div></div>
+<p class="text-[9px] text-slate-500 leading-tight" id="breakdown-wastage-desc">Allowances for overlapping sheets, valley cuts, and ridge line fittings.</p>
+</div>
+<div class="space-y-1" id="breakdown-safety-wrapper">
+<div class="flex justify-between text-xs"><span class="text-slate-400 flex items-center gap-1">🛡️ WHS Scaffolding &amp; Edge Safety</span><span class="font-bold text-white text-xs" id="breakdown-safety">$0</span></div>
+<div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden"><div id="bar-safety" class="bg-teal-500 h-1.5 rounded-full transition-all duration-500" style="width: 0%"></div></div>
+<p class="text-[9px] text-slate-500 leading-tight">Compulsory safety platform railings required by Australian height-safety codes.</p>
+</div>
+</div>
+<div class="bg-teal-950/30 border border-teal-500/20 p-3.5 rounded-lg">
+<h4 class="text-[10px] font-bold text-teal-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">🤝 Our Guarantee &amp; Price Optimisation</h4>
+<p class="text-[10px] text-slate-300 leading-relaxed">We intentionally run this digital estimator with a conservative buffer. <strong>When our team assesses your layout details using high-resolution aerial takeoffs, they frequently spot optimization opportunities that lower actual material and safety labor overheads, bringing the final quote below this ballpark.</strong></p>
+</div>
+<div class="bg-teal-900/10 border border-teal-500/20 p-3 rounded-lg flex items-start gap-2.5">
+<span class="text-base">💬</span>
+<div><h5 class="text-[10px] font-bold text-teal-400 uppercase tracking-wider">SMS Broadcast Triggered</h5><p class="text-[10px] text-slate-400 mt-0.5" id="sms-delivery-target">Estimate dispatched to phone...</p></div>
+</div>
+<div class="pt-2 border-t border-slate-700/50 space-y-2">
+<button onclick="window.print()" class="w-full bg-slate-700 hover:bg-slate-600 text-slate-100 border border-slate-600 font-semibold py-2 rounded-lg transition-all text-xs flex items-center justify-center gap-2">💾 Download Complete PDF Brief</button>
+<button onclick="resetCalculator()" class="w-full text-slate-500 hover:text-slate-300 font-medium text-[10px] py-1 transition-all">← Run Another Estimate</button>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-7 flex flex-col h-[320px] lg:h-auto min-h-[320px] bg-slate-950 relative">
+<div class="absolute top-4 left-4 z-10 bg-slate-900/90 border border-slate-700 px-3 py-1.5 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-slate-400">Live Satellite Roof Verification View</div>
+<div id="map-status" class="absolute top-4 right-4 z-10 bg-slate-900/90 border border-slate-700 px-3 py-1.5 rounded-lg text-[10px] text-teal-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-teal-500 animate-ping"></span> Map Ready</div>
+<div class="w-full h-full z-0 relative flex-1">
+<div id="map" class="w-full h-full"></div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+<div class="map-crosshair w-12 h-12 border border-teal-400/40 rounded-full flex items-center justify-center bg-teal-400/5"><div class="w-2 h-2 bg-teal-400 rounded-full"></div></div>
+</div>
+</div>
+<div id="map-overlay-banner" class="absolute bottom-4 left-4 right-4 bg-slate-900/90 border border-slate-700 backdrop-blur-sm px-4 py-2.5 rounded-lg text-[11px] text-slate-300 z-10 flex items-center justify-between pointer-events-none transition-all duration-300">
+<span id="overlay-text">📍 Ready. Enter address to sync live satellite view.</span>
+</div>
+</div>
+</div>
+</div>
+
+<div id="printable-brief" class="hidden p-8 bg-white text-slate-900 font-serif">
+<div class="border-b-4 border-teal-800 pb-4 mb-6">
+<h1 class="text-2xl font-bold uppercase tracking-tight text-slate-900">Custom Roof Assessment Project Brief</h1>
+<p class="text-sm text-slate-600 mt-1">Generated via online spatial estimator tool.</p>
+</div>
+<div class="grid grid-cols-2 gap-8 mb-6">
+<div><h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Contact Details</h3><p class="text-sm font-semibold mt-1" id="print-name">John Citizen</p><p class="text-xs text-slate-600" id="print-phone">0412 345 678</p></div>
+<div><h3 class="text-xs font-bold uppercase text-slate-500 tracking-wider">Assessed Address</h3><p class="text-sm font-semibold mt-1" id="print-address">1 Collins St, Melbourne VIC 3000</p></div>
+</div>
+<div class="border border-slate-300 rounded-lg p-4 mb-4 bg-slate-50">
+<h3 class="text-sm font-bold text-slate-800 mb-2">Calculated Parameter Allowances:</h3>
+<table class="w-full text-sm">
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Assessed Roof Footprint Allowance:</td><td class="py-2 text-right font-semibold" id="print-area">220 m²</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Elevation Height Allowance:</td><td class="py-2 text-right font-semibold" id="print-stories">Single Story</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Conversion System Selection:</td><td class="py-2 text-right font-semibold" id="print-swap">Tile to Colorbond</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Wastage / Slope Complexity Multiplier:</td><td class="py-2 text-right font-semibold" id="print-shape">Standard Hip (1.15)</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Warranty &amp; Material Tier Select:</td><td class="py-2 text-right font-semibold" id="print-tier">Premium Grade</td></tr>
+</table>
+</div>
+<div class="border border-slate-300 rounded-lg p-4 mb-6 bg-slate-50">
+<h3 class="text-sm font-bold text-slate-800 mb-2">Estimated Allocation Breakdown:</h3>
+<table class="w-full text-sm">
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Base Structural Materials:</td><td class="py-2 text-right font-semibold" id="print-materials">$0</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Labor, Removal &amp; Local Waste Fees:</td><td class="py-2 text-right font-semibold" id="print-labor">$0</td></tr>
+<tr class="border-b border-slate-200"><td class="py-2 text-slate-600">Profile Cutting &amp; Wastage Factor:</td><td class="py-2 text-right font-semibold" id="print-wastage">$0</td></tr>
+<tr class="border-b border-slate-200" id="print-safety-row"><td class="py-2 text-slate-600">Compliance Edge Safety &amp; Scaffolding:</td><td class="py-2 text-right font-semibold" id="print-safety">$0</td></tr>
+</table>
+</div>
+<div class="bg-teal-900 text-white p-6 rounded-lg text-center">
+<h2 class="text-xs font-bold uppercase tracking-wider text-teal-300">Total Project Ballpark Estimate Range</h2>
+<div class="text-3xl font-black mt-2" id="print-total-range">$18,400 - $22,500</div>
+<p class="text-xs text-teal-200 mt-2 max-w-md mx-auto">Includes all compliance parameters, edge safety rail setups, debris strip out, local waste tipping levies, and materials warranty.</p>
+</div>
+<p class="text-[10px] text-slate-400 mt-8 text-center">Estimate compiled with a standard conservative buffer allowance. On-site audits frequently reveal optimizations that lower actual fixed pricing contracts.</p>
+</div>
+
+<script>
+let activeStage = 1;
+let selectedShape = 'hip';
+let selectedTier = 'premium';
+let map;
+let marker;
+
+const RATES = { 'tile-to-colorbond': 115, 'metal-to-colorbond': 95, 'tile-to-tile': 125 };
+const SHAPE_MULTIPLIERS = { 'skillion': 1.00, 'gable': 1.05, 'hip': 1.15, 'complex': 1.30 };
+const TIER_COEFFICIENTS = { 'budget': 0.85, 'premium': 1.00, 'marine': 1.25 };
+const TIER_LABELS = { 'budget': 'Standard Budget Grade', 'premium': 'Premium Colorbond® Grade', 'marine': 'Ultra Marine-Grade' };
+const SECRET_BUFFER = 1.15;
+const STORY_FEES = { '1': 0, '2': 3500 };
+
+window.onload = function () { initializeMap(); }
+
+function initializeMap() {
+  const defaultLat = -37.8427;
+  const defaultLng = 145.0116;
+  map = L.map('map', { zoomControl: true, dragging: true, scrollWheelZoom: false }).setView([defaultLat, defaultLng], 18);
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, USDA, USGS, and the GIS User Community',
+    maxZoom: 19
+  }).addTo(map);
+  marker = L.marker([defaultLat, defaultLng]).addTo(map);
+}
+
+function locateAddress() {
+  const addressInput = document.getElementById('cust-address').value;
+  if (!addressInput.trim()) { showNotification("Please type an address to verify."); return; }
+  const statusLabel = document.getElementById('map-status');
+  const overlayBanner = document.getElementById('map-overlay-banner');
+  statusLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> Searching address...`;
+  overlayBanner.style.opacity = '0.5';
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addressInput)}&limit=1`;
+  fetch(url).then(response => response.json()).then(data => {
+    if (data && data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+      map.flyTo([lat, lon], 19);
+      marker.setLatLng([lat, lon]);
+      statusLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-teal-500"></span> Found & Locked`;
+      statusLabel.classList.remove('text-amber-400');
+      statusLabel.classList.add('text-teal-400');
+      overlayBanner.innerHTML = `📍 TARGET LOCKED: Center roof confirmed. Proceed below.`;
+      overlayBanner.classList.remove('bg-slate-900/90');
+      overlayBanner.classList.add('bg-teal-950/90', 'border-teal-500/50', 'text-teal-300');
+      overlayBanner.style.opacity = '1';
+      hideNotification();
+    } else {
+      statusLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-rose-500"></span> Address Unresolved`;
+      statusLabel.classList.add('text-rose-400');
+      showNotification("Could not geocode address automatically. Please verify your spelling.");
+      overlayBanner.style.opacity = '1';
+    }
+  }).catch(err => {
+    console.error("Geocoding failed:", err);
+    statusLabel.innerHTML = `⚠️ System Connection Hold`;
+    overlayBanner.style.opacity = '1';
+  });
+}
+
+let debounceTimer;
+const addressInputField = document.getElementById('cust-address');
+const suggestionsContainer = document.getElementById('address-suggestions');
+
+function debounce(func, delay) {
+  return function(...args) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => func.apply(this, args), delay);
+  };
+}
+
+if (addressInputField && suggestionsContainer) {
+  addressInputField.addEventListener('input', debounce(function(e) {
+    const query = e.target.value.trim();
+    if (query.length < 3) { suggestionsContainer.classList.add('hidden'); suggestionsContainer.innerHTML = ''; return; }
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=au&limit=5`;
+    fetch(url).then(response => response.json()).then(data => {
+      suggestionsContainer.innerHTML = '';
+      if (data && data.length > 0) {
+        suggestionsContainer.classList.remove('hidden');
+        data.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'px-3.5 py-2 hover:bg-slate-700 cursor-pointer text-xs text-slate-200 border-b border-slate-700/50 last:border-b-0 transition-colors';
+          div.innerText = item.display_name;
+          div.addEventListener('click', () => {
+            addressInputField.value = item.display_name;
+            suggestionsContainer.classList.add('hidden');
+            const lat = parseFloat(item.lat);
+            const lon = parseFloat(item.lon);
+            map.flyTo([lat, lon], 19);
+            marker.setLatLng([lat, lon]);
+            const statusLabel = document.getElementById('map-status');
+            const overlayBanner = document.getElementById('map-overlay-banner');
+            statusLabel.innerHTML = `<span class="w-2 h-2 rounded-full bg-teal-500"></span> Found & Locked`;
+            statusLabel.classList.remove('text-amber-400');
+            statusLabel.classList.add('text-teal-400');
+            overlayBanner.innerHTML = `📍 TARGET LOCKED: Center roof confirmed. Proceed below.`;
+            overlayBanner.classList.remove('bg-slate-900/90');
+            overlayBanner.classList.add('bg-teal-950/90', 'border-teal-500/50', 'text-teal-300');
+            overlayBanner.style.opacity = '1';
+            hideNotification();
+          });
+          suggestionsContainer.appendChild(div);
+        });
+      } else { suggestionsContainer.classList.add('hidden'); }
+    }).catch(err => { console.error('Autocomplete query failed:', err); });
+  }, 300));
+
+  document.addEventListener('click', function(e) {
+    if (e.target !== addressInputField && e.target !== suggestionsContainer) { suggestionsContainer.classList.add('hidden'); }
+  });
+}
+
+function showNotification(msg) {
+  const banner = document.getElementById('ui-notification');
+  document.getElementById('notification-text').innerText = msg;
+  banner.classList.remove('hidden');
+}
+function hideNotification() { document.getElementById('ui-notification').classList.add('hidden'); }
+
+function goToStage1() {
+  activeStage = 1;
+  document.getElementById('stage-1').classList.remove('step-inactive');
+  document.getElementById('stage-2').classList.add('step-inactive');
+  document.getElementById('stage-3').classList.add('step-inactive');
+  document.getElementById('stage-results').classList.add('step-inactive');
+  updateProgress();
+  setTimeout(() => { map.invalidateSize(); }, 200);
+}
+
+function goToStage2() {
+  const name = document.getElementById('cust-name').value;
+  const phone = document.getElementById('cust-phone').value;
+  const address = document.getElementById('cust-address').value;
+  if (!name.trim() || !phone.trim() || !address.trim()) { showNotification("Please complete your name, phone, and verified address to proceed."); return; }
+  activeStage = 2;
+  document.getElementById('stage-1').classList.add('step-inactive');
+  document.getElementById('stage-2').classList.remove('step-inactive');
+  document.getElementById('stage-3').classList.add('step-inactive');
+  document.getElementById('stage-results').classList.add('step-inactive');
+  updateProgress();
+  hideNotification();
+  setTimeout(() => { map.invalidateSize(); }, 200);
+}
+
+function goToStage3() {
+  activeStage = 3;
+  document.getElementById('stage-1').classList.add('step-inactive');
+  document.getElementById('stage-2').classList.add('step-inactive');
+  document.getElementById('stage-3').classList.remove('step-inactive');
+  document.getElementById('stage-results').classList.add('step-inactive');
+  updateProgress();
+  setTimeout(() => { map.invalidateSize(); }, 200);
+}
+
+function updateProgress() {
+  const dot1 = document.getElementById('prog-dot-1');
+  const dot2 = document.getElementById('prog-dot-2');
+  const dot3 = document.getElementById('prog-dot-3');
+  const line1 = document.getElementById('prog-line-1');
+  const line2 = document.getElementById('prog-line-2');
+  dot1.className = "w-8 h-8 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm transition-all";
+  dot2.className = "w-8 h-8 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm transition-all";
+  dot3.className = "w-8 h-8 rounded-full bg-slate-700 text-slate-400 flex items-center justify-center font-bold text-sm transition-all";
+  line1.className = "w-8 h-[2px] bg-slate-700";
+  line2.className = "w-8 h-[2px] bg-slate-700";
+  if (activeStage === 1) {
+    dot1.className = "w-8 h-8 rounded-full bg-teal-500 text-slate-950 flex items-center justify-center font-bold text-sm transition-all";
+  } else if (activeStage === 2) {
+    dot1.className = "w-8 h-8 rounded-full bg-teal-800 text-white flex items-center justify-center font-bold text-sm transition-all";
+    line1.className = "w-8 h-[2px] bg-teal-500";
+    dot2.className = "w-8 h-8 rounded-full bg-teal-500 text-slate-950 flex items-center justify-center font-bold text-sm transition-all";
+  } else if (activeStage === 3) {
+    dot1.className = "w-8 h-8 rounded-full bg-teal-800 text-white flex items-center justify-center font-bold text-sm transition-all";
+    line1.className = "w-8 h-[2px] bg-teal-500";
+    dot2.className = "w-8 h-8 rounded-full bg-teal-800 text-white flex items-center justify-center font-bold text-sm transition-all";
+    line2.className = "w-8 h-[2px] bg-teal-500";
+    dot3.className = "w-8 h-8 rounded-full bg-teal-500 text-slate-950 flex items-center justify-center font-bold text-sm transition-all";
+  }
+}
+
+function updateSizeLabel() {
+  const size = document.getElementById('home-size').value;
+  document.getElementById('size-helper').innerText = `~${size}m² Area Covered`;
+}
+
+function selectShape(shapeKey) {
+  selectedShape = shapeKey;
+  document.querySelectorAll('.shape-card').forEach(card => { card.classList.remove('border-teal-500', 'border-teal-400'); card.classList.add('border-slate-700'); });
+  document.querySelectorAll('[id^="badge-"]').forEach(badge => { badge.className = "w-4 h-4 rounded-full border border-slate-500 flex items-center justify-center text-[10px]"; badge.innerHTML = ""; });
+  const activeCard = document.getElementById(`shape-card-${shapeKey}`);
+  activeCard.classList.remove('border-slate-700');
+  activeCard.classList.add('border-teal-500');
+  const activeBadge = document.getElementById(`badge-${shapeKey}`);
+  activeBadge.className = "w-4 h-4 rounded-full border border-teal-500 bg-teal-500 text-slate-950 flex items-center justify-center text-[10px]";
+  activeBadge.innerHTML = "✓";
+}
+
+function selectTier(tierKey) {
+  selectedTier = tierKey;
+  const tiers = ['budget', 'premium', 'marine'];
+  tiers.forEach(t => {
+    const btn = document.getElementById(`tier-btn-${t}`);
+    if (t === tierKey) {
+      btn.className = "px-2 py-1.5 rounded-lg border text-center text-xs font-medium transition-all bg-teal-950/40 border-teal-500/50 text-teal-300";
+      btn.querySelector('div:last-child').className = "text-[9px] text-teal-400";
+    } else {
+      btn.className = "px-2 py-1.5 rounded-lg border text-center text-xs font-medium transition-all bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700";
+      btn.querySelector('div:last-child').className = "text-[9px] text-slate-500";
+    }
+  });
+  runSandboxCalculation();
+}
+
+function calculateAndShowResults() {
+  const size = parseFloat(document.getElementById('home-size').value);
+  const stories = document.getElementById('home-stories').value;
+  document.getElementById('sandbox-size-slider').value = size;
+  document.getElementById('sandbox-stories').value = stories;
+  document.getElementById('sandbox-shape').value = selectedShape;
+  runSandboxCalculation();
+  document.getElementById('stage-3').classList.add('step-inactive');
+  document.getElementById('stage-results').classList.remove('step-inactive');
+  setTimeout(() => { map.invalidateSize(); }, 200);
+}
+
+function runSandboxCalculation() {
+  const size = parseFloat(document.getElementById('sandbox-size-slider').value);
+  const stories = document.getElementById('sandbox-stories').value;
+  const sandboxShapeSelected = document.getElementById('sandbox-shape').value;
+  const swapType = document.getElementById('roof-swap').value;
+  const name = document.getElementById('cust-name').value;
+  const phone = document.getElementById('cust-phone').value;
+  const address = document.getElementById('cust-address').value;
+  document.getElementById('sandbox-size-label').innerText = `${size}m²`;
+  const baseRate = RATES[swapType];
+  const complexityMultiplier = SHAPE_MULTIPLIERS[sandboxShapeSelected];
+  const tierCoefficient = TIER_COEFFICIENTS[selectedTier];
+  const scaffoldingFee = STORY_FEES[stories];
+  const paddedBaseRate = baseRate * SECRET_BUFFER * tierCoefficient;
+  const baseTotal = (size * paddedBaseRate * complexityMultiplier) + scaffoldingFee;
+  const lowEstimateRange = Math.round((baseTotal * 0.90) / 100) * 100;
+  const highEstimateRange = Math.round((baseTotal * 1.10) / 100) * 100;
+  const formattedRange = `$${lowEstimateRange.toLocaleString()} - $${highEstimateRange.toLocaleString()}`;
+  const averageTotal = (lowEstimateRange + highEstimateRange) / 2;
+  const remainingPool = averageTotal - scaffoldingFee;
+  const wastageRatio = (complexityMultiplier - 1) + 0.05;
+  const wastageCost = Math.round(remainingPool * wastageRatio);
+  const materialsCost = Math.round((remainingPool - wastageCost) * 0.45);
+  const laborCost = Math.round(remainingPool - wastageCost - materialsCost);
+  const pctMaterials = (materialsCost / averageTotal) * 100;
+  const pctLabor = (laborCost / averageTotal) * 100;
+  const pctWastage = (wastageCost / averageTotal) * 100;
+  const pctSafety = (scaffoldingFee / averageTotal) * 100;
+  document.getElementById('calc-range-output').innerText = formattedRange;
+  document.getElementById('breakdown-materials').innerText = `$${materialsCost.toLocaleString()}`;
+  document.getElementById('breakdown-labor').innerText = `$${laborCost.toLocaleString()}`;
+  document.getElementById('breakdown-wastage').innerText = `$${wastageCost.toLocaleString()}`;
+  document.getElementById('breakdown-safety').innerText = `$${scaffoldingFee.toLocaleString()}`;
+  document.getElementById('bar-materials').style.width = `${pctMaterials}%`;
+  document.getElementById('bar-labor').style.width = `${pctLabor}%`;
+  document.getElementById('bar-wastage').style.width = `${pctWastage}%`;
+  document.getElementById('bar-safety').style.width = `${pctSafety}%`;
+  const safetyWrapper = document.getElementById('breakdown-safety-wrapper');
+  if (scaffoldingFee === 0) { safetyWrapper.classList.add('hidden'); } else { safetyWrapper.classList.remove('hidden'); }
+  const shapeSelectEl = document.getElementById('sandbox-shape');
+  const selectedShapeText = shapeSelectEl.options[shapeSelectEl.selectedIndex].text;
+  document.getElementById('breakdown-wastage-desc').innerHTML = `Specific allowance computed for your <strong>${selectedShapeText}</strong> profile (covers diagonal cuts, ridges, hips, and capping layouts).`;
+  document.getElementById('results-lead-congrats').innerHTML = `Excellent choice, <strong>${name}</strong>! We have analyzed your specifications against localized Australian trade pricing databases.`;
+  document.getElementById('sms-delivery-target').innerText = `Estimate brief broadcast to: ${phone}`;
+  document.getElementById('print-name').innerText = name;
+  document.getElementById('print-phone').innerText = phone;
+  document.getElementById('print-address').innerText = address;
+  document.getElementById('print-area').innerText = `${size} m² (Estimated Footprint)`;
+  document.getElementById('print-stories').innerText = stories === '2' ? 'Two Stories (+ Scaffold Setup)' : 'Single Story Layout';
+  document.getElementById('print-swap').innerText = document.getElementById('roof-swap').options[document.getElementById('roof-swap').selectedIndex].text;
+  document.getElementById('print-shape').innerText = `${selectedShapeText} (${complexityMultiplier})`;
+  document.getElementById('print-tier').innerText = TIER_LABELS[selectedTier];
+  document.getElementById('print-total-range').innerText = formattedRange;
+  document.getElementById('print-materials').innerText = `$${materialsCost.toLocaleString()}`;
+  document.getElementById('print-labor').innerText = `$${laborCost.toLocaleString()}`;
+  document.getElementById('print-wastage').innerText = `$${wastageCost.toLocaleString()}`;
+  document.getElementById('print-safety').innerText = `$${scaffoldingFee.toLocaleString()}`;
+  const printSafetyRow = document.getElementById('print-safety-row');
+  if (scaffoldingFee === 0) { printSafetyRow.classList.add('hidden'); } else { printSafetyRow.classList.remove('hidden'); }
+}
+
+function resetCalculator() {
+  activeStage = 1;
+  selectedShape = 'hip';
+  selectedTier = 'premium';
+  document.getElementById('cust-name').value = "";
+  document.getElementById('cust-phone').value = "";
+  document.getElementById('cust-address').value = "";
+  document.getElementById('home-stories').value = "1";
+  document.getElementById('roof-swap').value = "tile-to-colorbond";
+  document.getElementById('home-size').value = "220";
+  updateSizeLabel();
+  selectShape('hip');
+  goToStage1();
+}
+</script>
+</body>
+</html>

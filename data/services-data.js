@@ -329,6 +329,47 @@ export const servicePages = {
       },
     ],
   },
+
+  "fascia-repairs": {
+    slug: "fascia-repairs",
+    name: "Fascia Board Repairs",
+    keyword: "Fascia Repairs Adelaide",
+    metaTitle: "Fascia Board Repairs Adelaide | Adelaide Roofers",
+    metaDescription:
+      "Need fascia board repairs in Adelaide? We connect you with a local roofer to repair or replace rotten or damaged fascia. Free, no obligation.",
+    headline: "Fascia board repairs in Adelaide",
+    intro:
+      "Got rotting or damaged fascia boards in Adelaide? Adelaide Roofers connects you with a local roofing contractor to repair or replace the timber behind your gutter line — often found and fixed at the same time as guttering. Tell us your suburb and we'll connect you locally. Free, no obligation.",
+    overview:
+      "Fascia boards run along the roofline behind the gutters, and they take a quiet beating — trapped moisture, overflowing gutters and general weather exposure gradually rot the timber, even when the roof and gutters above look fine. Left alone, rotten fascia can let water into the roof cavity and eaves, and it stops gutters being properly supported. Because fascia sits right behind the gutter line, it's commonly picked up during a gutter inspection or replacement — the roofers we connect you with can assess and repair both in the one visit.",
+    included: [
+      "Assessing fascia boards for rot, warping or damage",
+      "Replacing damaged sections of timber fascia",
+      "Repainting or sealing repaired and replacement boards",
+      "Re-securing gutters properly once fascia is sound",
+      "Checking eaves and roofline for related water damage",
+    ],
+    signs: [
+      "Soft, spongy or crumbling timber behind the gutters",
+      "Peeling paint or visible rot along the roofline",
+      "Gutters sagging away from the house",
+      "Water stains on eaves or under the roofline",
+    ],
+    faqs: [
+      {
+        q: "How do I know if my fascia needs repairing?",
+        a: "The usual signs are soft or crumbling timber, peeling paint along the roofline, or gutters that have started sagging because they're no longer well supported. If your gutters are being replaced, it's worth having the fascia checked at the same time, since problems there are easy to miss from the ground.",
+      },
+      {
+        q: "Can fascia be repaired, or does it need full replacement?",
+        a: "It depends on how far the rot has spread. A small damaged section can often be cut out and replaced without touching the rest of the board; widespread rot along a run usually calls for full replacement. The roofer we connect you with will give you an honest assessment rather than replace more than necessary.",
+      },
+      {
+        q: "Does fascia repair need to happen with gutter work?",
+        a: "Not always, but it's common — since fascia sits directly behind the gutter line, gutter replacement is a natural time to check it, and doing both together usually saves a second call-out. If your fascia's fine, a roofer will simply tell you so.",
+      },
+    ],
+  },
 };
 
 export const serviceSlugs = Object.keys(servicePages);

@@ -6,7 +6,7 @@ import { site } from "@/data/config";
 
 export default function LeadForm({ suburbName }) {
   const [status, setStatus] = useState("idle"); // idle | sending | done | error
-  const [form, setForm] = useState({ name: "", phone: "", suburb: suburbName || "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", suburb: suburbName || "", message: "" });
 
   const update = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -27,16 +27,18 @@ export default function LeadForm({ suburbName }) {
       const { error } = await supabase.from("leads").insert([
         {
           name: form.name,
+          email: form.email,
           phone: form.phone,
           suburb: form.suburb,
           message: form.message,
+          lead_source: "website_form",
           source_page: suburbName || "general",
           created_at: new Date().toISOString(),
         },
       ]);
       if (error) throw error;
       setStatus("done");
-      setForm({ name: "", phone: "", suburb: suburbName || "", message: "" });
+      setForm({ name: "", email: "", phone: "", suburb: suburbName || "", message: "" });
     } catch (err) {
       console.error("Lead submission failed:", err);
       setStatus("error");
@@ -59,14 +61,21 @@ export default function LeadForm({ suburbName }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3.5">
       <div>
-        <label htmlFor="name" className="block font-body text-xs font-semibold text-ink/70">Your name</label>
+        <label htmlFor="name" className="block font-body text-xs font-semibold text-ink/70">Full Name</label>
         <input
           id="name" name="name" value={form.name} onChange={update} required
           className="mt-1 w-full rounded-lg border border-mortar bg-white px-3.5 py-2.5 font-body text-sm text-ink outline-none focus:border-clay"
         />
       </div>
       <div>
-        <label htmlFor="phone" className="block font-body text-xs font-semibold text-ink/70">Phone</label>
+        <label htmlFor="email" className="block font-body text-xs font-semibold text-ink/70">Email Address</label>
+        <input
+          id="email" name="email" type="email" value={form.email} onChange={update}
+          className="mt-1 w-full rounded-lg border border-mortar bg-white px-3.5 py-2.5 font-body text-sm text-ink outline-none focus:border-clay"
+        />
+      </div>
+      <div>
+        <label htmlFor="phone" className="block font-body text-xs font-semibold text-ink/70">Mobile</label>
         <input
           id="phone" name="phone" type="tel" value={form.phone} onChange={update} required
           className="mt-1 w-full rounded-lg border border-mortar bg-white px-3.5 py-2.5 font-body text-sm text-ink outline-none focus:border-clay"
@@ -80,7 +89,7 @@ export default function LeadForm({ suburbName }) {
         />
       </div>
       <div>
-        <label htmlFor="message" className="block font-body text-xs font-semibold text-ink/70">What&apos;s going on with your roof? <span className="font-normal text-ink/40">(optional)</span></label>
+        <label htmlFor="message" className="block font-body text-xs font-semibold text-ink/70">How Can We Help?</label>
         <textarea
           id="message" name="message" rows={3} value={form.message} onChange={update}
           className="mt-1 w-full rounded-lg border border-mortar bg-white px-3.5 py-2.5 font-body text-sm text-ink outline-none focus:border-clay"
@@ -99,10 +108,10 @@ export default function LeadForm({ suburbName }) {
         disabled={status === "sending"}
         className="w-full rounded-lg bg-ink px-6 py-3 font-display font-semibold tracking-tight text-paper transition hover:bg-steel disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Get connected with a roofer"}
+        {status === "sending" ? "Sending…" : "Get Connected With A Vetted Roofer"}
       </button>
       <p className="text-center font-body text-xs text-ink/45">
-        Free, no obligation. We&apos;ll only use your details to connect you with a local roofer.
+        We use your data solely to connect you with a vetted local roofer. We will never share your details with anyone else.
       </p>
     </form>
   );
