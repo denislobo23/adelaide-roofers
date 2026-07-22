@@ -214,15 +214,15 @@ export default function GetMyEstimatePage() {
 
   if (!answers) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-900 px-5 py-24 text-center">
+      <main className="flex min-h-screen items-center justify-center bg-paper px-5 py-24 text-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">Let&apos;s start with your roof</h1>
-          <p className="mt-3 text-slate-400">
+          <h1 className="text-2xl font-bold text-ink">Let&apos;s start with your roof</h1>
+          <p className="mt-3 text-ink/70">
             We couldn&apos;t find your answers — head back and use the calculator first.
           </p>
           <Link
             href="/calculator"
-            className="mt-6 inline-flex items-center justify-center rounded-xl bg-teal-500 px-6 py-3.5 font-bold tracking-tight text-slate-950 hover:bg-teal-400"
+            className="mt-6 inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95"
           >
             Go to the calculator
           </Link>
@@ -232,38 +232,38 @@ export default function GetMyEstimatePage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-900 px-5 py-16 md:py-24">
+    <main className="min-h-screen bg-paper px-5 py-16 md:py-24">
       <div className="mx-auto max-w-lg">
         {status === "sent" ? (
-          <div className="rounded-2xl border border-slate-700/50 bg-slate-800 p-6 text-center shadow-2xl md:p-8">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-teal-500/10 text-teal-400">
+          <div className="rounded-2xl border-2 border-clay/50 bg-white p-6 text-center shadow-2xl md:p-8">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-clay/10 text-clay">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-white">Check your phone</h1>
-            <p className="mt-3 text-slate-400">
-              We&apos;ve texted <span className="font-semibold text-white">{form.mobile}</span>{" "}
-              with the link to your full estimate for <span className="text-white">{answers.address}</span>,
+            <h1 className="text-2xl font-bold tracking-tight text-ink">Check your phone</h1>
+            <p className="mt-3 text-ink/70">
+              We&apos;ve texted <span className="font-semibold text-ink">{form.mobile}</span>{" "}
+              with the link to your full estimate for <span className="text-ink">{answers.address}</span>,
               including the itemised breakdown.
             </p>
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-ink/50">
               Didn&apos;t get it? Call us on{" "}
-              <a href={site.phoneHref} className="font-semibold text-teal-400">{site.phoneDisplay}</a>{" "}
+              <a href={site.phoneHref} className="font-semibold text-clay">{site.phoneDisplay}</a>{" "}
               and we&apos;ll help directly.
             </p>
 
             {/* Optional email capture — only shown if we actually have a
                 ref_number to attach it to. */}
             {refNumber && (
-              <div className="mt-6 border-t border-slate-700/50 pt-6 text-left">
+              <div className="mt-6 border-t border-teal-100 pt-6 text-left">
                 {emailCapture.status === "saved" ? (
-                  <p className="text-center text-sm text-teal-400">
+                  <p className="text-center text-sm text-clay">
                     Done — a copy will also come through by email.
                   </p>
                 ) : (
                   <form onSubmit={handleEmailCapture} className="space-y-2.5">
-                    <label htmlFor="capture-email" className="block text-center text-sm text-slate-400">
+                    <label htmlFor="capture-email" className="block text-center text-sm text-ink/70">
                       Want a copy emailed too, for safekeeping?
                     </label>
                     <div className="flex gap-2">
@@ -275,22 +275,22 @@ export default function GetMyEstimatePage() {
                           setEmailCapture((s) => ({ ...s, email: e.target.value }))
                         }
                         placeholder="you@example.com"
-                        className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2.5 text-sm text-white outline-none focus:border-teal-500"
+                        className="min-w-0 flex-1 rounded-lg border-2 border-teal-100 bg-white px-3.5 py-2.5 text-sm text-ink placeholder-ink/35 outline-none transition-all focus:border-clay"
                       />
                       <button
                         type="submit"
                         disabled={emailCapture.status === "saving" || !emailCapture.email.trim()}
-                        className="shrink-0 rounded-lg bg-teal-500 px-4 py-2.5 text-sm font-semibold text-slate-950 transition-all hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="shrink-0 rounded-lg bg-clay px-4 py-2.5 text-sm font-semibold text-ink transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        {emailCapture.status === "saving" ? "Saving…" : "Save"}
+                        {emailCapture.status === "saving" ? "Sending…" : "Send"}
                       </button>
                     </div>
                     {emailCapture.status === "error" && (
-                      <p className="text-center text-xs text-rose-400">
+                      <p className="text-center text-xs text-rose-600">
                         Couldn&apos;t save that — the text with your estimate still went through fine.
                       </p>
                     )}
-                    <p className="text-center text-xs text-slate-500">Optional — totally fine to skip.</p>
+                    <p className="text-center text-xs text-ink/50">Optional — totally fine to skip.</p>
                   </form>
                 )}
               </div>
@@ -298,54 +298,54 @@ export default function GetMyEstimatePage() {
 
             <Link
               href="/"
-              className="mt-6 inline-block text-sm font-medium text-slate-400 hover:text-slate-200"
+              className="mt-6 inline-block text-sm font-medium text-ink/60 hover:text-ink"
             >
               ← Back to Adelaide Roofers
             </Link>
           </div>
         ) : status === "sms_failed" ? (
-          <div className="rounded-2xl border border-slate-700/50 bg-slate-800 p-6 text-center shadow-2xl md:p-8">
-            <h1 className="text-2xl font-bold tracking-tight text-white">
+          <div className="rounded-2xl border-2 border-clay/50 bg-white p-6 text-center shadow-2xl md:p-8">
+            <h1 className="text-2xl font-bold tracking-tight text-ink">
               We couldn&apos;t reach that number
             </h1>
-            <p className="mt-3 text-slate-400">
-              We&apos;ve saved your details, but the text to <span className="text-white">{form.mobile}</span>{" "}
+            <p className="mt-3 text-ink/70">
+              We&apos;ve saved your details, but the text to <span className="text-ink">{form.mobile}</span>{" "}
               didn&apos;t go through. Please check the number, or call us directly and we&apos;ll
               sort it out.
             </p>
             <a
               href={site.phoneHref}
-              className="mt-6 inline-flex items-center justify-center rounded-xl bg-teal-500 px-6 py-3.5 font-bold tracking-tight text-slate-950 hover:bg-teal-400"
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95"
             >
               Call {site.phoneDisplay}
             </a>
           </div>
         ) : (
-          <div className="rounded-2xl border border-slate-700/50 bg-slate-800 p-6 shadow-2xl md:p-8">
-            <h1 className="text-2xl font-bold tracking-tight text-white">
+          <div className="rounded-2xl border-2 border-clay/50 bg-white p-6 shadow-2xl md:p-8">
+            <h1 className="text-2xl font-bold tracking-tight text-ink">
               Where should we send your estimate?
             </h1>
-            <p className="mt-2 text-sm text-slate-400">
+            <p className="mt-2 text-sm text-ink/70">
               Enter your details and we&apos;ll text you a link where you can download a
               detailed breakdown of the estimate, including material costs.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 space-y-3.5">
               <div>
-                <label htmlFor="name" className="block text-xs font-semibold text-slate-400">
-                  Full Name <span className="text-teal-400">*</span>
+                <label htmlFor="name" className="block text-xs font-semibold text-ink/70">
+                  Full Name <span className="text-clay">*</span>
                 </label>
                 <input
                   id="name"
                   required
                   value={form.name}
                   onChange={(e) => update("name", e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-3 text-sm text-white outline-none focus:border-teal-500"
+                  className="mt-1 w-full rounded-lg border-2 border-teal-100 bg-white px-3.5 py-3 text-sm text-ink placeholder-ink/35 outline-none transition-all focus:border-clay"
                 />
               </div>
               <div>
-                <label htmlFor="mobile" className="block text-xs font-semibold text-slate-400">
-                  Mobile <span className="text-teal-400">*</span>
+                <label htmlFor="mobile" className="block text-xs font-semibold text-ink/70">
+                  Mobile <span className="text-clay">*</span>
                 </label>
                 <input
                   id="mobile"
@@ -353,20 +353,20 @@ export default function GetMyEstimatePage() {
                   required
                   value={form.mobile}
                   onChange={(e) => update("mobile", e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-3 text-sm text-white outline-none focus:border-teal-500"
+                  className="mt-1 w-full rounded-lg border-2 border-teal-100 bg-white px-3.5 py-3 text-sm text-ink placeholder-ink/35 outline-none transition-all focus:border-clay"
                 />
               </div>
 
               <div>
-                <label htmlFor="timeframe" className="block text-xs font-semibold text-slate-400">
-                  When do you want to begin? <span className="text-teal-400">*</span>
+                <label htmlFor="timeframe" className="block text-xs font-semibold text-ink/70">
+                  When do you want to begin? <span className="text-clay">*</span>
                 </label>
                 <select
                   id="timeframe"
                   required
                   value={form.timeframe}
                   onChange={(e) => update("timeframe", e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-3 text-sm text-white outline-none focus:border-teal-500"
+                  className="mt-1 w-full rounded-lg border-2 border-teal-100 bg-white px-3.5 py-3 text-sm text-ink outline-none transition-all focus:border-clay"
                 >
                   <option value="" disabled>
                     Select a timeframe…
@@ -380,13 +380,13 @@ export default function GetMyEstimatePage() {
               </div>
 
               {status === "error" && (
-                <p className="text-sm text-rose-400">
+                <p className="text-sm text-rose-600">
                   Something went wrong sending your estimate. Please check your details and try
                   again, or call us on {site.phoneDisplay}.
                 </p>
               )}
 
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-ink/50">
                 We use your data solely to send you this estimate and connect you with a vetted
                 local roofer. We will never share your details with anyone else.
               </p>
@@ -394,7 +394,7 @@ export default function GetMyEstimatePage() {
               <button
                 type="submit"
                 disabled={status === "sending"}
-                className="w-full rounded-lg bg-teal-500 px-6 py-3.5 font-bold tracking-tight text-slate-950 transition-all hover:bg-teal-400 disabled:opacity-60"
+                className="w-full rounded-lg bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95 disabled:opacity-60"
               >
                 {status === "sending" ? "Sending your estimate…" : "Get My Estimate"}
               </button>
