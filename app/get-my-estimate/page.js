@@ -25,7 +25,7 @@ const FULL_JOB_PRICING = {
   baseRatePerM2: 45,
   storeyMultiplier: { single: 1, double: 1.35 },
   complexityMultiplier: { flat: 1, gable: 1.05, hip: 1.2, dutchGable: 1.35, multiLevel: 1.5 },
-  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.15, terracotta: 1.3, notSure: 1.15 },
+  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.15, terracotta: 1.3, notSure: 1.15, asbestos: 1.3 },
   minimumJob: 3200,
   jobTypeFactor: { restoration: 1, replacement: 1.6, painting: 0.55 },
   // Replacement-specific: converting BETWEEN material types (e.g. tile to
@@ -33,11 +33,22 @@ const FULL_JOB_PRICING = {
   // come off and the frame/battens checked before the new material goes on.
   sameTypeConversionFactor: 1, // metal→metal, or tile→tile (any tile combo)
   crossTypeConversionFactor: 1.3, // tile→metal or metal→tile
+  // ⚠️ PLACEHOLDER — asbestos (fibro) roofs legally require a licensed
+  // asbestos removalist in SA, with containment/air monitoring/disposal
+  // costs well above a standard tear-off. This factor applies whenever
+  // currentMaterial is asbestos, REGARDLESS of what's replacing it — a
+  // standard same-type/cross-type comparison doesn't apply here, since the
+  // removal cost dominates, not the conversion. 1.7 is a rough placeholder
+  // pending a real quote from a licensed asbestos removalist — treat this
+  // as one of the highest-priority numbers to replace with real data,
+  // alongside Wally's other rates.
+  asbestosRemovalFactor: 1.7,
   conservativeMargin: 1.15, // INTERNAL ONLY — never shown to the customer
 };
 
 // "notSure" is treated as tile for conversion purposes, since concrete tile
-// is the most common Adelaide roof type.
+// is the most common Adelaide roof type. Asbestos is handled as a special
+// case before this is ever called for a replacement job — see estimateCost.
 function materialGroup(material) {
   return ["colorbond", "galvanised", "zincalume"].includes(material) ? "metal" : "tile";
 }
@@ -45,7 +56,7 @@ function materialGroup(material) {
 const REPAIR_PRICING = {
   baseByAreaCount: { one: 450, few: 950, many: 1800 },
   storeyMultiplier: { single: 1, double: 1.3 },
-  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.1, terracotta: 1.2, notSure: 1.1 },
+  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.1, terracotta: 1.2, notSure: 1.1, asbestos: 1.5 },
   minimumJob: 350,
   conservativeMargin: 1.15,
 };
@@ -53,7 +64,7 @@ const REPAIR_PRICING = {
 const LEAK_PRICING = {
   baseByDuration: { just_noticed: 400, few_weeks: 550, months: 750, recurring: 950 },
   storeyMultiplier: { single: 1, double: 1.3 },
-  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.1, terracotta: 1.2, notSure: 1.1 },
+  materialMultiplier: { colorbond: 1, galvanised: 0.9, zincalume: 0.95, concreteTile: 1.1, terracotta: 1.2, notSure: 1.1, asbestos: 1.5 },
   minimumJob: 350,
   conservativeMargin: 1.15,
 };
@@ -105,7 +116,9 @@ function estimateCost(answers) {
 
   if (jobType === "replacement") {
     const conversionFactor =
-      materialGroup(answers.currentMaterial) === materialGroup(answers.desiredMaterial)
+      answers.currentMaterial === "asbestos"
+        ? FULL_JOB_PRICING.asbestosRemovalFactor
+        : materialGroup(answers.currentMaterial) === materialGroup(answers.desiredMaterial)
         ? FULL_JOB_PRICING.sameTypeConversionFactor
         : FULL_JOB_PRICING.crossTypeConversionFactor;
 

@@ -391,6 +391,7 @@ export default function RoofCalculator() {
                     { v: "zincalume", label: "Zincalume", note: "Silver metal, more corrosion-resistant than galvanised", img: "/images/roof-materials/material-zincalume.webp" },
                     { v: "concreteTile", label: "Concrete tile", note: "The most common Adelaide roof type", img: "/images/roof-materials/material-concrete-tile.webp" },
                     { v: "terracotta", label: "Terracotta tile", note: "Traditional, often on older homes", img: "/images/roof-materials/material-terracotta.webp" },
+                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on pre-1980s homes — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
                   ].map((o) => (
                     <button
                       key={o.v}
@@ -420,6 +421,13 @@ export default function RoofCalculator() {
                     </span>
                   </button>
                 </div>
+                {form.material === "asbestos" && (
+                  <p className="mt-3 rounded-lg border-2 border-clay/40 bg-clay/5 px-3.5 py-2.5 text-xs text-ink/70">
+                    ⚠ Asbestos roofing must be handled by a licensed removalist. This estimate is a
+                    rough placeholder for planning purposes — your actual quote may vary more than
+                    usual until a specialist has assessed the roof in person.
+                  </p>
+                )}
                 <div className="mt-6 flex gap-3">
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
@@ -448,6 +456,7 @@ export default function RoofCalculator() {
                     { v: "zincalume", label: "Zincalume", note: "Silver metal, more corrosion-resistant than galvanised", img: "/images/roof-materials/material-zincalume.webp" },
                     { v: "concreteTile", label: "Concrete tile", note: "The most common Adelaide roof type", img: "/images/roof-materials/material-concrete-tile.webp" },
                     { v: "terracotta", label: "Terracotta tile", note: "Traditional, often on older homes", img: "/images/roof-materials/material-terracotta.webp" },
+                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on pre-1980s homes — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
                   ].map((o) => (
                     <button
                       key={o.v}
@@ -477,6 +486,14 @@ export default function RoofCalculator() {
                     </span>
                   </button>
                 </div>
+                {form.currentMaterial === "asbestos" && (
+                  <p className="mt-3 rounded-lg border-2 border-clay/40 bg-clay/5 px-3.5 py-2.5 text-xs text-ink/70">
+                    ⚠ Asbestos roofing must be removed by a licensed removalist, regardless of what
+                    you&apos;re replacing it with. This estimate is a rough placeholder for planning
+                    purposes — your actual quote may vary more than usual until a specialist has
+                    assessed the roof in person.
+                  </p>
+                )}
                 <div className="mt-6 flex gap-3">
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
