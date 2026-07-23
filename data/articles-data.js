@@ -57,6 +57,31 @@ export const articles = [
     title: "10 Questions to Ask a Roofer Before You Sign",
     category: "Choosing a roofer",
   },
+  {
+    slug: "insurance-roof-replacement-sa",
+    title: "Does Home Insurance Cover Roof Replacement in SA?",
+    category: "Costs",
+  },
+  {
+    slug: "how-to-read-a-roofing-quote",
+    title: "How to Read a Roofing Quote: What Should Be Included",
+    category: "Choosing a roofer",
+  },
+  {
+    slug: "roofer-vs-contractor-vs-plumber",
+    title: "Roofer vs Roof Contractor vs Roof Plumber: Which Do You Need?",
+    category: "Choosing a roofer",
+  },
+  {
+    slug: "roofing-scams-adelaide",
+    title: "Common Roofing Scams in Australia (and How to Avoid Them)",
+    category: "Choosing a roofer",
+  },
+  {
+    slug: "roof-warranties-explained",
+    title: "Roof Warranties Explained: What's Actually Covered",
+    category: "Choosing a roofer",
+  },
 ];
 
 export function getArticle(slug) {
