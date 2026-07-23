@@ -1,12 +1,12 @@
 // app/services/[service]/page.js
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { site } from "@/data/config";
 import { regions } from "@/data/locations";
 import { servicePages, serviceSlugs, getServicePage } from "@/data/services-data";
 import CallButton from "@/components/CallButton";
 import ContactForm from "@/components/ContactForm";
+import HeroCalculatorMini from "@/components/HeroCalculatorMini";
 
 export function generateStaticParams() {
   return serviceSlugs.map((slug) => ({ service: slug }));
@@ -43,50 +43,11 @@ function RoofIcon() {
 // cards, but laid out for a footer CTA rather than a sticky article
 // sidebar (no `md:sticky`, since there's no scrolling content beside it
 // here).
-function CalculatorEbookTeasers() {
-  return (
-    <>
-      <div className="rounded-2xl border-2 border-clay/50 bg-white p-5 shadow-lg">
-        <h3 className="font-display text-base font-bold tracking-tight text-ink">
-          Know before you call
-        </h3>
-        <p className="mt-1.5 font-body text-sm leading-relaxed text-ink/65">
-          Get a real, itemised roof estimate in under two minutes.
-        </p>
-        <Link
-          href="/calculator"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-clay px-4 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:brightness-95"
-        >
-          Try the free calculator →
-        </Link>
-      </div>
-
-      <div className="rounded-2xl border border-mortar bg-white p-5 shadow-lg">
-        <Link href="/free-guide" className="block">
-          <Image
-            src="/images/before-you-call-a-roofer-cover.jpg"
-            alt="Before You Call a Roofer — free Adelaide homeowner's guide"
-            width={765}
-            height={1024}
-            className="w-full rounded-lg"
-          />
-        </Link>
-        <h3 className="mt-4 font-display text-base font-bold tracking-tight text-ink">
-          Before You Call a Roofer
-        </h3>
-        <p className="mt-1.5 font-body text-sm leading-relaxed text-ink/65">
-          The free guide to a fair quote, a trustworthy roofer, and avoiding costly mistakes.
-        </p>
-        <Link
-          href="/free-guide"
-          className="mt-4 inline-flex w-full items-center justify-center rounded-lg border-2 border-ink px-4 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
-        >
-          Get the free guide →
-        </Link>
-      </div>
-    </>
-  );
-}
+// (Small calculator/ebook teaser cards removed — the real HeroCalculatorMini
+// above the FAQ section now handles calculator lead capture directly, and
+// duplicating it here in miniature right before the Contact form was
+// redundant distraction rather than a second useful CTA. Ebook teaser will
+// come back in a later pass per the plan.)
 
 export default async function ServiceDetailPage({ params }) {
   const { service } = await params;
@@ -205,6 +166,44 @@ export default async function ServiceDetailPage({ params }) {
         </div>
       </section>
 
+      {/* ── CALCULATOR — primary lead capture, right where cost   ── */}
+      {/* ── intent peaks: after they've read what the job involves,── */}
+      {/* ── right before the FAQ answers the same "how much" ─────── */}
+      <section className="border-y border-mortar bg-paper">
+        <div className="mx-auto max-w-wrap px-5 py-16 md:py-20">
+          <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-center">
+            <div>
+              <span className="eyebrow text-clay">Know before you call</span>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                See what your job actually costs, before talking to a roofer.
+              </h2>
+              <p className="mt-4 font-body leading-relaxed text-ink/70">
+                Enter your address, answer a few quick questions about your roof, and see how the
+                price is built — no roofer, no obligation.
+              </p>
+              <ol className="mt-8 space-y-5">
+                {[
+                  { t: "Enter your address", d: "See your roof on satellite imagery instantly." },
+                  { t: "Answer a few quick questions", d: "Size, material, condition — takes about a minute." },
+                  { t: "Get your report", d: "A detailed, itemised PDF sent as a download link straight to your phone, ready to save, share, or show a roofer on the spot." },
+                ].map((step, i) => (
+                  <li key={step.t} className="flex gap-4">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-clay font-display text-sm font-bold text-white">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-base font-bold tracking-tight text-ink">{step.t}</h3>
+                      <p className="mt-1 font-body text-sm leading-relaxed text-ink/65">{step.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <HeroCalculatorMini />
+          </div>
+        </div>
+      </section>
+
       {/* ── FAQS ───────────────────────────────────────────── */}
       <section className="mx-auto max-w-wrap px-5 py-16">
         <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
@@ -265,15 +264,6 @@ export default async function ServiceDetailPage({ params }) {
                 </li>
               </ul>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CALCULATOR + EBOOK TEASERS ──────────────────────── */}
-      <section className="border-t border-mortar bg-paper">
-        <div className="mx-auto max-w-wrap px-5 py-16">
-          <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
-            <CalculatorEbookTeasers />
           </div>
         </div>
       </section>
