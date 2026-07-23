@@ -415,6 +415,94 @@ export const servicePages = {
     ],
   },
 
+  "roof-ventilation": {
+    slug: "roof-ventilation",
+    name: "Roof Ventilation",
+    keyword: "Roof Ventilation Adelaide",
+    metaTitle: "Roof Ventilation Adelaide | Whirlybirds & Roof Vents | Adelaide Roofers",
+    metaDescription:
+      "Need roof ventilation in Adelaide? We connect you with a local roofer to install whirlybirds and roof vents to reduce heat and moisture build-up. Free, no obligation.",
+    headline: "Roof ventilation in Adelaide",
+    intro:
+      "Looking into roof ventilation in Adelaide? Adelaide Roofers connects you with a local roofing contractor to install whirlybirds and roof vents that move hot, moist air out of the roof space. Tell us your suburb and we'll connect you with someone who does this work in your area. Free, no obligation.",
+    overview:
+      "Adelaide's hot, dry summers push a lot of heat into an unventilated roof space, which then radiates down into the ceiling below — and in winter, trapped moisture in the roof space can lead to condensation issues. Roof ventilation addresses both: whirlybirds (wind-driven turbine vents) and static roof vents give that hot, moist air somewhere to escape, rather than sitting in the roof cavity. It's a relatively small job with a real effect on comfort and, over time, on how hard your air conditioning has to work.",
+    included: [
+      "Assessing how many vents or whirlybirds your roof space needs",
+      "Installing whirlybird turbine vents",
+      "Installing static roof vents where appropriate",
+      "Sealing and flashing around each new vent so it doesn't introduce a leak",
+    ],
+    signs: [
+      "Upstairs or top-floor rooms noticeably hotter than the rest of the house",
+      "A roof space that feels stifling hot when you go up there in summer",
+      "Condensation or a musty smell in the roof cavity over winter",
+      "Higher-than-expected cooling bills over summer",
+    ],
+    faqs: [
+      {
+        q: "Do whirlybirds actually make a difference to how hot my house gets?",
+        a: "For the roof space itself, yes — they're specifically designed to vent hot air that builds up under the roof, which reduces how much heat radiates down into the ceiling below. They won't cool a room the way air conditioning does, but they take some of the load off it, particularly in top-floor rooms directly under the roof.",
+      },
+      {
+        q: "How many whirlybirds or vents does my roof need?",
+        a: "It depends on the size of your roof space and how it's currently ventilated, if at all. A roofer will look at your roof's size and layout and recommend a number that actually moves enough air, rather than a token single unit that does little.",
+      },
+      {
+        q: "Can roof vents cause leaks?",
+        a: "Only if they're poorly installed — any roof penetration needs to be properly flashed and sealed, whirlybirds and vents included. A roofer experienced with this work seals them correctly as standard, so a well-installed vent shouldn't be a leak risk.",
+      },
+      {
+        q: "How much does roof ventilation cost in Adelaide?",
+        a: "It depends on how many whirlybirds or vents your roof needs and how accessible the roof is. It's a relatively small job compared to restoration or replacement, but it still needs an on-site look for an accurate price. The roofer we connect you with will assess it and quote properly.",
+      },
+    ],
+  },
+
+  "roof-inspection": {
+    slug: "roof-inspection",
+    name: "Roof Inspection & Report",
+    keyword: "Roof Inspection Adelaide",
+    metaTitle: "Roof Inspection Adelaide | Honest Roof Report | Adelaide Roofers",
+    metaDescription:
+      "Need a roof inspection in Adelaide? We connect you with a local roofer for a thorough check of tiles, flashings, valleys and gutters, with an honest report. Free, no obligation.",
+    headline: "Roof inspection & report in Adelaide",
+    intro:
+      "Want a proper look at the condition of your roof? Adelaide Roofers connects you with a local roofing contractor for a thorough inspection and an honest write-up of what's fine, what needs attention now, and what can wait. Tell us your suburb and we'll connect you with someone who does this in your area. Free, no obligation.",
+    overview:
+      "A roof inspection is worth doing before small issues become expensive ones — buying a home, after a storm, or simply because the roof hasn't been looked at in years. Rather than a sales pitch dressed up as an inspection, the roofers we connect you with give you a straight assessment: tiles, flashings, valleys, ridge capping and gutters checked properly, with a clear picture of what actually needs doing versus what's simply cosmetic or can wait.",
+    included: [
+      "A full check of tiles, sheets, flashings, valleys and ridge capping",
+      "Checking gutters and downpipes for condition and blockages",
+      "Identifying any active or developing leak points",
+      "A written or verbal summary of what's urgent, what's worth planning for, and what's fine",
+    ],
+    signs: [
+      "Buying or selling a home and wanting to know the roof's real condition",
+      "After a storm, to check for damage that isn't obvious from the ground",
+      "The roof hasn't been looked at in over five years",
+      "General peace of mind before winter or a long dry summer",
+    ],
+    faqs: [
+      {
+        q: "How often should I get my roof inspected?",
+        a: "Roughly every two to three years for a roof with no known issues, or sooner after a major storm. Regular inspection catches small problems — a slipped tile, a cracked seal — before they turn into leaks and ceiling damage.",
+      },
+      {
+        q: "Should I get a roof inspection before buying a house?",
+        a: "It's a sensible step, especially on an older home. A roof inspection can pick up issues that aren't obvious in a standard building inspection, and gives you a realistic idea of any roofing costs you might be taking on with the property.",
+      },
+      {
+        q: "Will the inspection try to upsell me on work I don't need?",
+        a: "That's exactly what we try to avoid by only connecting you with roofers who give an honest assessment — telling you what's genuinely urgent versus what can wait, not padding out a quote. If you ever feel that wasn't the case with a roofer we've connected you with, let us know directly.",
+      },
+      {
+        q: "How much does a roof inspection cost in Adelaide?",
+        a: "It varies by roofer and the size of the roof, and some offer it free or low-cost as a first step toward quoting other work. It's worth asking upfront when you're matched with someone what their inspection involves and whether there's a cost.",
+      },
+    ],
+  },
+
 };
 
 export const serviceSlugs = Object.keys(servicePages);

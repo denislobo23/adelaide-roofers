@@ -50,6 +50,14 @@ const serviceCardMeta = {
     blurb: "Licensed, safe removal of asbestos roofing, then a new roof installed.",
     image: "/images/services/card-asbestos-roof-removal.webp",
   },
+  "roof-ventilation": {
+    blurb: "Whirlybirds and roof vents to cut summer heat and moisture build-up.",
+    image: "/images/services/card-roof-ventilation.webp",
+  },
+  "roof-inspection": {
+    blurb: "A thorough, honest check of your roof's condition, written up plainly.",
+    image: "/images/services/card-roof-inspection.webp",
+  },
 };
 
 function HomeServiceCard({ slug }) {

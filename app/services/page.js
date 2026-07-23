@@ -39,15 +39,15 @@ const serviceGroups = [
     items: [
       { t: "Gutters, downpipes & valleys", href: "/services/gutter-repairs", d: "Replacing rusted or undersized gutters, and sorting the valleys and downpipes that cause most water to back up under a roof." },
       { t: "Gutter guard & leaf screen", href: "/services/gutter-repairs", d: "Fitting mesh guards that keep leaves and debris out of gutters and valleys — important near trees, and for reducing ember risk in bushfire-prone foothills suburbs." },
-      { t: "Gutter & roof cleaning", d: "Clearing leaf litter from gutters and valleys, and pressure-cleaning moss, lichen and grime off the roof surface before it does damage." },
+      { t: "Gutter & roof cleaning", href: "/services/gutter-repairs", d: "Clearing leaf litter from gutters and valleys, and pressure-cleaning moss, lichen and grime off the roof surface before it does damage." },
     ],
   },
   {
     heading: "Maintenance & protection",
     items: [
-      { t: "Roof ventilation", d: "Installing whirlybirds and roof vents to move hot, moist air out of the roof space — helping with summer heat and reducing condensation and moisture build-up." },
+      { t: "Roof ventilation", href: "/services/roof-ventilation", d: "Installing whirlybirds and roof vents to move hot, moist air out of the roof space — helping with summer heat and reducing condensation and moisture build-up." },
       { t: "Solar panel mesh & bird-proofing", d: "Fitting mesh around solar panels and blocking gaps under the roofline to keep pigeons and pests out, without damaging the panels or roof." },
-      { t: "Roof inspection & report", d: "A thorough check of tiles, flashings, valleys, ridge capping and gutters, with an honest write-up of what's fine, what needs attention now, and what can wait." },
+      { t: "Roof inspection & report", href: "/services/roof-inspection", d: "A thorough check of tiles, flashings, valleys, ridge capping and gutters, with an honest write-up of what's fine, what needs attention now, and what can wait." },
     ],
   },
   {
