@@ -82,6 +82,31 @@ export const articles = [
     title: "Roof Warranties Explained: What's Actually Covered",
     category: "Choosing a roofer",
   },
+  {
+    slug: "financing-a-new-roof",
+    title: "Can I Finance a New Roof? Options for Adelaide Homeowners",
+    category: "Costs",
+  },
+  {
+    slug: "does-colorbond-rust",
+    title: "Does Colorbond Rust? What Adelaide Homeowners Should Know",
+    category: "Materials",
+  },
+  {
+    slug: "terracotta-roofs-pros-cons",
+    title: "Terracotta Roofs: Pros, Cons, and When to Restore vs Replace",
+    category: "Materials",
+  },
+  {
+    slug: "council-approval-roof-replacement-sa",
+    title: "Do I Need Council Approval to Replace My Roof in SA?",
+    category: "Process",
+  },
+  {
+    slug: "how-long-does-roof-replacement-take",
+    title: "How Long Does a Roof Replacement Actually Take?",
+    category: "Process",
+  },
 ];
 
 export function getArticle(slug) {
