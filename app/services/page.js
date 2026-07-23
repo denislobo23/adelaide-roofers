@@ -1,5 +1,6 @@
 // app/services/page.js
 import Link from "next/link";
+import Image from "next/image";
 import { site } from "@/data/config";
 import { regions } from "@/data/locations";
 import CallButton from "@/components/CallButton";
@@ -69,47 +70,82 @@ function RoofIcon() {
 }
 
 function ServiceCard({ s }) {
-  const inner = (
-    <div className="flex items-start gap-3.5">
-      <RoofIcon />
-      <div>
-        <h3 className="font-display text-lg font-bold tracking-tight text-ink">
-          {s.t}
-          {s.href && <span className="text-clay"> →</span>}
-        </h3>
-        <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
-      </div>
-    </div>
-  );
+  // For anything with a dedicated service page, the href's slug maps
+  // directly onto the same card image already used in the homepage grid
+  // (components/ServicesSection.jsx) — one set of images, reused here
+  // rather than duplicated or re-uploaded.
+  const slug = s.href?.replace("/services/", "");
+
   if (s.href) {
     return (
-      <Link href={s.href} className="block rounded-2xl border border-mortar bg-paper p-7 transition hover:border-clay">
-        {inner}
+      <Link
+        href={s.href}
+        className="group block overflow-hidden rounded-2xl border border-mortar bg-white transition hover:border-clay"
+      >
+        <div className="relative aspect-[16/10] w-full overflow-hidden">
+          <Image
+            src={`/images/services/card-${slug}.webp`}
+            alt={s.t}
+            fill
+            className="object-cover transition duration-300 group-hover:scale-105"
+            sizes="(min-width: 768px) 33vw, 100vw"
+          />
+        </div>
+        <div className="p-6">
+          <h3 className="font-display text-lg font-bold tracking-tight text-ink">
+            {s.t} <span className="text-clay">→</span>
+          </h3>
+          <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
+        </div>
       </Link>
     );
   }
-  return <div className="rounded-2xl border border-mortar bg-paper p-7">{inner}</div>;
+
+  // No dedicated page/image for this one yet — keep the compact icon card.
+  return (
+    <div className="rounded-2xl border border-mortar bg-paper p-7">
+      <div className="flex items-start gap-3.5">
+        <RoofIcon />
+        <div>
+          <h3 className="font-display text-lg font-bold tracking-tight text-ink">{s.t}</h3>
+          <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ServicesPage() {
   return (
     <main>
       {/* ── INTRO ──────────────────────────────────────────── */}
-      <section className="mx-auto max-w-wrap px-5 py-20 md:py-24">
-        <nav className="mb-4 font-body text-sm text-ink/50">
-          <Link href="/" className="hover:text-clay">Home</Link>
-          <span className="px-1.5">/</span>
-          Services
-        </nav>
-        <span className="eyebrow text-clay">Roofing services</span>
-        <h1 className="mt-2 max-w-3xl font-display text-4xl font-extrabold leading-[1.07] tracking-tight text-ink md:text-5xl">
-          Whatever your roof needs, we&apos;ll connect you with someone who does it.
-        </h1>
-        <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-ink/70">
-          Below is the range of roofing work the local contractors we connect you with provide
-          across metropolitan Adelaide. Tell us the problem and your suburb, and we&apos;ll
-          connect you with a roofer who handles it in your area — free, and with no obligation.
-        </p>
+      <section className="relative overflow-hidden bg-ink text-paper">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url(/images/hero-services.webp)" }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-ink/80" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" aria-hidden="true" />
+        <div
+          className="relative mx-auto max-w-wrap px-5 py-20 md:py-24"
+          style={{ textShadow: "0 2px 12px rgba(0,0,0,0.45)" }}
+        >
+          <nav className="mb-4 font-body text-sm text-paper/70">
+            <Link href="/" className="hover:text-clay">Home</Link>
+            <span className="px-1.5">/</span>
+            Services
+          </nav>
+          <span className="eyebrow text-clay">Roofing services</span>
+          <h1 className="mt-2 max-w-3xl font-display text-4xl font-extrabold leading-[1.07] tracking-tight md:text-5xl">
+            Whatever your roof needs, we&apos;ll connect you with someone who does it.
+          </h1>
+          <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-paper/90">
+            Below is the range of roofing work the local contractors we connect you with provide
+            across metropolitan Adelaide. Tell us the problem and your suburb, and we&apos;ll
+            connect you with a roofer who handles it in your area — free, and with no obligation.
+          </p>
+        </div>
       </section>
 
       <RidgeDivider />
