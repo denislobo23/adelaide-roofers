@@ -45,7 +45,7 @@ function RoofIcon() {
 // here).
 function CalculatorEbookTeasers() {
   return (
-    <div className="space-y-5">
+    <>
       <div className="rounded-2xl border-2 border-clay/50 bg-white p-5 shadow-lg">
         <h3 className="font-display text-base font-bold tracking-tight text-ink">
           Know before you call
@@ -84,7 +84,7 @@ function CalculatorEbookTeasers() {
           Get the free guide →
         </Link>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -269,23 +269,63 @@ export default async function ServiceDetailPage({ params }) {
         </div>
       </section>
 
-      {/* ── CTA: contact form + calculator/ebook teasers ────── */}
-      <section className="border-t border-mortar bg-ink text-paper">
-        <div className="mx-auto max-w-wrap px-5 py-16 md:py-20">
-          <div className="text-center">
-            <h2 className="mx-auto max-w-xl font-display text-3xl font-bold tracking-tight md:text-4xl">
-              Get connected with a local roofer
-            </h2>
-            <p className="mx-auto mt-3 max-w-md font-body text-paper/75">
-              Fill in your details below, or call now — we&apos;ll connect you with a local roofer
-              who covers your area.
-            </p>
-            <div className="mt-7 flex justify-center"><CallButton /></div>
-          </div>
-
-          <div className="mt-12 grid gap-8 md:grid-cols-[1.3fr_1fr]">
-            <ContactForm />
+      {/* ── CALCULATOR + EBOOK TEASERS ──────────────────────── */}
+      <section className="border-t border-mortar bg-paper">
+        <div className="mx-auto max-w-wrap px-5 py-16">
+          <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-2">
             <CalculatorEbookTeasers />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CONTACT (final section) — exact match of the homepage's
+          Contact section, so the two stay identical if either changes ── */}
+      <section id="contact" className="bg-ink">
+        <div className="mx-auto max-w-wrap px-5 py-20">
+          <div className="mx-auto grid max-w-5xl items-start gap-12 md:grid-cols-2 md:gap-16">
+            <div>
+              <h2 className="font-display text-3xl font-bold tracking-tight text-paper md:text-4xl">
+                Ready to be matched with a vetted roofer in your area?
+              </h2>
+              <p className="mt-4 font-body text-paper/70">
+                Tell us your suburb and what&apos;s going on with your roof, and we&apos;ll take
+                it from there.
+              </p>
+
+              <ul className="mt-8 space-y-4">
+                {[
+                  "Free — we're paid by the roofer, not by you",
+                  "Every roofer checked for licensing, insurance, and track record",
+                  "Matched to someone who already works your suburb",
+                ].map((item) => (
+                  <li key={item} className="flex gap-3 font-body text-paper/85">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mt-0.5 h-5 w-5 shrink-0 text-clay"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-8 font-body text-sm text-paper/50">
+                Prefer to talk it through first?{" "}
+                <a href={site.phoneHref} className="font-semibold text-clay underline-offset-2 hover:underline">
+                  Call {site.phoneDisplay}
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <ContactForm />
+            </div>
           </div>
         </div>
       </section>
