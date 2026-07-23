@@ -19,6 +19,7 @@ import Link from "next/link";
 import { site } from "@/data/config";
 import { regions, getSuburb } from "@/data/locations";
 import { servicePages, serviceSlugs } from "@/data/services-data";
+import { articles } from "@/data/articles-data";
 
 const regionList = Object.values(regions);
 
@@ -51,10 +52,15 @@ export default function Header() {
   const [servicesOpen, setServicesOpen] = useState(false);
   const servicesMenuRef = useRef(null);
 
+  // Desktop "Articles" dropdown
+  const [articlesOpen, setArticlesOpen] = useState(false);
+  const articlesMenuRef = useRef(null);
+
   // Mobile accordion state
   const [mobileAreasOpen, setMobileAreasOpen] = useState(false);
   const [mobileActiveRegion, setMobileActiveRegion] = useState(null);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobileArticlesOpen, setMobileArticlesOpen] = useState(false);
 
   // Close the desktop dropdowns on outside click
   useEffect(() => {
@@ -65,6 +71,9 @@ export default function Header() {
       if (servicesMenuRef.current && !servicesMenuRef.current.contains(e.target)) {
         setServicesOpen(false);
       }
+      if (articlesMenuRef.current && !articlesMenuRef.current.contains(e.target)) {
+        setArticlesOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -74,9 +83,11 @@ export default function Header() {
     setMenuOpen(false);
     setAreasOpen(false);
     setServicesOpen(false);
+    setArticlesOpen(false);
     setMobileAreasOpen(false);
     setMobileActiveRegion(null);
     setMobileServicesOpen(false);
+    setMobileArticlesOpen(false);
   };
 
   const activeRegionData = regions[activeRegion];
@@ -189,6 +200,37 @@ export default function Header() {
                     View all services →
                   </Link>
                 </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Articles — desktop dropdown ── */}
+          <div ref={articlesMenuRef} className="relative hidden sm:block">
+            <button
+              type="button"
+              onClick={() => setArticlesOpen((o) => !o)}
+              onMouseEnter={() => setArticlesOpen(true)}
+              className="flex items-center gap-1 font-body text-sm font-medium text-steel transition hover:text-ink"
+            >
+              Articles
+              <ChevronDown className={`transition-transform ${articlesOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {articlesOpen && (
+              <div
+                onMouseLeave={() => setArticlesOpen(false)}
+                className="absolute left-0 top-full mt-2 max-h-[70vh] w-72 overflow-y-auto rounded-2xl border border-mortar bg-white py-2 shadow-2xl"
+              >
+                {articles.map((a) => (
+                  <Link
+                    key={a.slug}
+                    href={`/blog/${a.slug}`}
+                    onClick={closeAllMenus}
+                    className="block px-4 py-2.5 font-body text-sm text-ink/75 transition hover:bg-paper hover:text-clay"
+                  >
+                    {a.title}
+                  </Link>
+                ))}
               </div>
             )}
           </div>
@@ -328,6 +370,33 @@ export default function Header() {
                       className="block py-2 font-body text-sm text-ink/65"
                     >
                       {servicePages[slug].name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Articles — accordion */}
+            <div className="border-b border-mortar">
+              <button
+                type="button"
+                onClick={() => setMobileArticlesOpen((o) => !o)}
+                className="flex w-full items-center justify-between py-3.5 font-body text-base font-medium text-ink"
+              >
+                Articles
+                <ChevronDown className={`transition-transform ${mobileArticlesOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {mobileArticlesOpen && (
+                <div className="pb-2 pl-1">
+                  {articles.map((a) => (
+                    <Link
+                      key={a.slug}
+                      href={`/blog/${a.slug}`}
+                      onClick={closeAllMenus}
+                      className="block py-2 font-body text-sm text-ink/65"
+                    >
+                      {a.title}
                     </Link>
                   ))}
                 </div>
