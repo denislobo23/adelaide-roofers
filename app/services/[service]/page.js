@@ -105,23 +105,28 @@ export default async function ServiceDetailPage({ params }) {
           style={{ backgroundImage: `url(${heroImage})` }}
           aria-hidden="true"
         />
+        {/* Uniform dark overlay + text-shadow, not a left-to-right fade —
+            same fix applied to suburb pages and the services hub, so
+            legibility holds regardless of how bright any given service's
+            hero photo is. */}
+        <div className="absolute inset-0 bg-ink/80" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" aria-hidden="true" />
         <div
-          className="absolute inset-0 bg-gradient-to-r from-ink/92 via-ink/75 to-ink/45"
-          aria-hidden="true"
-        />
-        <div className="relative mx-auto max-w-wrap px-5 py-20 md:py-28">
-          <nav className="mb-4 font-body text-sm text-paper/60">
+          className="relative mx-auto max-w-wrap px-5 py-20 md:py-28"
+          style={{ textShadow: "0 2px 12px rgba(0,0,0,0.45)" }}
+        >
+          <nav className="mb-4 font-body text-sm text-paper/70">
             <Link href="/" className="transition hover:text-clay">Home</Link>
             <span className="px-1.5">/</span>
             <Link href="/services" className="transition hover:text-clay">Services</Link>
             <span className="px-1.5">/</span>
-            <span className="text-paper/80">{s.name}</span>
+            <span className="text-paper/85">{s.name}</span>
           </nav>
           <span className="eyebrow text-clay">{s.keyword}</span>
           <h1 className="mt-2 max-w-3xl font-display text-4xl font-extrabold leading-[1.07] tracking-tight md:text-5xl">
             {s.headline}
           </h1>
-          <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-paper/85">{s.intro}</p>
+          <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-paper/90">{s.intro}</p>
           <div className="mt-7"><CallButton /></div>
         </div>
       </section>
