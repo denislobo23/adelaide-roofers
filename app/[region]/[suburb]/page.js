@@ -7,8 +7,22 @@ import { site } from "@/data/config";
 import CallButton from "@/components/CallButton";
 import RidgeDivider from "@/components/RidgeDivider";
 import ContactForm from "@/components/ContactForm";
+import EbookCaptureForm from "@/components/EbookCaptureForm";
 import HeroCalculatorMini from "@/components/HeroCalculatorMini";
 import { SuburbSchema, BreadcrumbSchema } from "@/components/SchemaMarkup";
+
+// Same list as app/page.js and app/free-guide/page.js — keep all three in
+// sync if this changes.
+const EBOOK_CONTENTS = [
+  "The three main roofing materials — their pros, cons, lifespan, and which is best for your home",
+  "How roofing quotes are really calculated so you can spot overpriced or suspicious estimates",
+  "What happens on installation day, from preparation through to final inspection",
+  "Repair, restore or replace? A simple framework to help you make the right decision",
+  "The subcontractor question that many homeowners forget to ask — and why it matters",
+  "What your warranty actually covers, including the common mistakes that can void it",
+  "Real Adelaide roofing price ranges for 2026, so you know what you should expect to pay",
+  "A 60-second pre-signing checklist to review before accepting any roofing quote",
+];
 
 // Only generate suburbs that have real content (ready: true).
 export function generateStaticParams() {
@@ -174,32 +188,66 @@ export default async function SuburbPage({ params }) {
         </div>
       </section>
 
-      {/* ── EBOOK — for visitors not ready to submit contact details ── */}
-      {/* ── yet, right after the calculator's "get a number" moment ── */}
-      <section className="bg-white">
-        <div className="mx-auto max-w-wrap px-5 py-16">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 rounded-2xl border border-mortar bg-paper p-8 text-center sm:flex-row sm:text-left">
-            <Image
-              src="/images/before-you-call-a-roofer-cover.jpg"
-              alt="Before You Call a Roofer — free Adelaide homeowner's guide"
-              width={200}
-              height={267}
-              className="w-32 shrink-0 rounded-lg shadow-lg sm:w-40"
-            />
+      {/* ── EBOOK — exact match of the homepage's Ebook section, for  ── */}
+      {/* ── visitors not ready to submit contact details yet ────────── */}
+      <section className="border-y border-mortar bg-paper">
+        <div className="mx-auto max-w-wrap px-5 py-20">
+          <div className="grid gap-12 md:grid-cols-[300px_1fr] md:gap-14">
+            <div className="mx-auto w-full max-w-[300px] md:mx-0">
+              <Image
+                src="/images/before-you-call-a-roofer-cover.jpg"
+                alt="Before You Call a Roofer — the complete Adelaide homeowner's guide to getting a fair quote, finding a trustworthy roofer, and avoiding costly mistakes"
+                width={765}
+                height={1024}
+                className="w-full rounded-lg shadow-xl"
+              />
+            </div>
+
             <div>
-              <h3 className="font-display text-xl font-bold tracking-tight text-ink">
-                Not ready to call yet?
-              </h3>
-              <p className="mt-2 font-body leading-relaxed text-ink/65">
-                Get <span className="font-semibold text-ink">Before You Call a Roofer</span> —
-                the free guide to a fair quote, a trustworthy roofer, and avoiding costly mistakes.
+              <span className="eyebrow text-clay">Free 2026 Adelaide Roofing Buyer&apos;s Guide</span>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                Before You Call a Roofer
+              </h2>
+              <p className="mt-4 max-w-2xl font-body text-ink/65">
+                Buying a new roof or restoring an existing one can cost thousands of dollars. One
+                wrong decision can leave you paying far more than you should — or dealing with
+                problems that surface years later.
               </p>
-              <Link
-                href="/free-guide"
-                className="mt-4 inline-flex items-center justify-center rounded-lg border-2 border-ink px-5 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
-              >
-                Get the free guide →
-              </Link>
+              <p className="mt-3 max-w-2xl font-body text-ink/65">
+                This free guide shows Adelaide homeowners how to compare quotes with confidence,
+                choose the right roofing contractor, and avoid the expensive mistakes that catch
+                many people out.
+              </p>
+
+              <h3 className="mt-6 font-display text-sm font-bold uppercase tracking-wider text-ink/50">
+                Inside You&apos;ll Discover
+              </h3>
+              <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                {EBOOK_CONTENTS.map((item) => (
+                  <li key={item} className="flex gap-2.5 font-body text-sm leading-snug text-ink/70">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mt-0.5 h-4 w-4 shrink-0 text-clay"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-7">
+                <EbookCaptureForm />
+              </div>
+              <p className="mt-3 font-body text-xs text-ink/45">
+                No spam. No sales pressure. Just practical advice to help you make an informed
+                decision.
+              </p>
             </div>
           </div>
         </div>
