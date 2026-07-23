@@ -18,11 +18,11 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { site } from "@/data/config";
 import { regions, getSuburb } from "@/data/locations";
+import { servicePages, serviceSlugs } from "@/data/services-data";
 
 const regionList = Object.values(regions);
 
 const otherNavLinks = [
-  { href: "/services", label: "Services" },
   { href: "/faq", label: "FAQs" },
   { href: "/about", label: "About" },
 ];
@@ -47,15 +47,23 @@ export default function Header() {
   const [activeRegion, setActiveRegion] = useState(regionList[0].slug);
   const areasMenuRef = useRef(null);
 
+  // Desktop "Services" dropdown
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const servicesMenuRef = useRef(null);
+
   // Mobile accordion state
   const [mobileAreasOpen, setMobileAreasOpen] = useState(false);
   const [mobileActiveRegion, setMobileActiveRegion] = useState(null);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  // Close the desktop dropdown on outside click
+  // Close the desktop dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (areasMenuRef.current && !areasMenuRef.current.contains(e.target)) {
         setAreasOpen(false);
+      }
+      if (servicesMenuRef.current && !servicesMenuRef.current.contains(e.target)) {
+        setServicesOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -65,8 +73,10 @@ export default function Header() {
   const closeAllMenus = () => {
     setMenuOpen(false);
     setAreasOpen(false);
+    setServicesOpen(false);
     setMobileAreasOpen(false);
     setMobileActiveRegion(null);
+    setMobileServicesOpen(false);
   };
 
   const activeRegionData = regions[activeRegion];
@@ -138,6 +148,46 @@ export default function Header() {
                       </Link>
                     );
                   })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Services — desktop dropdown ── */}
+          <div ref={servicesMenuRef} className="relative hidden sm:block">
+            <button
+              type="button"
+              onClick={() => setServicesOpen((o) => !o)}
+              onMouseEnter={() => setServicesOpen(true)}
+              className="flex items-center gap-1 font-body text-sm font-medium text-steel transition hover:text-ink"
+            >
+              Services
+              <ChevronDown className={`transition-transform ${servicesOpen ? "rotate-180" : ""}`} />
+            </button>
+
+            {servicesOpen && (
+              <div
+                onMouseLeave={() => setServicesOpen(false)}
+                className="absolute left-0 top-full mt-2 w-64 overflow-hidden rounded-2xl border border-mortar bg-white py-2 shadow-2xl"
+              >
+                {serviceSlugs.map((slug) => (
+                  <Link
+                    key={slug}
+                    href={`/services/${slug}`}
+                    onClick={closeAllMenus}
+                    className="block px-4 py-2.5 font-body text-sm text-ink/75 transition hover:bg-paper hover:text-clay"
+                  >
+                    {servicePages[slug].name}
+                  </Link>
+                ))}
+                <div className="mt-1 border-t border-mortar pt-1">
+                  <Link
+                    href="/services"
+                    onClick={closeAllMenus}
+                    className="block px-4 py-2.5 font-body text-sm font-semibold text-clay transition hover:text-clay-deep"
+                  >
+                    View all services →
+                  </Link>
                 </div>
               </div>
             )}
@@ -247,6 +297,38 @@ export default function Header() {
                         </div>
                       )}
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Services — accordion */}
+            <div className="border-b border-mortar">
+              <div className="flex items-center justify-between py-3.5">
+                <Link href="/services" onClick={closeAllMenus} className="font-body text-base font-medium text-ink">
+                  Services
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileServicesOpen((o) => !o)}
+                  aria-label={mobileServicesOpen ? "Collapse services" : "Expand services"}
+                  className="flex h-8 w-8 items-center justify-center text-ink/60"
+                >
+                  <ChevronDown className={`transition-transform ${mobileServicesOpen ? "rotate-180" : ""}`} />
+                </button>
+              </div>
+
+              {mobileServicesOpen && (
+                <div className="pb-2 pl-1">
+                  {serviceSlugs.map((slug) => (
+                    <Link
+                      key={slug}
+                      href={`/services/${slug}`}
+                      onClick={closeAllMenus}
+                      className="block py-2 font-body text-sm text-ink/65"
+                    >
+                      {servicePages[slug].name}
+                    </Link>
                   ))}
                 </div>
               )}
