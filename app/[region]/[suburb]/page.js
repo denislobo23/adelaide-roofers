@@ -1,11 +1,11 @@
 // app/[region]/[suburb]/page.js
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { suburbs, regions, getSuburb, siblingSuburbs } from "@/data/locations";
 import { site } from "@/data/config";
 import CallButton from "@/components/CallButton";
 import RidgeDivider from "@/components/RidgeDivider";
-import LeadForm from "@/components/LeadForm";
 import ContactForm from "@/components/ContactForm";
 import HeroCalculatorMini from "@/components/HeroCalculatorMini";
 import { SuburbSchema, BreadcrumbSchema } from "@/components/SchemaMarkup";
@@ -51,10 +51,15 @@ export default async function SuburbPage({ params }) {
       {/* ── HERO ───────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${s.heroImage})` }} aria-hidden="true" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/92 via-ink/78 to-ink/45" aria-hidden="true" />
-        <div className="relative mx-auto grid max-w-wrap gap-10 px-5 py-20 md:grid-cols-[1.15fr_0.85fr] md:py-24">
-          <div className="max-w-xl text-paper">
-            <nav className="mb-4 font-body text-sm text-paper/60">
+        {/* Darkened and made more uniform (was a left-to-right fade tuned
+            for a two-column layout) — now the whole hero needs to be
+            reliably readable since text can sit over any part of the
+            image, not just the darkest left edge. */}
+        <div className="absolute inset-0 bg-ink/80" aria-hidden="true" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" aria-hidden="true" />
+        <div className="relative mx-auto max-w-wrap px-5 py-20 md:py-24">
+          <div className="max-w-2xl text-paper" style={{ textShadow: "0 2px 12px rgba(0,0,0,0.45)" }}>
+            <nav className="mb-4 font-body text-sm text-paper/70">
               <Link href="/" className="hover:text-clay">Home</Link>
               <span className="px-1.5">/</span>
               <Link href={`/${r.slug}`} className="hover:text-clay">{r.name}</Link>
@@ -65,14 +70,8 @@ export default async function SuburbPage({ params }) {
             <h1 className="mt-2 font-display text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
               {s.headline}
             </h1>
-            <p className="mt-5 font-body text-lg leading-relaxed text-paper/85">{s.intro}</p>
+            <p className="mt-5 font-body text-lg leading-relaxed text-paper/90">{s.intro}</p>
             <div className="mt-7"><CallButton region={s.region} /></div>
-          </div>
-
-          <div className="self-start rounded-2xl border border-white/10 bg-paper p-6 shadow-xl">
-            <h2 className="font-display text-lg font-bold tracking-tight text-ink">Get connected in {s.name}</h2>
-            <p className="mt-1 mb-4 font-body text-sm text-ink/60">Free, no obligation.</p>
-            <LeadForm suburbName={s.name} />
           </div>
         </div>
       </section>
@@ -171,6 +170,37 @@ export default async function SuburbPage({ params }) {
               </ol>
             </div>
             <HeroCalculatorMini />
+          </div>
+        </div>
+      </section>
+
+      {/* ── EBOOK — for visitors not ready to submit contact details ── */}
+      {/* ── yet, right after the calculator's "get a number" moment ── */}
+      <section className="bg-white">
+        <div className="mx-auto max-w-wrap px-5 py-16">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 rounded-2xl border border-mortar bg-paper p-8 text-center sm:flex-row sm:text-left">
+            <Image
+              src="/images/before-you-call-a-roofer-cover.jpg"
+              alt="Before You Call a Roofer — free Adelaide homeowner's guide"
+              width={200}
+              height={267}
+              className="w-32 shrink-0 rounded-lg shadow-lg sm:w-40"
+            />
+            <div>
+              <h3 className="font-display text-xl font-bold tracking-tight text-ink">
+                Not ready to call yet?
+              </h3>
+              <p className="mt-2 font-body leading-relaxed text-ink/65">
+                Get <span className="font-semibold text-ink">Before You Call a Roofer</span> —
+                the free guide to a fair quote, a trustworthy roofer, and avoiding costly mistakes.
+              </p>
+              <Link
+                href="/free-guide"
+                className="mt-4 inline-flex items-center justify-center rounded-lg border-2 border-ink px-5 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
+              >
+                Get the free guide →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
