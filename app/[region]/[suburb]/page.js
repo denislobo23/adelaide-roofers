@@ -6,6 +6,8 @@ import { site } from "@/data/config";
 import CallButton from "@/components/CallButton";
 import RidgeDivider from "@/components/RidgeDivider";
 import LeadForm from "@/components/LeadForm";
+import ContactForm from "@/components/ContactForm";
+import HeroCalculatorMini from "@/components/HeroCalculatorMini";
 import { SuburbSchema, BreadcrumbSchema } from "@/components/SchemaMarkup";
 
 // Only generate suburbs that have real content (ready: true).
@@ -131,12 +133,45 @@ export default async function SuburbPage({ params }) {
                 </div>
               </div>
             </div>
-            <div className="rounded-2xl bg-ink p-6 text-paper">
-              <p className="font-display text-lg font-bold leading-snug tracking-tight">Prefer to talk it through?</p>
-              <p className="mt-2 font-body text-sm text-paper/70">Give us a call and we&apos;ll connect you with a {s.name} roofer.</p>
-              <CallButton className="mt-4 w-full justify-center" region={s.region} />
-            </div>
           </aside>
+        </div>
+      </section>
+
+      {/* ── CALCULATOR — primary lead capture, right where cost   ── */}
+      {/* ── intent peaks: after they've read what the roof needs, ── */}
+      {/* ── right before the FAQ answers the same "how much" ─────── */}
+      <section className="border-y border-mortar bg-paper">
+        <div className="mx-auto max-w-wrap px-5 py-16 md:py-20">
+          <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-center">
+            <div>
+              <span className="eyebrow text-clay">Know before you call</span>
+              <h2 className="mt-2 font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+                See what your {s.name} job actually costs, before talking to a roofer.
+              </h2>
+              <p className="mt-4 font-body leading-relaxed text-ink/70">
+                Enter your address, answer a few quick questions about your roof, and see how the
+                price is built — no roofer, no obligation.
+              </p>
+              <ol className="mt-8 space-y-5">
+                {[
+                  { t: "Enter your address", d: "See your roof on satellite imagery instantly." },
+                  { t: "Answer a few quick questions", d: "Size, material, condition — takes about a minute." },
+                  { t: "Get your report", d: "A detailed, itemised PDF sent as a download link straight to your phone, ready to save, share, or show a roofer on the spot." },
+                ].map((step, i) => (
+                  <li key={step.t} className="flex gap-4">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-clay font-display text-sm font-bold text-white">
+                      {i + 1}
+                    </span>
+                    <div>
+                      <h3 className="font-display text-base font-bold tracking-tight text-ink">{step.t}</h3>
+                      <p className="mt-1 font-body text-sm leading-relaxed text-ink/65">{step.d}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <HeroCalculatorMini />
+          </div>
         </div>
       </section>
 
@@ -158,6 +193,13 @@ export default async function SuburbPage({ params }) {
               </details>
             ))}
           </div>
+          <p className="mt-8 font-body text-sm leading-relaxed text-ink/55">
+            Got a broader roofing question?{" "}
+            <Link href="/faq" className="font-semibold text-clay hover:text-clay-deep">
+              See our full FAQ hub
+            </Link>{" "}
+            — cost, licensing, materials, timing and more.
+          </p>
         </div>
       </section>
 
@@ -183,6 +225,59 @@ export default async function SuburbPage({ params }) {
           </div>
         </section>
       )}
+
+      {/* ── CONTACT (final section) — exact match of the homepage's
+          Contact section, so all three (home, service, suburb pages)
+          stay identical if any of them change ── */}
+      <section id="contact" className="bg-ink">
+        <div className="mx-auto max-w-wrap px-5 py-20">
+          <div className="mx-auto grid max-w-5xl items-start gap-12 md:grid-cols-2 md:gap-16">
+            <div>
+              <h2 className="font-display text-3xl font-bold tracking-tight text-paper md:text-4xl">
+                Ready to be matched with a vetted roofer in your area?
+              </h2>
+              <p className="mt-4 font-body text-paper/70">
+                Tell us your suburb and what&apos;s going on with your roof, and we&apos;ll take
+                it from there.
+              </p>
+
+              <ul className="mt-8 space-y-4">
+                {[
+                  "Free — we're paid by the roofer, not by you",
+                  "Every roofer checked for licensing, insurance, and track record",
+                  "Matched to someone who already works your suburb",
+                ].map((item) => (
+                  <li key={item} className="flex gap-3 font-body text-paper/85">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="mt-0.5 h-5 w-5 shrink-0 text-clay"
+                    >
+                      <path d="M5 13l4 4L19 7" />
+                    </svg>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-8 font-body text-sm text-paper/50">
+                Prefer to talk it through first?{" "}
+                <a href={site.phoneHref} className="font-semibold text-clay underline-offset-2 hover:underline">
+                  Call {site.phoneDisplay}
+                </a>
+              </p>
+            </div>
+
+            <div>
+              <ContactForm />
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
