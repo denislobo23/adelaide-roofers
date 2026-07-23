@@ -370,6 +370,51 @@ export const servicePages = {
       },
     ],
   },
+  "asbestos-roof-removal": {
+    slug: "asbestos-roof-removal",
+    name: "Asbestos Roof Removal",
+    keyword: "Asbestos Roof Removal Adelaide",
+    metaTitle: "Asbestos Roof Removal Adelaide | Adelaide Roofers",
+    metaDescription:
+      "Got an asbestos (fibro) roof in Adelaide? We connect you with a licensed asbestos removalist for safe removal and a new roof. Free, no obligation.",
+    headline: "Asbestos roof removal in Adelaide",
+    intro:
+      "Have an asbestos (fibro) roof in Adelaide? Adelaide Roofers connects you with a licensed asbestos removalist to safely remove it and get a new roof installed in its place. Tell us your suburb and we'll connect you with someone properly licensed for this specific work. Free, no obligation.",
+    overview:
+      "Many Adelaide homes built before the early 1980s have corrugated asbestos cement roofing — often called fibro. Left undisturbed and in good condition it's generally not an immediate risk, but any work that cuts, drills, breaks or removes it can release airborne fibres, which is a genuine health hazard. Because of that, asbestos removal in South Australia legally has to be done by a licensed asbestos removalist, not a standard roofing crew. That's a different trade to general roofing, which is exactly why this is its own service: we connect you with someone who holds the right licence, handles the removal safely and legally, and can then install your new roof once the old one's gone.",
+    included: [
+      "Assessment to confirm whether your roofing sheets contain asbestos",
+      "Safe, contained removal by a licensed asbestos removalist",
+      "Correct transport and disposal at a licensed facility",
+      "Installation of a new tile or Colorbond roof once removal is complete",
+      "All required safety and containment measures during the work",
+    ],
+    signs: [
+      "Corrugated cement sheet roofing, common on homes built before the early 1980s",
+      "A roof that looks like older-style fibro sheeting rather than modern tile or metal",
+      "Planning a renovation or extension and needing to know what's up there before work starts",
+      "An ageing roof you're simply unsure about the material of",
+    ],
+    faqs: [
+      {
+        q: "How do I know if my roof has asbestos?",
+        a: "Corrugated cement sheet roofing on a home built before the early 1980s is the main giveaway, but it isn't always obvious just by looking — some later materials look similar. If you're not sure, don't drill, cut or disturb it; a professional can confirm what it's actually made of before any work starts.",
+      },
+      {
+        q: "Is it safe to stay in the house while the asbestos is being removed?",
+        a: "Licensed removalists use containment and safety procedures specifically so the work can be done without releasing fibres into the rest of the property. They'll talk you through what that looks like for your job and whether any part of the property needs to be kept clear during the work itself.",
+      },
+      {
+        q: "Do I legally need a licensed removalist, or can a regular roofer do it?",
+        a: "In South Australia, asbestos removal legally requires a licensed asbestos removalist — it's a separate licence to a standard roofing or building licence. This isn't just best practice, it protects you and your family, and it's why we connect you with someone who actually holds that licence rather than a general roofing crew.",
+      },
+      {
+        q: "How much does asbestos roof removal cost in Adelaide?",
+        a: "It typically costs more than a standard roof removal, because licensed handling, containment and disposal at an approved facility all add cost that a normal tear-off doesn't have. The amount depends heavily on roof size and access, so it needs an on-site assessment — the removalist we connect you with will quote it properly after inspecting the roof.",
+      },
+    ],
+  },
+
 };
 
 export const serviceSlugs = Object.keys(servicePages);

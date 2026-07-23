@@ -53,6 +53,7 @@ const serviceGroups = [
     heading: "Specialist work",
     items: [
       { t: "Metal & Colorbond roofing", href: "/services/colorbond-roofing", d: "Metal re-roofs and repairs, including coastal-grade materials for salt-exposed suburbs where standard sheeting and fasteners corrode faster." },
+      { t: "Asbestos roof removal", href: "/services/asbestos-roof-removal", d: "Licensed, safe removal of asbestos (fibro) roofing — common on pre-1980s Adelaide homes — followed by a new tile or Colorbond roof installation." },
       { t: "Heritage, slate & iron", d: "Specialist, sympathetic work on slate, traditional galvanised iron and heritage roofs — common across Adelaide's older eastern and inner suburbs, where preserving the original matters." },
       { t: "Storm & emergency repairs", href: "/services/roof-repairs", d: "Making a damaged roof safe and watertight after a storm, and helping you get the right evidence and quotes together for an insurance claim." },
     ],

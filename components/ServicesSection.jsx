@@ -46,6 +46,10 @@ const serviceCardMeta = {
     blurb: "Rotting timber behind the gutter line, repaired or replaced.",
     image: "/images/services/card-fascia-repairs.webp",
   },
+  "asbestos-roof-removal": {
+    blurb: "Licensed, safe removal of asbestos roofing, then a new roof installed.",
+    image: "/images/services/card-asbestos-roof-removal.webp",
+  },
 };
 
 function HomeServiceCard({ slug }) {
