@@ -1,10 +1,12 @@
 // app/services/[service]/page.js
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { site } from "@/data/config";
 import { regions } from "@/data/locations";
 import { servicePages, serviceSlugs, getServicePage } from "@/data/services-data";
 import CallButton from "@/components/CallButton";
+import ContactForm from "@/components/ContactForm";
 
 export function generateStaticParams() {
   return serviceSlugs.map((slug) => ({ service: slug }));
@@ -34,6 +36,55 @@ function RoofIcon() {
     <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true" className="mt-0.5 shrink-0">
       <path d="M16 4 4 16h4v10h6v-6h4v6h6V16h4L16 4Z" fill="#BC5B3A" />
     </svg>
+  );
+}
+
+// Calculator + ebook teaser cards — same visual style as ArticleSidebar's
+// cards, but laid out for a footer CTA rather than a sticky article
+// sidebar (no `md:sticky`, since there's no scrolling content beside it
+// here).
+function CalculatorEbookTeasers() {
+  return (
+    <div className="space-y-5">
+      <div className="rounded-2xl border-2 border-clay/50 bg-white p-5 shadow-lg">
+        <h3 className="font-display text-base font-bold tracking-tight text-ink">
+          Know before you call
+        </h3>
+        <p className="mt-1.5 font-body text-sm leading-relaxed text-ink/65">
+          Get a real, itemised roof estimate in under two minutes.
+        </p>
+        <Link
+          href="/calculator"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-lg bg-clay px-4 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:brightness-95"
+        >
+          Try the free calculator →
+        </Link>
+      </div>
+
+      <div className="rounded-2xl border border-mortar bg-white p-5 shadow-lg">
+        <Link href="/free-guide" className="block">
+          <Image
+            src="/images/before-you-call-a-roofer-cover.jpg"
+            alt="Before You Call a Roofer — free Adelaide homeowner's guide"
+            width={765}
+            height={1024}
+            className="w-full rounded-lg"
+          />
+        </Link>
+        <h3 className="mt-4 font-display text-base font-bold tracking-tight text-ink">
+          Before You Call a Roofer
+        </h3>
+        <p className="mt-1.5 font-body text-sm leading-relaxed text-ink/65">
+          The free guide to a fair quote, a trustworthy roofer, and avoiding costly mistakes.
+        </p>
+        <Link
+          href="/free-guide"
+          className="mt-4 inline-flex w-full items-center justify-center rounded-lg border-2 border-ink px-4 py-2.5 font-display text-sm font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
+        >
+          Get the free guide →
+        </Link>
+      </div>
+    </div>
   );
 }
 
@@ -164,6 +215,17 @@ export default async function ServiceDetailPage({ params }) {
             <div key={f.q} className="py-6 first:pt-0 last:pb-0">
               <h3 className="font-display text-lg font-bold tracking-tight text-ink">{f.q}</h3>
               <p className="mt-2.5 font-body leading-relaxed text-ink/70">{f.a}</p>
+              {/* Cost/finance-flavoured questions get a direct link to the
+                  calculator — a short answer plus "get a real number"
+                  beats trying to cram pricing detail into FAQ copy. */}
+              {/cost|much does|financ|insurance/i.test(f.q) && (
+                <Link
+                  href="/calculator"
+                  className="mt-3 inline-flex items-center gap-1.5 font-display text-sm font-semibold text-clay hover:text-clay-deep"
+                >
+                  Get a personalised estimate →
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -207,16 +269,24 @@ export default async function ServiceDetailPage({ params }) {
         </div>
       </section>
 
-      {/* ── CTA ────────────────────────────────────────────── */}
+      {/* ── CTA: contact form + calculator/ebook teasers ────── */}
       <section className="border-t border-mortar bg-ink text-paper">
-        <div className="mx-auto max-w-wrap px-5 py-16 text-center">
-          <h2 className="mx-auto max-w-xl font-display text-3xl font-bold tracking-tight md:text-4xl">
-            Get connected with a local roofer
-          </h2>
-          <p className="mx-auto mt-3 max-w-md font-body text-paper/75">
-            Tell us your suburb and what you need — we&apos;ll connect you with a roofer who covers your area.
-          </p>
-          <div className="mt-7 flex justify-center"><CallButton /></div>
+        <div className="mx-auto max-w-wrap px-5 py-16 md:py-20">
+          <div className="text-center">
+            <h2 className="mx-auto max-w-xl font-display text-3xl font-bold tracking-tight md:text-4xl">
+              Get connected with a local roofer
+            </h2>
+            <p className="mx-auto mt-3 max-w-md font-body text-paper/75">
+              Fill in your details below, or call now — we&apos;ll connect you with a local roofer
+              who covers your area.
+            </p>
+            <div className="mt-7 flex justify-center"><CallButton /></div>
+          </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-[1.3fr_1fr]">
+            <ContactForm />
+            <CalculatorEbookTeasers />
+          </div>
         </div>
       </section>
     </main>
