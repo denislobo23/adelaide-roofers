@@ -11,7 +11,7 @@ export default function Footer() {
           <div>
             <span className="font-display text-xl font-bold tracking-tight">{site.brand}</span>
             <p className="mt-3 max-w-sm font-body text-sm leading-relaxed text-mortar">
-              {site.shortDescription} We&apos;re a free service Ã¢â‚¬â€ you deal directly with
+              {site.shortDescription} We&apos;re a free service — you deal directly with
               the roofer on any quote or work.
             </p>
             <a
