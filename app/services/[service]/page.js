@@ -206,6 +206,13 @@ export default async function ServiceDetailPage({ params }) {
 
       {/* ── FAQS ───────────────────────────────────────────── */}
       <section className="mx-auto max-w-wrap px-5 py-16">
+        <p className="mb-6 max-w-3xl font-body text-sm leading-relaxed text-ink/55">
+          Have a broader roofing question?{" "}
+          <Link href="/faq" className="font-semibold text-clay hover:text-clay-deep">
+            See our full FAQ hub
+          </Link>{" "}
+          — cost, licensing, materials, timing and more.
+        </p>
         <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
           {s.name} — common questions
         </h2>
