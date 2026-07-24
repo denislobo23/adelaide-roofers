@@ -212,7 +212,7 @@ export default function Header() {
               onMouseEnter={() => setArticlesOpen(true)}
               className="flex items-center gap-1 font-body text-sm font-medium text-steel transition hover:text-ink"
             >
-              Articles
+              Roofing Guides
               <ChevronDown className={`transition-transform ${articlesOpen ? "rotate-180" : ""}`} />
             </button>
 
@@ -237,7 +237,7 @@ export default function Header() {
                     onClick={closeAllMenus}
                     className="block px-4 py-2.5 font-body text-sm font-semibold text-clay transition hover:text-clay-deep"
                   >
-                    View all articles →
+                    View all guides →
                   </Link>
                 </div>
               </div>
@@ -392,7 +392,7 @@ export default function Header() {
                 onClick={() => setMobileArticlesOpen((o) => !o)}
                 className="flex w-full items-center justify-between py-3.5 font-body text-base font-medium text-ink"
               >
-                Articles
+                Roofing Guides
                 <ChevronDown className={`transition-transform ${mobileArticlesOpen ? "rotate-180" : ""}`} />
               </button>
 
@@ -413,7 +413,7 @@ export default function Header() {
                     onClick={closeAllMenus}
                     className="block py-2 font-body text-sm font-semibold text-clay"
                   >
-                    View all articles →
+                    View all guides →
                   </Link>
                 </div>
               )}

@@ -12,12 +12,12 @@ import CallButton from "@/components/CallButton";
 import RidgeDivider from "@/components/RidgeDivider";
 
 export const metadata = {
-  title: `Roofing Articles & Guides for Adelaide Homeowners | ${site.brand}`,
+  title: `Roofing Guides for Adelaide Homeowners | ${site.brand}`,
   description:
     "Every guide on costs, materials, choosing a roofer, and the roofing process — written for Adelaide homeowners, no sales pitch.",
   alternates: { canonical: `${site.url}/blog` },
   openGraph: {
-    title: `Roofing Articles & Guides for Adelaide Homeowners | ${site.brand}`,
+    title: `Roofing Guides for Adelaide Homeowners | ${site.brand}`,
     description: "Every guide on costs, materials, choosing a roofer, and the roofing process.",
     url: `${site.url}/blog`,
     type: "website",
@@ -66,9 +66,9 @@ export default function BlogIndexPage() {
         <nav className="mb-4 font-body text-sm text-ink/50">
           <Link href="/" className="hover:text-clay">Home</Link>
           <span className="px-1.5">/</span>
-          Articles
+          Roofing Guides
         </nav>
-        <span className="eyebrow text-clay">Roofing articles</span>
+        <span className="eyebrow text-clay">Roofing guides</span>
         <h1 className="mt-2 max-w-3xl font-display text-4xl font-extrabold leading-[1.07] tracking-tight text-ink md:text-5xl">
           Guides and answers for Adelaide homeowners
         </h1>
