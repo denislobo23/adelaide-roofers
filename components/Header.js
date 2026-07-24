@@ -231,6 +231,15 @@ export default function Header() {
                     {a.title}
                   </Link>
                 ))}
+                <div className="sticky bottom-0 mt-1 border-t border-mortar bg-white pt-1">
+                  <Link
+                    href="/blog"
+                    onClick={closeAllMenus}
+                    className="block px-4 py-2.5 font-body text-sm font-semibold text-clay transition hover:text-clay-deep"
+                  >
+                    View all articles →
+                  </Link>
+                </div>
               </div>
             )}
           </div>
@@ -399,6 +408,13 @@ export default function Header() {
                       {a.title}
                     </Link>
                   ))}
+                  <Link
+                    href="/blog"
+                    onClick={closeAllMenus}
+                    className="block py-2 font-body text-sm font-semibold text-clay"
+                  >
+                    View all articles →
+                  </Link>
                 </div>
               )}
             </div>
