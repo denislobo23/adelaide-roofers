@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import RoofCalculator from "@/components/RoofCalculator";
 
 export const metadata = {
   title: "Does Home Insurance Cover Roof Replacement in SA? | Adelaide Roofers",
@@ -116,15 +117,10 @@ export default function InsuranceRoofReplacementPage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Whether or not insurance ends up covering it, it's worth knowing what the
-                  actual repair or replacement would cost.
+                  actual repair or replacement would cost. Use the calculator below for a
+                  ballpark figure.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href="/calculator"
-                    className="inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:brightness-95"
-                  >
-                    Try the free calculator →
-                  </Link>
                   <Link
                     href="/free-guide"
                     className="inline-flex items-center justify-center rounded-xl border-2 border-ink px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
@@ -141,12 +137,29 @@ export default function InsuranceRoofReplacementPage() {
         </div>
       </section>
 
+      {/* ── INSTANT CALCULATOR (full-width, matches homepage/suburb pages) ── */}
+      <section className="mx-auto max-w-wrap px-5 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+            Get your instant estimate
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
+            Answer a few quick questions about your roof for a free, no-obligation ballpark
+            figure.
+          </p>
+        </div>
+        <div className="mt-10">
+          <RoofCalculator />
+        </div>
+      </section>
+
       <section className="mx-auto max-w-wrap px-5 py-20 text-center">
         <h2 className="mx-auto max-w-xl font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
           Tell us your suburb and what&apos;s going on with your roof
         </h2>
         <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
-          We&apos;ll match you with a vetted local roofer who can assess and document the damage.
+          We&apos;ll match you with a vetted local roofer who can assess and document the
+          damage.
         </p>
         <div className="mx-auto mt-8 max-w-lg text-left">
           <ContactForm />

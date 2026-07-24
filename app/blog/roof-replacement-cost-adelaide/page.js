@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import RoofCalculator from "@/components/RoofCalculator";
 
 export const metadata = {
   title: "How Much Does a Roof Replacement Cost in Adelaide? (2026) | Adelaide Roofers",
@@ -127,17 +128,11 @@ export default function ReplacementCostPage() {
                   Get a number specific to your roof
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  These figures are a starting point, not your actual quote. Our calculator
-                  factors in your roof&apos;s real size, material and condition rather than
-                  giving you a generic range.
+                  These figures are a starting point, not your actual quote. Use the calculator
+                  below — it factors in your roof&apos;s real size, material and condition
+                  rather than giving you a generic range.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href="/calculator"
-                    className="inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:brightness-95"
-                  >
-                    Try the free calculator →
-                  </Link>
                   <Link
                     href="/free-guide"
                     className="inline-flex items-center justify-center rounded-xl border-2 border-ink px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
@@ -151,6 +146,22 @@ export default function ReplacementCostPage() {
 
           {/* ── SIDEBAR ──────────────────────────────────── */}
           <ArticleSidebar />
+        </div>
+      </section>
+
+      {/* ── INSTANT CALCULATOR (full-width, matches homepage/suburb pages) ── */}
+      <section className="mx-auto max-w-wrap px-5 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+            Get your instant roof replacement estimate
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
+            Answer a few quick questions about your roof for a free, no-obligation ballpark
+            figure.
+          </p>
+        </div>
+        <div className="mt-10">
+          <RoofCalculator />
         </div>
       </section>
 

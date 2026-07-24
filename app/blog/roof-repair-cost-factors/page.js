@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import RoofCalculator from "@/components/RoofCalculator";
 
 export const metadata = {
   title: "What Factors Affect the Cost of a Roof Repair | Adelaide Roofers",
@@ -121,15 +122,9 @@ export default function RepairCostFactorsPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   None of this means pricing is unknowable in advance — it means a fair estimate
                   accounts for these factors rather than quoting a flat number regardless of your
-                  specific situation. That&apos;s exactly what our calculator does.
+                  specific situation. Use the calculator below for a figure specific to your job.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link
-                    href="/calculator"
-                    className="inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:brightness-95"
-                  >
-                    Try the free calculator →
-                  </Link>
                   <Link
                     href="/free-guide"
                     className="inline-flex items-center justify-center rounded-xl border-2 border-ink px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
@@ -143,6 +138,22 @@ export default function RepairCostFactorsPage() {
 
           {/* ── SIDEBAR ──────────────────────────────────── */}
           <ArticleSidebar />
+        </div>
+      </section>
+
+      {/* ── INSTANT CALCULATOR (full-width, matches homepage/suburb pages) ── */}
+      <section className="mx-auto max-w-wrap px-5 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+            Get your instant repair estimate
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
+            Answer a few quick questions about your roof for a free, no-obligation ballpark
+            figure.
+          </p>
+        </div>
+        <div className="mt-10">
+          <RoofCalculator />
         </div>
       </section>
 
