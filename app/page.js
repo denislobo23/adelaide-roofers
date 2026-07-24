@@ -1,18 +1,5 @@
 // app/page.js
 //
-// ⚠️ HOMEPAGE REBUILD PER adelaide-roofers-site-build-brief.md — DO NOT
-// DEPLOY until the following pages exist, or these links 404:
-//   /how-we-vet-our-roofers
-//   /verify-a-roofer
-//   /why-use-a-roofer-matching-service
-//   /free-guide (gated ebook landing page)
-//   /blog/tile-to-metal-roofing
-//   /blog/roof-repair-cost-factors
-//   /blog/roof-restoration-cost-adelaide
-// See the resources grid + FAQ + ebook sections below — all live URLs are
-// already pointed at their final intended paths so nothing needs revisiting
-// once those pages are built.
-//
 // The FAQ section is self-contained (real <Link>s + its own JSON-LD schema)
 // rather than routed through data/faqs.js + FaqList/FaqSchema, since those
 // components' shape wasn't available to build against safely.
@@ -168,6 +155,9 @@ const EBOOK_CONTENTS = [
   "A 60-second pre-signing checklist to review before accepting any roofing quote",
 ];
 
+// Curated selection for the homepage teaser grid — not the full library.
+// See app/blog/page.js ("Roofing Guides") for the complete, always-current
+// list of all articles, pulled from data/articles-data.js.
 const resourceCards = [
   {
     title: "How We Vet a Roofer",
@@ -195,9 +185,19 @@ const resourceCards = [
     href: "/blog/roof-repair-cost-factors",
   },
   {
-    title: "How Much Does Roof Restoration Cost in Adelaide?",
-    body: "Real price ranges, and what changes the number for your home.",
-    href: "/blog/roof-restoration-cost-adelaide",
+    title: "10 Questions to Ask a Roofer Before You Sign",
+    body: "The questions that actually separate a properly licensed roofer from a risky one.",
+    href: "/blog/questions-to-ask-a-roofer",
+  },
+  {
+    title: "Common Roofing Scams in Australia",
+    body: "The tactics that show up again and again — and how to spot them before they cost you.",
+    href: "/blog/roofing-scams-adelaide",
+  },
+  {
+    title: "Asbestos Roof Removal: What You Need to Know",
+    body: "How to tell if your roof has asbestos, and why it needs a licensed removalist.",
+    href: "/blog/asbestos-roof-removal-guide",
   },
 ];
 
@@ -549,9 +549,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── RESOURCES GRID — "Learn Before You Call" (7th, new) ──
-          ⚠️ 5 of 6 cards link to pages that don't exist yet. See
-          the file header comment for the full list. */}
+      {/* ── RESOURCES GRID — "Learn Before You Call" ────────── */}
       <section className="mx-auto max-w-wrap px-5 py-20">
         <span className="eyebrow text-clay">Learn before you call</span>
         <h2 className="mt-2 max-w-2xl font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
@@ -573,6 +571,14 @@ export default function Home() {
               </span>
             </Link>
           ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-1.5 font-display text-sm font-semibold text-clay hover:text-clay-deep"
+          >
+            See all our roofing guides →
+          </Link>
         </div>
       </section>
 
