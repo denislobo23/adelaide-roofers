@@ -107,6 +107,31 @@ export const articles = [
     title: "How Long Does a Roof Replacement Actually Take?",
     category: "Process",
   },
+  {
+    slug: "metal-roof-noise-in-rain",
+    title: "Is a Metal Roof Really Noisier in the Rain?",
+    category: "Materials",
+  },
+  {
+    slug: "how-often-inspect-your-roof",
+    title: "How Often Should You Get Your Roof Inspected?",
+    category: "Process",
+  },
+  {
+    slug: "rain-during-a-roofing-job",
+    title: "What Happens If It Rains During a Roofing Job?",
+    category: "Process",
+  },
+  {
+    slug: "roof-ventilation-whirlybirds-guide",
+    title: "Roof Ventilation & Whirlybirds: Do You Actually Need Them?",
+    category: "Materials",
+  },
+  {
+    slug: "solar-panels-and-your-roof",
+    title: "Solar Panels and Your Roof: What to Check First",
+    category: "Materials",
+  },
 ];
 
 export function getArticle(slug) {
