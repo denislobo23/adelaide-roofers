@@ -3,9 +3,10 @@
 // POST { customer: { name, mobile }, answers: {...}, estimate: { low, high }, timeframe }
 //
 // Pipeline: generate PDF → upload to Supabase Storage → send SMS with the
-// link → save the lead. Returns { success: true, refNumber } or an honest
-// failure reason — it does NOT return the estimate figures. The on-screen
-// page never reveals numbers; the SMS'd PDF is the only place they appear.
+// link → save the lead → notify Denis. Returns { success: true, refNumber }
+// or an honest failure reason — it does NOT return the estimate figures.
+// The on-screen page never reveals numbers; the SMS'd PDF is the only
+// place they appear.
 //
 // ⚠️ REQUIRES a new column on the Supabase `leads` table: ref_number
 // (text, nullable). Without it, the optional "email me a copy" capture on
@@ -15,7 +16,14 @@
 // SETUP REQUIRED (see lib/supabaseAdmin.js and lib/sendSms.js for details):
 // - SUPABASE_SERVICE_ROLE_KEY
 // - CLICKSEND_USERNAME, CLICKSEND_API_KEY
+// - NOTIFY_PHONE_NUMBER (Denis's number, for the lead notification below)
 // - A Supabase Storage bucket named "estimates", set to public read access
+//
+// UPDATE: also fires a second SMS via sendSms() to NOTIFY_PHONE_NUMBER once
+// the lead is saved, so calculator leads notify Denis the same way contact
+// form leads already do (see app/api/contact/route.js). This is separate
+// from the customer-facing SMS above and never blocks or fails the request
+// — a failed notification just means follow-up may need to be manual.
 
 import { renderToBuffer } from "@react-pdf/renderer";
 import EstimatePDF from "@/components/pdf/EstimatePDF";
@@ -31,6 +39,23 @@ function generateRefNumber() {
   const d = String(date.getDate()).padStart(2, "0");
   const rand = Math.floor(1000 + Math.random() * 9000);
   return `AR-${y}${m}${d}-${rand}`;
+}
+
+async function notifyLead({ customer, answers, estimate }) {
+  if (!process.env.NOTIFY_PHONE_NUMBER) {
+    console.warn(
+      "NOTIFY_PHONE_NUMBER not configured — skipping calculator lead notification."
+    );
+    return;
+  }
+
+  const location = answers.suburb || answers.address || "";
+  await sendSms({
+    to: process.env.NOTIFY_PHONE_NUMBER,
+    message: `New lead (calculator): ${customer.name}, ${customer.mobile}${
+      location ? `, ${location}` : ""
+    }. Est: $${estimate.low}-$${estimate.high}.`,
+  });
 }
 
 export async function POST(request) {
@@ -110,6 +135,14 @@ export async function POST(request) {
           created_at: new Date().toISOString(),
         },
       ]);
+    }
+
+    // 5. Notify Denis of the new lead — fire-and-log, never blocks the
+    // response to the customer.
+    try {
+      await notifyLead({ customer, answers, estimate });
+    } catch (notifyErr) {
+      console.error("Calculator lead notification failed:", notifyErr);
     }
 
     if (!smsResult.success) {
