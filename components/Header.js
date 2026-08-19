@@ -26,6 +26,7 @@ const regionList = Object.values(regions);
 const otherNavLinks = [
   { href: "/faq", label: "FAQs" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 function ChevronDown({ className = "" }) {

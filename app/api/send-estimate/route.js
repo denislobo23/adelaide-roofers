@@ -3,33 +3,38 @@
 // POST { customer: { name, mobile }, answers: {...}, estimate: { low, high }, timeframe }
 //
 // Pipeline: generate PDF → upload to Supabase Storage → send SMS with the
-// link → save the lead → notify Denis. Returns { success: true, refNumber }
-// or an honest failure reason — it does NOT return the estimate figures.
-// The on-screen page never reveals numbers; the SMS'd PDF is the only
-// place they appear.
+// link → save the lead → notify Denis (SMS + email). Returns
+// { success: true, refNumber } or an honest failure reason — it does NOT
+// return the estimate figures. The on-screen page never reveals numbers;
+// the SMS'd PDF is the only place they appear.
 //
 // ⚠️ REQUIRES a new column on the Supabase `leads` table: ref_number
 // (text, nullable). Without it, the optional "email me a copy" capture on
 // the success screen has no way to find this row again to attach the
 // email to. Add it in the Supabase table editor before deploying this.
 //
-// SETUP REQUIRED (see lib/supabaseAdmin.js and lib/sendSms.js for details):
+// SETUP REQUIRED (see lib/supabaseAdmin.js, lib/sendSms.js, and
+// lib/sendLeadEmail.js for details):
 // - SUPABASE_SERVICE_ROLE_KEY
 // - CLICKSEND_USERNAME, CLICKSEND_API_KEY
-// - NOTIFY_PHONE_NUMBER (Denis's number, for the lead notification below)
+// - NOTIFY_PHONE_NUMBER (Denis's number, for the SMS lead notification)
+// - RESEND_API_KEY, NOTIFY_EMAIL (Denis's email, for the email lead
+//   notification — see lib/sendLeadEmail.js for Resend domain setup)
 // - A Supabase Storage bucket named "estimates", set to public read access
 //
-// UPDATE: also fires a second SMS via sendSms() to NOTIFY_PHONE_NUMBER once
-// the lead is saved, so calculator leads notify Denis the same way contact
-// form leads already do (see app/api/contact/route.js). This is separate
-// from the customer-facing SMS above and never blocks or fails the request
-// — a failed notification just means follow-up may need to be manual.
+// UPDATE: fires a second SMS via sendSms() AND an email via
+// sendLeadEmail() once the lead is saved, so calculator leads notify
+// Denis the same way contact form leads already do (see
+// app/api/contact/route.js). Both are separate from the customer-facing
+// SMS above and never block or fail the request — a failed notification
+// just means follow-up may need to be manual.
 
 import { renderToBuffer } from "@react-pdf/renderer";
 import EstimatePDF from "@/components/pdf/EstimatePDF";
 import { buildEstimateBreakdown } from "@/lib/estimateBreakdown";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { sendSms } from "@/lib/sendSms";
+import { sendLeadEmail } from "@/lib/sendLeadEmail";
 import { site } from "@/data/config";
 
 function generateRefNumber() {
@@ -41,10 +46,10 @@ function generateRefNumber() {
   return `AR-${y}${m}${d}-${rand}`;
 }
 
-async function notifyLead({ customer, answers, estimate }) {
+async function notifyLeadSms({ customer, answers, estimate }) {
   if (!process.env.NOTIFY_PHONE_NUMBER) {
     console.warn(
-      "NOTIFY_PHONE_NUMBER not configured — skipping calculator lead notification."
+      "NOTIFY_PHONE_NUMBER not configured — skipping calculator lead SMS notification."
     );
     return;
   }
@@ -56,6 +61,42 @@ async function notifyLead({ customer, answers, estimate }) {
       location ? `, ${location}` : ""
     }. Est: $${estimate.low}-$${estimate.high}.`,
   });
+}
+
+function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdown, refNumber }) {
+  const subject = `New lead (calculator): ${customer.name} — $${estimate.low}-$${estimate.high}`;
+
+  const rows = [
+    ["Name", customer.name],
+    ["Phone", customer.mobile],
+    ["Address", answers.address || "(not provided)"],
+    ["Suburb", answers.suburb || "(not provided)"],
+    ["Job type", breakdown.jobTypeLabel],
+    ["Estimate", `$${estimate.low} - $${estimate.high}`],
+    ["Timeframe", timeframe || "(not provided)"],
+    ["Ref number", refNumber],
+  ];
+
+  const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
+
+  const html = `
+    <div style="font-family: sans-serif; font-size: 15px; color: #1a1a1a;">
+      <h2 style="margin: 0 0 16px;">New lead — calculator</h2>
+      <table cellpadding="6" cellspacing="0">
+        ${rows
+          .map(
+            ([label, value]) => `
+          <tr>
+            <td style="font-weight: 600; vertical-align: top;">${label}</td>
+            <td>${String(value).replace(/\n/g, "<br />")}</td>
+          </tr>`
+          )
+          .join("")}
+      </table>
+    </div>
+  `;
+
+  return { subject, html, text };
 }
 
 export async function POST(request) {
@@ -137,12 +178,26 @@ export async function POST(request) {
       ]);
     }
 
-    // 5. Notify Denis of the new lead — fire-and-log, never blocks the
-    // response to the customer.
+    // 5. Notify Denis of the new lead — SMS and email, both fire-and-log,
+    // neither blocks the response to the customer or each other.
     try {
-      await notifyLead({ customer, answers, estimate });
+      await notifyLeadSms({ customer, answers, estimate });
     } catch (notifyErr) {
-      console.error("Calculator lead notification failed:", notifyErr);
+      console.error("Calculator lead SMS notification failed:", notifyErr);
+    }
+
+    try {
+      const { subject, html, text } = buildCalculatorEmail({
+        customer,
+        answers,
+        estimate,
+        timeframe,
+        breakdown,
+        refNumber,
+      });
+      await sendLeadEmail({ subject, html, text });
+    } catch (emailErr) {
+      console.error("Calculator lead email notification failed:", emailErr);
     }
 
     if (!smsResult.success) {

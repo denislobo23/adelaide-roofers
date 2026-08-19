@@ -40,6 +40,7 @@ export default function Footer() {
             <ul className="mt-3 space-y-2 font-body text-sm">
               <li><Link href="/about" className="text-paper/80 transition hover:text-clay">About us</Link></li>
               <li><Link href="/services" className="text-paper/80 transition hover:text-clay">Services</Link></li>
+              <li><Link href="/contact" className="text-paper/80 transition hover:text-clay">Contact</Link></li>
               <li><Link href="/#how-it-works" className="text-paper/80 transition hover:text-clay">How it works</Link></li>
               <li><Link href="/#regions" className="text-paper/80 transition hover:text-clay">Find your suburb</Link></li>
               <li><Link href="/privacy" className="text-paper/80 transition hover:text-clay">Privacy Policy</Link></li>
