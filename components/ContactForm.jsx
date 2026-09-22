@@ -7,8 +7,14 @@
 // Name/Phone row and a consent checkbox, and matches the brief's copy
 // exactly. Saves straight to the same Supabase `leads` table as the
 // calculator pipeline (lead_source: "contact_form").
+//
+// GA4 lead tracking: fires a `generate_lead` event on successful submit
+// so this conversion shows up in GA4's Lead acquisition report (previously
+// untracked — Supabase/SMS/email notifications fired, but GA4 had no idea
+// a lead had happened).
 
 import { useState } from "react";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function ContactForm() {
   const [form, setForm] = useState({ name: "", phone: "", email: "", suburb: "", message: "", consent: false });
@@ -30,6 +36,11 @@ export default function ContactForm() {
         body: JSON.stringify(form),
       });
       const data = await res.json();
+      if (data.success) {
+        sendGAEvent("event", "generate_lead", {
+          lead_source: "contact_form",
+        });
+      }
       setStatus(data.success ? "sent" : "error");
     } catch (err) {
       console.error("Contact form submit failed:", err);
