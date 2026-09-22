@@ -13,12 +13,18 @@
 // cost any conversion on the actual estimate flow. Saves via
 // /api/save-email, matched back to this exact lead by ref_number.
 //
+// GA4 lead tracking: fires a `generate_lead` event once /api/send-estimate
+// confirms success, mirroring the same fix already applied to ContactForm
+// — previously calculator leads landed in Supabase/SMS/email but were
+// invisible to GA4's Lead acquisition report.
+//
 // ⚠️ Pricing calculation below is still PLACEHOLDER — see the shared
 // logic notes in lib/estimateBreakdown.js. Once Wally's real rates are
 // captured, only the rate tables need updating.
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { sendGAEvent } from "@next/third-parties/google";
 import { site } from "@/data/config";
 
 const FULL_JOB_PRICING = {
@@ -194,6 +200,9 @@ export default function GetMyEstimatePage() {
       const data = await res.json();
 
       if (data.success) {
+        sendGAEvent("event", "generate_lead", {
+          lead_source: "roof_calculator",
+        });
         setRefNumber(data.refNumber || null);
         setStatus("sent");
       } else if (data.reason === "sms_failed") {
