@@ -36,11 +36,21 @@ export const servicePages = {
         href: "/services/roof-cleaning",
         label: "Roof cleaning in Adelaide",
       },
+      {
+        text: "Got a terracotta roof? Read our guide to",
+        href: "/blog/terracotta-roofs-pros-cons",
+        label: "terracotta roof pros and cons",
+      },
     ],
     faqs: [
       {
         q: "How much does roof restoration cost in Adelaide?",
-        a: "It varies with the roof's size, pitch and condition, so it needs an on-site look. As a general guide, restorations on a standard single-storey tiled home commonly fall in the mid-to-high four-figure range — treat that as a ballpark. The roofer we connect you with will quote it properly after inspecting your roof.",
+        a: "It varies with the roof's size, pitch and condition, so it needs an on-site look. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will quote it properly after inspecting your roof.",
+        link: {
+          text: "For what drives the price up or down, see our",
+          href: "/blog/roof-restoration-cost-adelaide",
+          label: "full roof restoration cost guide",
+        },
       },
       {
         q: "Is roof restoration worth it, or should I just replace the roof?",

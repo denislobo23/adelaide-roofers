@@ -52,6 +52,13 @@ export default function RestorationCostPage() {
               repainting — typically runs <strong>$6,500–$10,000+</strong>. Here&apos;s what
               actually moves your number within, or beyond, that range.
             </p>
+            <p className="mt-4 font-body leading-relaxed text-ink/70">
+              For what the job involves and how to get matched with a local roofer, see our{" "}
+              <Link href="/services/roof-restoration" className="font-semibold text-clay underline-offset-2 hover:underline">
+                roof restoration in Adelaide
+              </Link>{" "}
+              page.
+            </p>
 
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
@@ -117,10 +124,16 @@ export default function RestorationCostPage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   These ranges are a starting point, not your actual number. Use the calculator
-                  below — it accounts for your roof&apos;s specific size, material, and
-                  condition rather than giving you a generic estimate.
+                  further down this page — it accounts for your roof&apos;s specific size,
+                  material, and condition rather than giving you a generic estimate.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href="#restoration-calculator"
+                    className="inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:brightness-95"
+                  >
+                    Jump to the calculator ↓
+                  </a>
                   <Link
                     href="/free-guide"
                     className="inline-flex items-center justify-center rounded-xl border-2 border-ink px-6 py-3 font-display font-bold tracking-tight text-ink transition hover:bg-ink hover:text-paper"
@@ -138,7 +151,7 @@ export default function RestorationCostPage() {
       </section>
 
       {/* ── INSTANT CALCULATOR (full-width, matches homepage/suburb pages) ── */}
-      <section className="mx-auto max-w-wrap px-5 pb-16">
+      <section id="restoration-calculator" className="scroll-mt-24 mx-auto max-w-wrap px-5 pb-16">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
             Get your instant restoration estimate

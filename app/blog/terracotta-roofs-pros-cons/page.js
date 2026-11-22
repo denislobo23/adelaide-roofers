@@ -119,7 +119,11 @@ export default function TerracottaRoofsPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   A local roofer can tell you honestly whether your terracotta roof needs
                   restoration or replacement, and our calculator can give you a starting number
-                  either way.
+                  either way. If it sounds like restoration, see our{" "}
+                  <Link href="/services/roof-restoration" className="font-semibold text-clay underline-offset-2 hover:underline">
+                    roof restoration in Adelaide
+                  </Link>{" "}
+                  page.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

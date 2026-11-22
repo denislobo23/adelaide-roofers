@@ -201,7 +201,7 @@ export default async function ServiceDetailPage({ params }) {
                 <p className="mt-6 font-body text-sm leading-relaxed text-ink/65">
                   Not sure if it&apos;s a repair, restoration or full replacement?{" "}
                   <Link href="/blog/repair-vs-replace" className="font-semibold text-clay hover:text-clay-deep">
-                    Take the 1-minute quiz →
+                    Take the repair vs replace quiz →
                   </Link>
                 </p>
               )}
@@ -330,6 +330,15 @@ export default async function ServiceDetailPage({ params }) {
             <div key={f.q} className="py-6 first:pt-0 last:pb-0">
               <h3 className="font-display text-lg font-bold tracking-tight text-ink">{f.q}</h3>
               <p className="mt-2.5 font-body leading-relaxed text-ink/70">{f.a}</p>
+              {f.link && (
+                <p className="mt-3 font-body leading-relaxed text-ink/70">
+                  {f.link.text}{" "}
+                  <Link href={f.link.href} className="font-semibold text-clay hover:text-clay-deep">
+                    {f.link.label}
+                  </Link>
+                  .
+                </p>
+              )}
               {/* Cost/finance-flavoured questions get a direct link to the
                   calculator — a short answer plus "get a real number"
                   beats trying to cram pricing detail into FAQ copy. */}
