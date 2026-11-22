@@ -16,7 +16,9 @@ export async function generateMetadata({ params }) {
   const { service } = await params;
   const s = getServicePage(service);
   if (!s) return {};
-  const img = `/images/service-${s.slug}.webp`;
+  // Pages flagged hasImages: false don't have a hero image yet — fall back
+  // to the site-wide share image so the preview never points at a 404.
+  const img = s.hasImages === false ? site.ogImage : `/images/service-${s.slug}.webp`;
   return {
     title: s.metaTitle,
     description: s.metaDescription,
@@ -54,7 +56,11 @@ export default async function ServiceDetailPage({ params }) {
   const s = getServicePage(service);
   if (!s) notFound();
 
-  const heroImage = `/images/service-${s.slug}.webp`;
+  const heroImage = s.hasImages === false ? null : `/images/service-${s.slug}.webp`;
+  const hasSections = Boolean(s.sections && s.sections.length > 0);
+  const showOverview = !hasSections;
+  const hasSigns = Boolean(s.signs && s.signs.length > 0);
+  const hasRelated = Boolean(s.relatedLinks && s.relatedLinks.length > 0);
 
   const serviceSchema = {
     "@context": "https://schema.org",
@@ -100,11 +106,13 @@ export default async function ServiceDetailPage({ params }) {
 
       {/* ── HERO (image background, matches suburb pages) ──── */}
       <section className="relative overflow-hidden bg-ink text-paper">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage})` }}
-          aria-hidden="true"
-        />
+        {heroImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${heroImage})` }}
+            aria-hidden="true"
+          />
+        )}
         {/* Uniform dark overlay + text-shadow, not a left-to-right fade —
             same fix applied to suburb pages and the services hub, so
             legibility holds regardless of how bright any given service's
@@ -127,13 +135,35 @@ export default async function ServiceDetailPage({ params }) {
             {s.headline}
           </h1>
           <p className="mt-6 max-w-2xl font-body text-lg leading-relaxed text-paper/90">{s.intro}</p>
-          <div className="mt-7"><CallButton /></div>
+          {s.quickFacts && s.quickFacts.length > 0 && (
+            <dl className="mt-7 grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
+              {s.quickFacts.map((f) => (
+                <div key={f.label} className="rounded-xl border border-paper/20 bg-paper/10 px-4 py-3">
+                  <dt className="font-body text-xs uppercase tracking-wide text-paper/65">{f.label}</dt>
+                  <dd className="mt-1 font-display text-lg font-bold tracking-tight text-paper">{f.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+            <CallButton />
+            {s.quickFacts && (
+              <a href="#estimate" className="font-display text-sm font-semibold text-clay hover:underline">
+                Get an instant estimate ↓
+              </a>
+            )}
+          </div>
         </div>
       </section>
 
       {/* ── OVERVIEW + WHAT'S INCLUDED ─────────────────────── */}
+      {/* Pages with their own answer-first `sections` skip the generic
+          overview and "Typically includes" box, which would only repeat
+          them. Signs and related links still show if a page has them. */}
+      {(showOverview || hasSigns || hasRelated) && (
       <section className="border-y border-mortar bg-white">
         <div className="mx-auto max-w-wrap px-5 py-16">
+          {showOverview && (
           <div className="grid gap-12 md:grid-cols-[1.1fr_1fr]">
             <div>
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
@@ -153,9 +183,10 @@ export default async function ServiceDetailPage({ params }) {
               </ul>
             </div>
           </div>
+          )}
 
-          {s.signs && s.signs.length > 0 && (
-            <div className="mt-14">
+          {hasSigns && (
+            <div className={showOverview ? "mt-14" : ""}>
               <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
                 Signs you might need this
               </h2>
@@ -176,13 +207,78 @@ export default async function ServiceDetailPage({ params }) {
               )}
             </div>
           )}
+
+          {hasRelated && (
+            <div className="mt-4 space-y-2">
+              {s.relatedLinks.map((l) => (
+                <p key={l.href} className="font-body text-sm leading-relaxed text-ink/65">
+                  {l.text}{" "}
+                  <Link href={l.href} className="font-semibold text-clay hover:text-clay-deep">
+                    {l.label} →
+                  </Link>
+                </p>
+              ))}
+            </div>
+          )}
         </div>
       </section>
+      )}
+
+      {/* ── OPTIONAL ANSWER-FIRST SECTIONS (only pages with `sections`) ── */}
+      {s.sections && s.sections.length > 0 && (
+        <section className="mx-auto max-w-wrap px-5 py-16">
+          <div className="max-w-3xl space-y-14">
+            {s.sections.map((sec) => (
+              <article key={sec.q}>
+                <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
+                  {sec.q}
+                </h2>
+                <p className="mt-4 font-body text-lg leading-relaxed text-ink/80">{sec.a}</p>
+                {sec.points && sec.points.length > 0 && (
+                  <ul className="mt-5 space-y-3">
+                    {sec.points.map((pt) => (
+                      <li key={pt} className="flex items-start gap-3">
+                        <RoofIcon />
+                        <span className="font-body leading-relaxed text-ink/70">{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {sec.groups &&
+                  sec.groups.map((g) => (
+                    <div key={g.heading} className="mt-6">
+                      <h3 className="font-display text-lg font-bold tracking-tight text-ink">{g.heading}</h3>
+                      <ul className="mt-3 space-y-3">
+                        {g.points.map((pt) => (
+                          <li key={pt} className="flex items-start gap-3">
+                            <RoofIcon />
+                            <span className="font-body leading-relaxed text-ink/70">{pt}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                {sec.more && (
+                  <p className="mt-5 font-body leading-relaxed text-ink/70">{sec.more}</p>
+                )}
+                {sec.link && (
+                  <p className="mt-5 font-body leading-relaxed text-ink/70">
+                    {sec.link.text}{" "}
+                    <Link href={sec.link.href} className="font-semibold text-clay hover:text-clay-deep">
+                      {sec.link.label} →
+                    </Link>
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── CALCULATOR — primary lead capture, right where cost   ── */}
       {/* ── intent peaks: after they've read what the job involves,── */}
       {/* ── right before the FAQ answers the same "how much" ─────── */}
-      <section className="border-y border-mortar bg-paper">
+      <section id="estimate" className="scroll-mt-24 border-y border-mortar bg-paper">
         <div className="mx-auto max-w-wrap px-5 py-16 md:py-20">
           <div className="grid gap-10 md:grid-cols-[1fr_1fr] md:items-center">
             <div>

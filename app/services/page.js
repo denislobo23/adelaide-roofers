@@ -39,12 +39,13 @@ const serviceGroups = [
     items: [
       { t: "Gutters, downpipes & valleys", href: "/services/gutter-repairs", d: "Replacing rusted or undersized gutters, and sorting the valleys and downpipes that cause most water to back up under a roof." },
       { t: "Gutter guard & leaf screen", href: "/services/gutter-repairs", d: "Fitting mesh guards that keep leaves and debris out of gutters and valleys — important near trees, and for reducing ember risk in bushfire-prone foothills suburbs." },
-      { t: "Gutter & roof cleaning", href: "/services/gutter-repairs", d: "Clearing leaf litter from gutters and valleys, and pressure-cleaning moss, lichen and grime off the roof surface before it does damage." },
+      { t: "Gutter cleaning", href: "/services/gutter-repairs", d: "Clearing leaf litter from gutters, valleys and downpipes so water drains away properly — and so dry debris isn't sitting there come bushfire season." },
     ],
   },
   {
     heading: "Maintenance & protection",
     items: [
+      { t: "Roof cleaning", href: "/services/roof-cleaning", d: "A low-pressure soft wash and moss and lichen treatment to clear growth and staining, keep water draining properly and help tiles and coatings last longer." },
       { t: "Roof ventilation", href: "/services/roof-ventilation", d: "Installing whirlybirds and roof vents to move hot, moist air out of the roof space — helping with summer heat and reducing condensation and moisture build-up." },
       { t: "Solar panel mesh & bird-proofing", d: "Fitting mesh around solar panels and blocking gaps under the roofline to keep pigeons and pests out, without damaging the panels or roof." },
       { t: "Roof inspection & report", href: "/services/roof-inspection", d: "A thorough check of tiles, flashings, valleys, ridge capping and gutters, with an honest write-up of what's fine, what needs attention now, and what can wait." },
@@ -75,6 +76,26 @@ function ServiceCard({ s }) {
   // (components/ServicesSection.jsx) — one set of images, reused here
   // rather than duplicated or re-uploaded.
   const slug = s.href?.replace("/services/", "");
+
+  // Has a page but no card image yet — compact icon card, still linked.
+  if (s.href && s.noImage) {
+    return (
+      <Link
+        href={s.href}
+        className="block rounded-2xl border border-mortar bg-paper p-7 transition hover:border-clay"
+      >
+        <div className="flex items-start gap-3.5">
+          <RoofIcon />
+          <div>
+            <h3 className="font-display text-lg font-bold tracking-tight text-ink">
+              {s.t} <span className="text-clay">→</span>
+            </h3>
+            <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{s.d}</p>
+          </div>
+        </div>
+      </Link>
+    );
+  }
 
   if (s.href) {
     return (

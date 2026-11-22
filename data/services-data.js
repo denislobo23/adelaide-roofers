@@ -17,7 +17,7 @@ export const servicePages = {
     overview:
       "Roof restoration is the most common job on Adelaide's many ageing tile roofs. Rather than replacing a structurally sound roof, restoration renews it: the tiles are cleaned, broken ones replaced, the ridge capping re-bedded and re-pointed, and the whole roof sealed and re-coated. It's a cost-effective way to add years of life and refresh the look of a roof that's simply weathered — and it's exactly the kind of work the roofers we connect you with do day in, day out.",
     included: [
-      "Pressure cleaning to strip moss, lichen and grime",
+      "A thorough clean to strip moss, lichen and grime",
       "Replacing cracked, broken or slipped tiles",
       "Re-bedding and re-pointing ridge capping with flexible pointing",
       "Repairing worn flashings and valleys",
@@ -30,6 +30,13 @@ export const servicePages = {
       "Minor leaks or damp patches starting to appear",
     ],
     decisionGuide: true,
+    relatedLinks: [
+      {
+        text: "Roof just dirty, not damaged? A clean may be all it needs.",
+        href: "/services/roof-cleaning",
+        label: "Roof cleaning in Adelaide",
+      },
+    ],
     faqs: [
       {
         q: "How much does roof restoration cost in Adelaide?",
@@ -292,6 +299,148 @@ export const servicePages = {
     ],
   },
 
+  "roof-cleaning": {
+    slug: "roof-cleaning",
+    name: "Roof Cleaning",
+    keyword: "Roof Cleaning Adelaide",
+    metaTitle: "Roof Cleaning Adelaide | Free Quotes from Trusted Locals",
+    metaDescription:
+      "Roof cleaning in Adelaide: what's involved, typical costs for tile and Colorbond, and the red flags to avoid. Free quotes from trusted local pros.",
+    headline: "Roof cleaning in Adelaide",
+    intro:
+      "If you can see moss, lichen or black streaks, or your gutters keep clogging, your roof is worth a clean. Most Adelaide homes pay $400–$900 for a tiled roof or $350–$750 for Colorbond, and it's usually done in a day. We'll connect you with a trusted local pro who cleans roofs in your suburb, and the connection costs you nothing.",
+    quickFacts: [
+      { label: "Typical cost", value: "$350–$900" },
+      { label: "Time on site", value: "Usually one day" },
+      { label: "How often", value: "Every 2–5 years" },
+    ],
+    // `sections` replaces the template's generic overview and "Typically
+    // includes" blocks on this page (see app/services/[service]/page.js).
+    sections: [
+      {
+        q: "Does my roof need cleaning?",
+        a: "Your roof is worth cleaning if you can see moss, lichen or black streaks, or your gutters keep filling with debris. If it just looks a bit dull, that's cosmetic and can wait.",
+        points: [
+          "Moss: green, spongy clumps that hold water against the tiles. It's most common in the Adelaide Hills and on shaded, south-facing roof faces across the plains",
+          "Lichen: flat, crusty patches in white, grey, yellow or orange. It's very common on the concrete tiles of Adelaide's post-war and 1970s homes, and slowly roughens the surface",
+          "Black streaks: usually algae, and worst on south-facing sides and under trees",
+          "Blocked gutters and valleys: debris washed off the roof that stops water draining away",
+        ],
+        more: "Moss and blocked gutters are the ones to act on. Both trap water, and trapped water is what leads to leaks, rot and gutters spilling over in a winter downpour.",
+      },
+      {
+        q: "What are the benefits of roof cleaning?",
+        a: "A clean roof drains properly, lasts longer and looks better. In Adelaide it also matters for your rainwater tank and for bushfire season.",
+        points: [
+          "Tiles, coatings and Colorbond last longer when nothing is holding moisture against them",
+          "Water runs off freely instead of backing up under tiles or spilling over the gutters",
+          "Cleaner water in your tank, if your downpipes feed one, as they do on many Adelaide homes",
+          "Less dry leaf litter sitting in gutters and valleys over summer, when embers are a real risk in the Hills and foothills",
+          "Better kerb appeal if you're selling",
+          "It also gives the roofer a clear look at the roof, including cracked tiles, crumbling ridge capping or rust the moss was hiding",
+        ],
+      },
+      {
+        q: "What's involved in a roof clean?",
+        a: "A proper clean has five steps: protect your rainwater tank, inspect the roof, give it a gentle wash, treat any growth, and clear the gutters.",
+        points: [
+          "Protect the tank: any downpipes that feed a rainwater tank are disconnected or diverted before water or treatment goes on the roof, and stay diverted for the first couple of good rains afterwards so wash water and treatment don't end up in the tank",
+          "Inspect: the roofer checks for cracked or loose tiles, ridge capping and gutters before walking on the roof, and takes before photos",
+          "Soft wash: a low-pressure rinse with a cleaning solution, which lifts dirt and staining without stripping coatings or cracking brittle tiles",
+          "Treat: a moss and lichen treatment that kills growth at the root, so it keeps breaking down and washing off over the following weeks",
+          "Finish: gutters, valleys and downpipes are cleared of whatever came off the roof, with after photos and a note on anything that needs attention",
+        ],
+        link: {
+          text: "If the clean shows cracked tiles, crumbling ridge capping or a worn-out coating, that's the point where a restoration may make more sense.",
+          href: "/services/roof-restoration",
+          label: "Roof restoration in Adelaide",
+        },
+      },
+      {
+        q: "How much does roof cleaning cost in Adelaide?",
+        a: "Roof cleaning in Adelaide typically costs $400–$900 for a tiled roof and $350–$750 for Colorbond. Add about $150 if you have solar panels.",
+        points: [
+          "Size: a bigger roof means more time and more product",
+          "Pitch and height: steep Hills blocks and two-storey homes in newer suburbs need extra safety gear and take longer",
+          "Access: narrow side paths, overhanging gums and fragile pergolas or verandahs slow the job down",
+          "How much growth: years of Hills moss takes longer to shift than light staining on the plains",
+          "Tile condition: original terracotta on older homes needs slower, more careful work",
+          "Extras: solar panels, gutter guards or a full gutter clean add to the price",
+        ],
+        more: "A small single-storey Colorbond roof with light staining sits at the bottom of these ranges. A large, steep, two-storey tiled roof with heavy moss and solar sits at the top. These are ballpark figures; you'll get a proper quote once a roofer has seen the roof.",
+      },
+      {
+        q: "How do I know I'm getting value for money?",
+        a: "You're getting value if the quote covers your tank, an inspection, a gentle wash, a growth treatment and the gutters, and nobody pushes you into work you don't need.",
+        groups: [
+          {
+            heading: "Questions to ask",
+            points: [
+              "What's included, and are the gutters part of it?",
+              "Will you use low pressure on my tiles?",
+              "What product do you use, and is it safe around my tank, pets and garden?",
+              "Are you insured, and will I get before-and-after photos?",
+            ],
+          },
+          {
+            heading: "Red flags",
+            points: [
+              "High-pressure blasting on old tiles. It can crack them, strip the surface and force water underneath, and original terracotta on older homes is especially easy to damage",
+              "Being pushed into a full restoration when the roof only needs a clean",
+              "No written quote, or a price that jumps once they're up on the roof",
+            ],
+          },
+        ],
+        link: {
+          text: "A restoration is the right call when tiles are cracking, ridge capping is crumbling or the coating has worn through, not when the roof is just dirty.",
+          href: "/services/roof-restoration",
+          label: "When roof restoration is worth it",
+        },
+      },
+      {
+        q: "Are there cheaper alternatives to a full roof clean?",
+        a: "Yes. If the roof is only lightly affected, a moss spray or a gutter clean on its own may be enough. If the staining is purely cosmetic, doing nothing is a fair choice too.",
+        points: [
+          "Moss spray: applied without washing, then the growth breaks down and rinses off with rain over several months. In Adelaide, early autumn is the time to put it on, so the winter rains can do the rinsing. It's cheaper but slower, and the roof looks patchy for a while",
+          "Gutter clean only: deals with drainage, which is the part that actually causes damage. It's worth doing before bushfire season even if you skip the roof",
+          "Do nothing: light staining or dull tiles on a sound roof won't hurt it. Keep an eye on it and revisit if moss starts building up",
+        ],
+      },
+      {
+        q: "What's different about cleaning a roof in Adelaide?",
+        a: "Where you live in Adelaide changes how your roof should be cleaned, and when.",
+        points: [
+          "Adelaide Hills: shade, cooler temperatures and higher rainfall mean moss and lichen grow faster, so Hills roofs often need cleaning more often than those on the plains",
+          "Beachside suburbs: salt spray builds up on roofs and in gutters near the sea, and a gentle rinse helps slow corrosion on Colorbond, fixings and flashings",
+          "Unley, Norwood, Prospect and other older suburbs: many homes still have their original terracotta tiles, which are brittle with age. They need a gentle wash and a roofer who knows where to step",
+          "Best time of year: spring or early autumn. It's mild and mostly dry, and the treatment needs a few dry days to work",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Can you clean a roof with solar panels?",
+        a: "Yes. A roofer can clean around solar panels and usually rinse the panels too, which can help them perform better. Expect it to add about $150, because working around panels takes more time and care.",
+      },
+      {
+        q: "Are roof cleaning chemicals safe for pets, gardens and rainwater tanks?",
+        a: "Roofers use products made for roof cleaning, and you can reduce the risk further. Keep pets inside during the job, ask the roofer to rinse or cover nearby plants, and make sure your tank is diverted first. Ask which product they're using before they start, so you can check the label yourself.",
+      },
+      {
+        q: "How often should I get my roof cleaned?",
+        a: "Every two to five years is typical. Homes in the Hills, under trees or with shaded south-facing roofs grow moss faster and may need it every two years. Sunny, open roofs on the plains can often go five years or more.",
+      },
+      {
+        q: "How long does roof cleaning take?",
+        a: "Most Adelaide homes are done in a day. A small single-storey roof can take a few hours, while a large, steep or two-storey roof with heavy moss may take longer. The treatment keeps working for weeks afterwards.",
+      },
+      {
+        q: "Do I need to be home while my roof is cleaned?",
+        a: "Usually not, as long as the roofer can get to the roof safely and use an outside tap. It's worth being around at the start to point out problem areas and check the tank is diverted, and at the end to look over the before-and-after photos.",
+      },
+    ],
+  },
+
   "gutter-repairs": {
     slug: "gutter-repairs",
     name: "Gutter Repairs & Replacement",
@@ -316,6 +465,13 @@ export const servicePages = {
       "Water overflowing the gutters in rain",
       "Gutters full of leaves and debris",
       "Water damage or staining down external walls",
+    ],
+    relatedLinks: [
+      {
+        text: "Gutters filling up because of moss and grime washing off the roof?",
+        href: "/services/roof-cleaning",
+        label: "Roof cleaning in Adelaide",
+      },
     ],
     faqs: [
       {

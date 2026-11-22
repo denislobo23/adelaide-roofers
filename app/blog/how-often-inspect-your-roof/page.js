@@ -104,6 +104,14 @@ export default function HowOftenInspectPage() {
                   reason enough on its own — a first inspection often surfaces small, cheap fixes
                   that would have become expensive if left another few years.
                 </p>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  If the main thing you&apos;re seeing is moss, lichen or black streaks rather than
+                  damage, you may only need a clean. See{" "}
+                  <Link href="/services/roof-cleaning" className="font-semibold text-clay underline-offset-2 hover:underline">
+                    roof cleaning in Adelaide
+                  </Link>
+                  .
+                </p>
               </article>
 
               <article>

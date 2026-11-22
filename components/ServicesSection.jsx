@@ -38,6 +38,10 @@ const serviceCardMeta = {
     blurb: "Clean, seal and coat a faded roof for a fresh, uniform finish.",
     image: "/images/services/card-roof-painting.webp",
   },
+  "roof-cleaning": {
+    blurb: "A gentle wash and moss and lichen treatment to keep water draining properly.",
+    image: "/images/services/card-roof-cleaning.webp",
+  },
   "gutter-repairs": {
     blurb: "Rusted or overflowing gutters, sorted — repair or full replacement.",
     image: "/images/services/card-gutter-repairs.webp",
