@@ -20,8 +20,21 @@ import RidgeDivider from "@/components/RidgeDivider";
 import HeroCalculatorMini from "@/components/HeroCalculatorMini";
 import ServicesSection from "@/components/ServicesSection";
 
+const homeDescription =
+  "Adelaide Roofers connects homeowners with trusted local roofers across metropolitan Adelaide. Get free quotes for roof repairs and restorations.";
+
 export const metadata = {
   alternates: { canonical: site.url },
+  description: homeDescription,
+  openGraph: {
+    title: `${site.brand} | Find a Trusted Local Roofer in Adelaide`,
+    description: homeDescription,
+    url: site.url,
+    siteName: site.brand,
+    locale: "en_AU",
+    type: "website",
+    images: site.ogImage ? [{ url: site.ogImage, width: 1200, height: 630, alt: site.brand }] : [],
+  },
 };
 
 // ── FAQ DATA (self-contained — see note above) ─────────────────────────
