@@ -166,6 +166,14 @@ export default async function ServiceDetailPage({ params }) {
                   </div>
                 ))}
               </div>
+              {s.decisionGuide && (
+                <p className="mt-6 font-body text-sm leading-relaxed text-ink/65">
+                  Not sure if it&apos;s a repair, restoration or full replacement?{" "}
+                  <Link href="/blog/repair-vs-replace" className="font-semibold text-clay hover:text-clay-deep">
+                    Take the 1-minute quiz →
+                  </Link>
+                </p>
+              )}
             </div>
           )}
         </div>

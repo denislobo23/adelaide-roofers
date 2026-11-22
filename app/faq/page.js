@@ -171,7 +171,7 @@ const faqGroups = [
         q: "Is roof restoration actually worth it, or does it just delay the inevitable?",
         a: "For a structurally sound roof that's simply weathered, restoration genuinely extends its life for a fraction of replacement cost — it's not just cosmetic delay. It's the wrong call only when the tiles or sheets themselves are failing, in which case a roofer should say so honestly.",
         topics: ["decision", "restoration"],
-        link: { href: "/blog/repair-vs-replace", label: "Take the repair vs replace quiz" },
+        link: { href: "/services/roof-restoration", label: "Roof restoration in Adelaide" },
       },
     ],
   },

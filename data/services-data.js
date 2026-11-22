@@ -8,7 +8,7 @@ export const servicePages = {
     slug: "roof-restoration",
     name: "Roof Restoration",
     keyword: "Roof Restoration Adelaide",
-    metaTitle: "Roof Restoration Adelaide | Adelaide Roofers",
+    metaTitle: "Roof Restoration Adelaide | Free Quotes from Trusted Local Roofers",
     metaDescription:
       "Need roof restoration in Adelaide? We connect you with a local roofer to clean, re-point and re-coat your tile or metal roof. Free, no obligation.",
     headline: "Roof restoration in Adelaide",
@@ -29,6 +29,7 @@ export const servicePages = {
       "Moss, lichen or dark staining across the roof",
       "Minor leaks or damp patches starting to appear",
     ],
+    decisionGuide: true,
     faqs: [
       {
         q: "How much does roof restoration cost in Adelaide?",
@@ -49,7 +50,7 @@ export const servicePages = {
     slug: "roof-repairs",
     name: "Roof Repairs",
     keyword: "Roof Repairs Adelaide",
-    metaTitle: "Roof Repairs Adelaide | Adelaide Roofers",
+    metaTitle: "Roof Repairs Adelaide | Free Quotes from Trusted Local Roofers",
     metaDescription:
       "Need roof repairs in Adelaide? We connect you with a local roofer for broken tiles, flashings, valleys and leaks. Fast, free, no obligation.",
     headline: "Roof repairs in Adelaide",
@@ -70,6 +71,7 @@ export const servicePages = {
       "Damaged flashing around a chimney or vent",
       "Debris or damage after a storm",
     ],
+    decisionGuide: true,
     faqs: [
       {
         q: "How much do roof repairs cost in Adelaide?",
@@ -90,7 +92,7 @@ export const servicePages = {
     slug: "roof-replacement",
     name: "Roof Replacement & Re-Roofing",
     keyword: "Roof Replacement Adelaide",
-    metaTitle: "Roof Replacement & Re-Roofing Adelaide | Adelaide Roofers",
+    metaTitle: "Roof Replacement & Re-Roofing Adelaide | Free Quotes",
     metaDescription:
       "Need a roof replacement or re-roof in Adelaide? We connect you with a local roofer for full replacements and tile-to-Colorbond conversions. Free quote.",
     headline: "Roof replacement & re-roofing in Adelaide",
@@ -111,6 +113,7 @@ export const servicePages = {
       "Sagging roofline or structural concerns",
       "Repeated leaks despite previous repairs",
     ],
+    decisionGuide: true,
     faqs: [
       {
         q: "How much does a roof replacement cost in Adelaide?",

@@ -9,7 +9,7 @@ import ArticleSidebar from "@/components/ArticleSidebar";
 import RepairVsReplaceQuiz from "@/components/RepairVsReplaceQuiz";
 
 export const metadata = {
-  title: "Repair vs. Replace: Which Does Your Roof Need? | Adelaide Roofers",
+  title: "Repair, Restore or Replace Your Roof? How to Decide | Adelaide Roofers",
   description:
     "A simple framework for telling whether your roof needs a repair, a restoration, or a full replacement — and why the real comparison isn't the price of one job.",
   alternates: { canonical: `${site.url}/blog/repair-vs-replace` },
@@ -34,24 +34,37 @@ const DECISION_TABLE = [
   {
     situation: "A handful of cracked tiles or a single leak, roof otherwise sound",
     path: "Repair",
+    href: "/services/roof-repairs",
   },
   {
     situation: "Roof is structurally sound but faded, chalky, or has moss/lichen build-up",
     path: "Restoration",
+    href: "/services/roof-restoration",
   },
   {
     situation: "Repeated leaks in different spots, or repairs needed more than once a year",
     path: "Getting close to replacement",
+    href: "/services/roof-replacement",
   },
   {
     situation: "Roof is asbestos and showing any cracking or deterioration",
     path: "Replacement (safety, not just cosmetics)",
+    href: "/services/roof-replacement",
   },
   {
     situation: "Roof is 40+ years old with widespread wear, or you're planning solar",
     path: "Replacement usually pays off over patch-repairing",
+    href: "/services/roof-replacement",
   },
 ];
+
+const SERVICE_LINKS = [
+  { href: "/services/roof-repairs", label: "Roof repairs in Adelaide" },
+  { href: "/services/roof-restoration", label: "Roof restoration in Adelaide" },
+  { href: "/services/roof-replacement", label: "Roof replacement in Adelaide" },
+];
+
+const inlineLink = "font-semibold text-clay underline-offset-2 hover:underline";
 
 export default function RepairVsReplacePage() {
   return (
@@ -79,7 +92,7 @@ export default function RepairVsReplacePage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-roof-replacement.webp"
-                alt="Roof repair vs replacement in Adelaide — roofer assessing tile condition before recommending next steps"
+                alt="Roofer checking tile condition to decide between repair, restoration and replacement"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -115,7 +128,9 @@ export default function RepairVsReplacePage() {
                             {row.situation}
                           </td>
                           <td className="border-b border-mortar px-4 py-3 font-body text-sm font-semibold text-ink">
-                            {row.path}
+                            <Link href={row.href} className="text-ink underline-offset-2 hover:text-clay hover:underline">
+                              {row.path}
+                            </Link>
                           </td>
                         </tr>
                       ))}
@@ -143,6 +158,13 @@ export default function RepairVsReplacePage() {
                   identifiable source, or damage confined to a small, specific area — often
                   after a storm. The rest of the roof holding up fine is the key signal here.
                 </p>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  If that sounds like your roof, see our{" "}
+                  <Link href="/services/roof-repairs" className={inlineLink}>
+                    roof repairs in Adelaide
+                  </Link>{" "}
+                  page.
+                </p>
               </article>
 
               <article>
@@ -155,6 +177,13 @@ export default function RepairVsReplacePage() {
                   its age cosmetically: faded or chalky coating, moss or lichen build-up, or
                   ridge capping that&apos;s started to crumble. Nothing&apos;s actively failing
                   yet, but it&apos;s heading that way without attention.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  If that sounds like your roof, see our{" "}
+                  <Link href="/services/roof-restoration" className={inlineLink}>
+                    roof restoration in Adelaide
+                  </Link>{" "}
+                  page.
                 </p>
               </article>
 
@@ -170,6 +199,13 @@ export default function RepairVsReplacePage() {
                   a safety question, not just a cosmetic one. And a roof that&apos;s 40+ years
                   old with widespread wear, or a home planning to add solar, often makes more
                   sense to replace outright than to keep patching.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  If that sounds like your roof, see our{" "}
+                  <Link href="/services/roof-replacement" className={inlineLink}>
+                    roof replacement in Adelaide
+                  </Link>{" "}
+                  page.
                 </p>
               </article>
 
@@ -199,6 +235,15 @@ export default function RepairVsReplacePage() {
                     Get the free guide →
                   </Link>
                 </div>
+                <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+                  {SERVICE_LINKS.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} className="font-display text-sm font-semibold text-clay hover:text-clay-deep">
+                        {l.label} →
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </article>
             </div>
           </div>
