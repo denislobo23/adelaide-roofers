@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "metal-roof-noise-in-rain",
   title: "Is a Metal Roof Really Noisier in the Rain? | Adelaide Roofers",
   description:
     "Where the 'noisy tin roof' reputation actually comes from, and what modern Colorbond installations with proper insulation sound like in practice.",
-  alternates: { canonical: `${site.url}/blog/metal-roof-noise-in-rain` },
-};
+  image: "/images/service-colorbond-roofing.webp",
+  imageAlt: "Colorbond metal roof on an Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

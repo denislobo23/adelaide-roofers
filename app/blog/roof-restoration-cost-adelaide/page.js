@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roof-restoration-cost-adelaide",
   title: "How Much Does Roof Restoration Cost in Adelaide? | Adelaide Roofers",
   description:
     "Real 2026 Adelaide price ranges for roof restoration, and what actually changes the number for your home.",
-  alternates: { canonical: `${site.url}/blog/roof-restoration-cost-adelaide` },
-};
+  image: "/images/service-roof-restoration.webp",
+  imageAlt: "Roof restoration cost in Adelaide — roof being cleaned and resealed",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

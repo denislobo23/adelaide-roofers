@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "solar-panels-and-your-roof",
   title: "Solar Panels and Your Roof: What to Check First | Adelaide Roofers",
   description:
     "What to check about your roof's condition and material before installing solar, and why doing roof work first usually saves money overall.",
-  alternates: { canonical: `${site.url}/blog/solar-panels-and-your-roof` },
-};
+  image: "/images/service-colorbond-roofing.webp",
+  imageAlt: "Solar panel installation considerations on an Adelaide roof",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

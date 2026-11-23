@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roofing-scams-adelaide",
   title: "Common Roofing Scams in Australia (and How to Avoid Them) | Adelaide Roofers",
   description:
     "The tactics that show up again and again in roofing scams — door-knockers, pressure tactics, upfront cash demands — and how to spot them before they cost you.",
-  alternates: { canonical: `${site.url}/blog/roofing-scams-adelaide` },
-};
+  image: "/images/blog-roofing-scams.webp",
+  imageAlt: "Homeowner checking a tradesperson's identification and licence before agreeing to work",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

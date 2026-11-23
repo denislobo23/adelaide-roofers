@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "insurance-roof-replacement-sa",
   title: "Does Home Insurance Cover Roof Replacement in SA? | Adelaide Roofers",
   description:
     "What's typically covered versus not when it comes to roof damage and insurance in South Australia, and how to document a claim properly.",
-  alternates: { canonical: `${site.url}/blog/insurance-roof-replacement-sa` },
-};
+  image: "/images/service-roof-repairs.webp",
+  imageAlt: "Storm-damaged roof in Adelaide being assessed for an insurance claim",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

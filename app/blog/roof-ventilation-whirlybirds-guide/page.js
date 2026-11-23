@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roof-ventilation-whirlybirds-guide",
   title: "Roof Ventilation & Whirlybirds: Do You Actually Need Them? | Adelaide Roofers",
   description:
     "What whirlybirds and roof vents actually do, and how to tell whether your Adelaide home would genuinely benefit from them.",
-  alternates: { canonical: `${site.url}/blog/roof-ventilation-whirlybirds-guide` },
-};
+  image: "/images/service-roof-ventilation.webp",
+  imageAlt: "Whirlybird roof ventilator installed on an Adelaide roof",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

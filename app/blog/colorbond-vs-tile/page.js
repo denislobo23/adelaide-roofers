@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "colorbond-vs-tile",
   title: "Colorbond vs Tile: Which Is Better for Adelaide Homes? | Adelaide Roofers",
   description:
     "A straight comparison of Colorbond and tile roofing for Adelaide's climate — weight, cost, lifespan, noise, and which one actually suits your home.",
-  alternates: { canonical: `${site.url}/blog/colorbond-vs-tile` },
-};
+  image: "/images/service-colorbond-roofing.webp",
+  imageAlt: "Colorbond metal roofing compared to tile roofing on Adelaide homes",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

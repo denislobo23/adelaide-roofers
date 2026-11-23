@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "how-long-does-roof-replacement-take",
   title: "How Long Does a Roof Replacement Actually Take? | Adelaide Roofers",
   description:
     "A realistic day-by-day breakdown of a full roof replacement in Adelaide, and the factors that can extend the timeline.",
-  alternates: { canonical: `${site.url}/blog/how-long-does-roof-replacement-take` },
-};
+  image: "/images/service-roof-replacement.webp",
+  imageAlt: "Roof replacement in progress on an Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RepairVsReplaceQuiz from "@/components/RepairVsReplaceQuiz";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "repair-vs-replace",
   title: "Repair, Restore or Replace Your Roof? How to Decide | Adelaide Roofers",
   description:
     "A simple framework for telling whether your roof needs a repair, a restoration, or a full replacement — and why the real comparison isn't the price of one job.",
-  alternates: { canonical: `${site.url}/blog/repair-vs-replace` },
-};
+  image: "/images/service-roof-replacement.webp",
+  imageAlt: "Roofer checking tile condition to decide between repair, restoration and replacement",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

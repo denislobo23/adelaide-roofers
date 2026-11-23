@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roofer-vs-contractor-vs-plumber",
   title: "Roofer vs Roof Contractor vs Roof Plumber: Which Do You Need? | Adelaide Roofers",
   description:
     "The trade titles overlap, but they're not identical — what each one actually covers, and which one fits your specific job.",
-  alternates: { canonical: `${site.url}/blog/roofer-vs-contractor-vs-plumber` },
-};
+  image: "/images/service-roof-restoration.webp",
+  imageAlt: "Roofing tradesperson working on an Adelaide tile roof",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

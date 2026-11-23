@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "asbestos-roof-removal-guide",
   title: "Asbestos Roof Removal: What Adelaide Homeowners Need to Know | Adelaide Roofers",
   description:
     "How to tell if your Adelaide home has an asbestos roof, why it needs a licensed removalist, and what the process and cost actually look like.",
-  alternates: { canonical: `${site.url}/blog/asbestos-roof-removal-guide` },
-};
+  image: "/images/service-asbestos-roof-removal.webp",
+  imageAlt: "Asbestos roof removal in Adelaide — licensed removalist assessing an older fibro roof",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

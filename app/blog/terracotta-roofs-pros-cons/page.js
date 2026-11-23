@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "terracotta-roofs-pros-cons",
   title: "Terracotta Roofs: Pros, Cons, and When to Restore vs Replace | Adelaide Roofers",
   description:
     "What makes terracotta tile different from concrete tile, its real advantages and drawbacks, and how to tell if yours needs restoring or replacing.",
-  alternates: { canonical: `${site.url}/blog/terracotta-roofs-pros-cons` },
-};
+  image: "/images/blog-terracotta-roof.webp",
+  imageAlt: "Terracotta tile roof on a traditional Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

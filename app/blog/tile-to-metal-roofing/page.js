@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "tile-to-metal-roofing",
   title: "What Actually Changes When You Go Tile-to-Metal | Adelaide Roofers",
   description:
     "Weight, solar compatibility, colour, and the one thing to check with your council first — what really changes when you switch from tile to Colorbond.",
-  alternates: { canonical: `${site.url}/blog/tile-to-metal-roofing` },
-};
+  image: "/images/service-colorbond-roofing.webp",
+  imageAlt: "Tile to Colorbond roof conversion in Adelaide — new metal roofing sheets being installed",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

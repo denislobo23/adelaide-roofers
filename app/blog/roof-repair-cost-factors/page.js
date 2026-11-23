@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roof-repair-cost-factors",
   title: "What Factors Affect the Cost of a Roof Repair | Adelaide Roofers",
   description:
     "Why two quotes for the same job can be thousands apart — the real factors that drive roof repair pricing in Adelaide.",
-  alternates: { canonical: `${site.url}/blog/roof-repair-cost-factors` },
-};
+  image: "/images/service-roof-repairs.webp",
+  imageAlt: "Roof repair cost in Adelaide — tradesperson repairing cracked roof tiles",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

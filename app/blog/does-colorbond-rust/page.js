@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "does-colorbond-rust",
   title: "Does Colorbond Rust? What Adelaide Homeowners Should Know | Adelaide Roofers",
   description:
     "How Colorbond's protective coating actually works, when corrosion genuinely becomes a risk, and what coastal Adelaide suburbs need to know.",
-  alternates: { canonical: `${site.url}/blog/does-colorbond-rust` },
-};
+  image: "/images/service-colorbond-roofing.webp",
+  imageAlt: "Colorbond metal roofing on an Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

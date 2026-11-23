@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "how-often-inspect-your-roof",
   title: "How Often Should You Get Your Roof Inspected? | Adelaide Roofers",
   description:
     "A realistic inspection schedule for Adelaide roofs, and the moments outside that schedule when it's worth getting one sooner.",
-  alternates: { canonical: `${site.url}/blog/how-often-inspect-your-roof` },
-};
+  image: "/images/service-roof-inspection.webp",
+  imageAlt: "Roof inspection in progress on an Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

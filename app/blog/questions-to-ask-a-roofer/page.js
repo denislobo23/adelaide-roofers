@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "questions-to-ask-a-roofer",
   title: "10 Questions to Ask a Roofer Before You Sign | Adelaide Roofers",
   description:
     "The questions that actually separate a properly licensed, insured roofer from a risky one — and what a good answer to each one sounds like.",
-  alternates: { canonical: `${site.url}/blog/questions-to-ask-a-roofer` },
-};
+  image: "/images/blog-questions-to-ask-a-roofer.webp",
+  imageAlt: "Homeowner reviewing a written roofing quote before signing",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

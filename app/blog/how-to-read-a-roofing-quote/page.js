@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "how-to-read-a-roofing-quote",
   title: "How to Read a Roofing Quote: What Should Be Included | Adelaide Roofers",
   description:
     "What a properly itemised roofing quote actually looks like, and the vague line items that should make you ask more questions before signing.",
-  alternates: { canonical: `${site.url}/blog/how-to-read-a-roofing-quote` },
-};
+  image: "/images/blog-how-to-read-a-quote.webp",
+  imageAlt: "Reading and comparing itemised roofing quotes",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

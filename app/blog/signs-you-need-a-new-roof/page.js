@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "signs-you-need-a-new-roof",
   title: "Signs You Need a New Roof, Not Just a Repair | Adelaide Roofers",
   description:
     "10 signs your Adelaide roof needs replacing, not another repair, from leaks that keep coming back to crumbling tiles, rust and sagging rooflines.",
-  alternates: { canonical: `${site.url}/blog/signs-you-need-a-new-roof` },
-};
+  image: "/images/service-roof-repairs.webp",
+  imageAlt: "Assessing roof damage in Adelaide — signs a roof needs full replacement rather than a repair",
+});
 
 const HEADLINE = "Signs You Need a New Roof, Not Just a Repair";
 

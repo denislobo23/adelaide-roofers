@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "financing-a-new-roof",
   title: "Can I Finance a New Roof? Options for Adelaide Homeowners | Adelaide Roofers",
   description:
     "Payment plans, personal loans, and what to ask a roofer about financing before you commit to a full roof replacement.",
-  alternates: { canonical: `${site.url}/blog/financing-a-new-roof` },
-};
+  image: "/images/service-roof-restoration.webp",
+  imageAlt: "Planning finance options for a roof replacement in Adelaide",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

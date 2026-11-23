@@ -8,13 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roof-replacement-cost-adelaide",
   title: "How Much Does a Roof Replacement Cost in Adelaide? (2026) | Adelaide Roofers",
   description:
     "Real 2026 Adelaide price ranges for a full roof replacement, and the factors — size, material, access, and what's underneath — that actually move the number.",
-  alternates: { canonical: `${site.url}/blog/roof-replacement-cost-adelaide` },
-};
+  image: "/images/service-roof-replacement.webp",
+  imageAlt: "Roof replacement cost in Adelaide — new roofing sheets being installed on a home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

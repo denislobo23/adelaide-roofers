@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "council-approval-roof-replacement-sa",
   title: "Do I Need Council Approval to Replace My Roof in SA? | Adelaide Roofers",
   description:
     "When roof replacement in South Australia is treated as routine maintenance, and when heritage or character overlays mean you need council sign-off first.",
-  alternates: { canonical: `${site.url}/blog/council-approval-roof-replacement-sa` },
-};
+  image: "/images/service-roof-replacement.webp",
+  imageAlt: "Roof replacement work on an Adelaide home",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

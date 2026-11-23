@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "roof-warranties-explained",
   title: "Roof Warranties Explained: What's Actually Covered | Adelaide Roofers",
   description:
     "The difference between a materials warranty and a workmanship warranty, and the common mistakes that can quietly void either one.",
-  alternates: { canonical: `${site.url}/blog/roof-warranties-explained` },
-};
+  image: "/images/service-roof-replacement.webp",
+  imageAlt: "Newly installed roof covered by a workmanship warranty",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",

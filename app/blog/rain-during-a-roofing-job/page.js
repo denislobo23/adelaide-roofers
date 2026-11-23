@@ -7,13 +7,16 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
+import { articleMetadata } from "@/lib/articleMetadata";
 
-export const metadata = {
+export const metadata = articleMetadata({
+  slug: "rain-during-a-roofing-job",
   title: "What Happens If It Rains During a Roofing Job? | Adelaide Roofers",
   description:
     "How a properly run roofing job handles rain and weather delays, and why it's a normal part of scheduling rather than something to worry about.",
-  alternates: { canonical: `${site.url}/blog/rain-during-a-roofing-job` },
-};
+  image: "/images/service-roof-restoration.webp",
+  imageAlt: "Roofing work paused during weather in Adelaide",
+});
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
