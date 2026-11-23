@@ -126,8 +126,19 @@ export default function RoofingScamsPage() {
                       A trader who wants cash only, or a large deposit before any materials arrive,
                       is a red flag. A legitimate roofer has a business account, issues proper
                       invoices, and ties payments to stages of the job. In South Australia, the
-                      law caps the deposit on domestic building work contracts over $20,000 at 5%
-                      of the contract price.
+                      law caps the deposit on domestic building work at $1,000 for contracts up to
+                      $20,000, and at 5% of the contract price for contracts over $20,000, according
+                      to{" "}
+                      <a
+                        href="https://www.cbs.sa.gov.au/documents/form-1-building-contract-rights-and-obligations.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={inlineLink}
+                      >
+                        CBS Form 1
+                        <span className="sr-only"> (PDF, opens in a new tab)</span>
+                      </a>
+                      .
                     </p>
                   </div>
                   <div>
