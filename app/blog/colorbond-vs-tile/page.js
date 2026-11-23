@@ -108,7 +108,11 @@ export default function ColorbondVsTilePage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   If you're planning solar, want lower long-term maintenance, or your home is in
                   a salt-exposed coastal suburb where a coastal-grade metal option performs well,
-                  Colorbond tends to be the stronger fit.
+                  Colorbond tends to be the stronger fit. If that&apos;s you, see our{" "}
+                  <Link href="/services/colorbond-roofing" className="font-semibold text-clay hover:text-clay-deep">
+                    Colorbond and metal roofing
+                  </Link>{" "}
+                  page.
                 </p>
               </article>
 

@@ -66,6 +66,7 @@ const QUESTIONS = [
   {
     q: "What happens if it rains or the job runs over?",
     a: "A roofer who's done this before has a straightforward answer — weather delays are normal, and how they handle them tells you a lot about how they run a job.",
+    link: { href: "/blog/rain-during-a-roofing-job", label: "Here's what a well-run job does when it rains." },
   },
   {
     q: "What's your payment structure?",
@@ -113,7 +114,17 @@ export default function QuestionsToAskARooferPage() {
                   <h2 className="font-display text-xl font-bold tracking-tight text-clay">
                     {i + 1}. {item.q}
                   </h2>
-                  <p className="mt-3 font-body leading-relaxed text-ink/70">{item.a}</p>
+                  <p className="mt-3 font-body leading-relaxed text-ink/70">
+                    {item.a}
+                    {item.link && (
+                      <>
+                        {" "}
+                        <Link href={item.link.href} className="font-semibold text-clay hover:text-clay-deep">
+                          {item.link.label}
+                        </Link>
+                      </>
+                    )}
+                  </p>
                 </article>
               ))}
 

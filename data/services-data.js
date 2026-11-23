@@ -89,6 +89,27 @@ export const servicePages = {
       "Debris or damage after a storm",
     ],
     decisionGuide: true,
+    guides: {
+      heading: "Before you book a repair",
+      intro: "Useful reading if you're weighing up a roof repair.",
+      links: [
+        {
+          href: "/blog/roof-repair-cost-factors",
+          label: "What affects the cost of a roof repair",
+          text: "Why two quotes for \"a few cracked tiles\" can be far apart.",
+        },
+        {
+          href: "/blog/repair-vs-replace",
+          label: "Repair, restore or replace?",
+          text: "A quick way to tell which job your roof actually needs.",
+        },
+        {
+          href: "/blog/insurance-roof-replacement-sa",
+          label: "Will insurance cover storm damage?",
+          text: "What insurers usually cover, and how to document it.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "How much do roof repairs cost in Adelaide?",
@@ -224,6 +245,22 @@ export const servicePages = {
       "Active dripping during or after a downpour",
       "Sagging or discoloured plaster",
     ],
+    guides: {
+      heading: "More on leaks and repair costs",
+      intro: "Background reading while you get the leak sorted.",
+      links: [
+        {
+          href: "/blog/roof-repair-cost-factors",
+          label: "Why repair quotes vary",
+          text: "Including why a long-running leak can change the price.",
+        },
+        {
+          href: "/blog/insurance-roof-replacement-sa",
+          label: "Does insurance cover a leaking roof?",
+          text: "Sudden damage versus slow wear, and what to do first.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "Why is my roof leaking in a spot away from the damage?",
@@ -265,6 +302,32 @@ export const servicePages = {
       "Salt corrosion on a coastal home's roof and fixings",
       "Building or extending and choosing a roof material",
     ],
+    guides: {
+      heading: "Thinking about a metal roof?",
+      intro: "Answers to the questions Adelaide homeowners ask most about Colorbond.",
+      links: [
+        {
+          href: "/blog/colorbond-vs-tile",
+          label: "Colorbond vs tile for Adelaide homes",
+          text: "A side-by-side comparison of the two materials.",
+        },
+        {
+          href: "/blog/tile-to-metal-roofing",
+          label: "What changes when you switch from tile to metal",
+          text: "Weight, solar, colour and council checks.",
+        },
+        {
+          href: "/blog/does-colorbond-rust",
+          label: "Does Colorbond rust?",
+          text: "Coastal suburbs, cut edges and choosing the right grade.",
+        },
+        {
+          href: "/blog/metal-roof-noise-in-rain",
+          label: "Is a metal roof noisier in the rain?",
+          text: "What really controls the noise, and what to ask for.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "Is Colorbond better than tile?",
@@ -616,6 +679,32 @@ export const servicePages = {
       "Planning a renovation or extension and needing to know what's up there before work starts",
       "An ageing roof you're simply unsure about the material of",
     ],
+    guides: {
+      heading: "Living with an older fibro roof?",
+      intro: "What to know before you plan removal or a re-roof.",
+      links: [
+        {
+          href: "/blog/asbestos-roof-removal-guide",
+          label: "Asbestos roof removal guide",
+          text: "How to tell, why it needs a licensed removalist, and costs.",
+        },
+        {
+          href: "/blog/signs-you-need-a-new-roof",
+          label: "Signs your roof needs replacing",
+          text: "Including when an ageing asbestos roof can't be repaired.",
+        },
+        {
+          href: "/blog/roof-replacement-cost-adelaide",
+          label: "What a re-roof costs in Adelaide",
+          text: "Typical ranges, and why asbestos removal is priced separately.",
+        },
+        {
+          href: "/blog/solar-panels-and-your-roof",
+          label: "Planning solar on an older roof?",
+          text: "Why asbestos has to come off before panels go on.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "How do I know if my roof has asbestos?",
@@ -660,6 +749,17 @@ export const servicePages = {
       "Condensation or a musty smell in the roof cavity over winter",
       "Higher-than-expected cooling bills over summer",
     ],
+    guides: {
+      heading: "Before you add vents",
+      intro: "A plain-English look at whether your roof space needs them.",
+      links: [
+        {
+          href: "/blog/roof-ventilation-whirlybirds-guide",
+          label: "Do you actually need whirlybirds?",
+          text: "What vents change, signs you'd benefit, and how many you need.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "Do whirlybirds actually make a difference to how hot my house gets?",
@@ -704,6 +804,22 @@ export const servicePages = {
       "The roof hasn't been looked at in over five years",
       "General peace of mind before winter or a long dry summer",
     ],
+    guides: {
+      heading: "When to book an inspection",
+      intro: "Guides on timing and what an inspection should cover.",
+      links: [
+        {
+          href: "/blog/how-often-inspect-your-roof",
+          label: "How often to get your roof inspected",
+          text: "The baseline schedule, plus the moments to go sooner.",
+        },
+        {
+          href: "/blog/solar-panels-and-your-roof",
+          label: "What to check before installing solar",
+          text: "Lifespan, material, structure and asbestos.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "How often should I get my roof inspected?",

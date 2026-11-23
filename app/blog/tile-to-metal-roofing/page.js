@@ -111,7 +111,10 @@ export default function TileToMetalPage() {
                   comes in a broad standard colour range and doesn&apos;t chalk or fade the way an
                   ageing painted tile coating can. The look is genuinely different from tile,
                   though — this is a visible, permanent change to your home&apos;s appearance, not
-                  a subtle one.
+                  a subtle one. To see what the job looks like, visit{" "}
+                  <Link href="/services/colorbond-roofing" className="font-semibold text-clay hover:text-clay-deep">
+                    our Colorbond roofing page
+                  </Link>.
                 </p>
               </article>
 

@@ -125,7 +125,10 @@ export default function HowLongDoesReplacementTakePage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   A properly run job keeps the home weather-sealed at the end of every single
                   day, regardless of how far through the job you are — you're never left exposed
-                  to rain overnight partway through a replacement.
+                  to rain overnight partway through a replacement. More on{" "}
+                  <Link href="/blog/rain-during-a-roofing-job" className="font-semibold text-clay hover:text-clay-deep">
+                    what happens if it rains mid-job
+                  </Link>.
                 </p>
               </article>
 

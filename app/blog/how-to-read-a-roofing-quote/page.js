@@ -116,7 +116,10 @@ export default function HowToReadAQuotePage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   None of this means a short quote is automatically dishonest — but if any of the
                   above is missing, it's entirely reasonable to ask for it before signing
-                  anything.
+                  anything. Checking quotes, licences and warranties is also part of{" "}
+                  <Link href="/how-we-vet-our-roofers" className="font-semibold text-clay hover:text-clay-deep">
+                    how we vet the roofers we work with
+                  </Link>.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

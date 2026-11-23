@@ -30,6 +30,39 @@ export const metadata = {
   alternates: { canonical: `${site.url}/how-we-vet-our-roofers` },
 };
 
+const HIRING_GUIDES = [
+  {
+    href: "/blog/questions-to-ask-a-roofer",
+    label: "10 questions to ask a roofer before you sign",
+    text: "licence, insurance, warranty, payment and more.",
+  },
+  {
+    href: "/blog/how-to-read-a-roofing-quote",
+    label: "How to read a roofing quote",
+    text: "what a properly itemised quote should include.",
+  },
+  {
+    href: "/blog/roof-warranties-explained",
+    label: "Roof warranties explained",
+    text: "materials versus workmanship, and what voids each.",
+  },
+  {
+    href: "/blog/roofing-scams-adelaide",
+    label: "Common roofing scams and how to avoid them",
+    text: "door-knocks, pressure tactics and cash-upfront demands.",
+  },
+  {
+    href: "/blog/roofer-vs-contractor-vs-plumber",
+    label: "Roofer, roof contractor or roof plumber?",
+    text: "which licence your job actually needs.",
+  },
+  {
+    href: "/blog/rain-during-a-roofing-job",
+    label: "What happens if it rains during a roofing job",
+    text: "how a well-run job handles Adelaide's weather.",
+  },
+];
+
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -284,6 +317,25 @@ export default function HowWeVetOurRoofersPage() {
                   </Link>
                   .
                 </p>
+              </article>
+
+              <article>
+                <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
+                  Hiring a roofer yourself?
+                </h2>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  These guides cover what to check and what to expect, whoever you end up hiring.
+                </p>
+                <ul className="mt-5 space-y-3">
+                  {HIRING_GUIDES.map((g) => (
+                    <li key={g.href} className="font-body leading-relaxed text-ink/70">
+                      <Link href={g.href} className="font-semibold text-clay underline-offset-2 hover:underline">
+                        {g.label}
+                      </Link>{" "}
+                      — {g.text}
+                    </li>
+                  ))}
+                </ul>
               </article>
             </div>
           </div>

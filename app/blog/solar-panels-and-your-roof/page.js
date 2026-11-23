@@ -121,7 +121,11 @@ export default function SolarPanelsAndYourRoofPage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   If you're planning solar and unsure whether your roof needs attention first,
-                  it's worth checking before committing to an install date.
+                  it's worth checking before committing to an install date. A{" "}
+                  <Link href="/services/roof-inspection" className="font-semibold text-clay hover:text-clay-deep">
+                    roof inspection before the panels go on
+                  </Link>{" "}
+                  will tell you.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

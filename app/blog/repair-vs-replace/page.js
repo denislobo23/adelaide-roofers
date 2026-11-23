@@ -165,7 +165,11 @@ export default function RepairVsReplacePage() {
                   <Link href="/services/roof-repairs" className={inlineLink}>
                     roof repairs in Adelaide
                   </Link>{" "}
-                  page.
+                  page, or read{" "}
+                  <Link href="/blog/roof-repair-cost-factors" className={inlineLink}>
+                    what affects the cost of a roof repair
+                  </Link>
+                  .
                 </p>
               </article>
 

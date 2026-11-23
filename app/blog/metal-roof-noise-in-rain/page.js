@@ -106,7 +106,11 @@ export default function MetalRoofNoisePage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Ask specifically about the insulation and sarking specification when getting a
                   quote for a metal re-roof — this is the actual lever that controls noise, not
-                  the roofing sheet itself.
+                  the roofing sheet itself. Our{" "}
+                  <Link href="/services/colorbond-roofing" className="font-semibold text-clay hover:text-clay-deep">
+                    Colorbond roofing in Adelaide
+                  </Link>{" "}
+                  page covers what a metal roof job involves.
                 </p>
               </article>
 

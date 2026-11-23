@@ -94,7 +94,10 @@ export default function RainDuringAJobPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Weather delays add days to the schedule, not dollars to the quote — a fair
                   roofer doesn't charge extra for waiting out rain that's genuinely outside
-                  anyone's control.
+                  anyone's control. For what a typical schedule looks like, see{" "}
+                  <Link href="/blog/how-long-does-roof-replacement-take" className="font-semibold text-clay hover:text-clay-deep">
+                    how long a roof replacement takes
+                  </Link>.
                 </p>
               </article>
 
@@ -105,7 +108,11 @@ export default function RainDuringAJobPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Experienced roofers keep an eye on the forecast and sequence work to minimise
                   exposure during likely wet periods — it's part of normal job planning, not
-                  something you need to manage yourself.
+                  something you need to manage yourself. A proven track record is one of the
+                  things we look for —{" "}
+                  <Link href="/how-we-vet-our-roofers" className="font-semibold text-clay hover:text-clay-deep">
+                    see how we choose our roofers
+                  </Link>.
                 </p>
               </article>
 
