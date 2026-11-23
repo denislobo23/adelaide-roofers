@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "How Often Should You Get Your Roof Inspected? | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function HowOftenInspectPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               How Often Should You Get Your Roof Inspected?
             </h1>
+            <ArticleMeta slug="how-often-inspect-your-roof" headline={"How Often Should You Get Your Roof Inspected?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Roughly every two to three years for a roof with no known issues — plus a handful
               of specific moments where it's worth doing one sooner, regardless of schedule.

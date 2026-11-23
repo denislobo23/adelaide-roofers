@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Does Colorbond Rust? What Adelaide Homeowners Should Know | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function DoesColorbondRustPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Does Colorbond Rust? What Adelaide Homeowners Should Know
             </h1>
+            <ArticleMeta slug="does-colorbond-rust" headline={"Does Colorbond Rust? What Adelaide Homeowners Should Know"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Short answer: properly maintained Colorbond very rarely corrodes, but "rarely"
               isn't "never" — and where you live in Adelaide genuinely changes the risk.

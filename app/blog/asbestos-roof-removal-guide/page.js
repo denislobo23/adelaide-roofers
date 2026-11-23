@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Asbestos Roof Removal: What Adelaide Homeowners Need to Know | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function AsbestosRoofRemovalGuidePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Asbestos Roof Removal: What Adelaide Homeowners Need to Know
             </h1>
+            <ArticleMeta slug="asbestos-roof-removal-guide" headline={"Asbestos Roof Removal: What Adelaide Homeowners Need to Know"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Plenty of Adelaide homes built before the early 1980s still have their original{" "}
               <strong>asbestos roof</strong>, and most owners have never had a reason to think

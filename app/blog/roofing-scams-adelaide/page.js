@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Common Roofing Scams in Australia (and How to Avoid Them) | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function RoofingScamsPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Common Roofing Scams in Australia (and How to Avoid Them)
             </h1>
+            <ArticleMeta slug="roofing-scams-adelaide" headline={"Common Roofing Scams in Australia (and How to Avoid Them)"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Most roofing scams follow a handful of recognisable patterns. Knowing them ahead
               of time is the best protection — none of these are subtle once you know what to

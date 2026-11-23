@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "How to Read a Roofing Quote: What Should Be Included | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function HowToReadAQuotePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               How to Read a Roofing Quote: What Should Be Included
             </h1>
+            <ArticleMeta slug="how-to-read-a-roofing-quote" headline={"How to Read a Roofing Quote: What Should Be Included"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Two quotes for the same job can look completely different — not because one
               roofer is dishonest, but because "quote" means different things to different

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "What Actually Changes When You Go Tile-to-Metal | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function TileToMetalPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               What Actually Changes When You Go Tile-to-Metal
             </h1>
+            <ArticleMeta slug="tile-to-metal-roofing" headline={"What Actually Changes When You Go Tile-to-Metal"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Switching from tile to <strong>Colorbond roofing in Adelaide</strong> is one of
               the most common re-roofing decisions homeowners make — and one of the least

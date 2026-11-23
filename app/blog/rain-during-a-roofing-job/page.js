@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "What Happens If It Rains During a Roofing Job? | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function RainDuringAJobPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               What Happens If It Rains During a Roofing Job?
             </h1>
+            <ArticleMeta slug="rain-during-a-roofing-job" headline={"What Happens If It Rains During a Roofing Job?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Adelaide's weather doesn't always cooperate with a roofing schedule — here's how a
               properly run job actually handles it, and why it's not something to worry about.

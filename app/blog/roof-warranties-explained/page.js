@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Roof Warranties Explained: What's Actually Covered | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function RoofWarrantiesExplainedPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Roof Warranties Explained: What&apos;s Actually Covered
             </h1>
+            <ArticleMeta slug="roof-warranties-explained" headline={"Roof Warranties Explained: What's Actually Covered"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               "It's under warranty" can mean very different things depending on which warranty
               you're actually talking about — and what you did (or didn't do) in the meantime.

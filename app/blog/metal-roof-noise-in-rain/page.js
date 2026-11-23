@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Is a Metal Roof Really Noisier in the Rain? | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function MetalRoofNoisePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Is a Metal Roof Really Noisier in the Rain?
             </h1>
+            <ArticleMeta slug="metal-roof-noise-in-rain" headline={"Is a Metal Roof Really Noisier in the Rain?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Less than the reputation suggests — the "noisy tin roof" idea mostly comes from a
               specific kind of building that isn't what's going on a modern Adelaide home.

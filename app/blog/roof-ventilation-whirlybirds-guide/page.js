@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Roof Ventilation & Whirlybirds: Do You Actually Need Them? | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function RoofVentilationGuidePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Roof Ventilation & Whirlybirds: Do You Actually Need Them?
             </h1>
+            <ArticleMeta slug="roof-ventilation-whirlybirds-guide" headline={"Roof Ventilation & Whirlybirds: Do You Actually Need Them?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               For a lot of Adelaide homes, yes — an unventilated roof space in a hot, dry
               climate does real, measurable work against you. Here's what whirlybirds and roof

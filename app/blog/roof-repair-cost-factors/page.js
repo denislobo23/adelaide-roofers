@@ -7,6 +7,7 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "What Factors Affect the Cost of a Roof Repair | Adelaide Roofers",
@@ -46,6 +47,7 @@ export default function RepairCostFactorsPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               What Factors Affect the Cost of a Roof Repair
             </h1>
+            <ArticleMeta slug="roof-repair-cost-factors" headline={"What Factors Affect the Cost of a Roof Repair"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Two homeowners with what sounds like the same problem — &ldquo;a few cracked
               tiles&rdquo; — can get quotes thousands of dollars apart. That&apos;s not

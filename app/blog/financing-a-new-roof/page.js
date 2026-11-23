@@ -7,6 +7,7 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Can I Finance a New Roof? Options for Adelaide Homeowners | Adelaide Roofers",
@@ -46,6 +47,7 @@ export default function FinancingANewRoofPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Can I Finance a New Roof? Options for Adelaide Homeowners
             </h1>
+            <ArticleMeta slug="financing-a-new-roof" headline={"Can I Finance a New Roof? Options for Adelaide Homeowners"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               A full roof replacement is a big enough spend that paying it outright isn't always
               realistic — and it doesn't have to be the only path. Here are the common ways

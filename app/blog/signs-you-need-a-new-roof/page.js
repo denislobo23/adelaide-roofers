@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Signs You Need a Roof Replacement, Not Just a Repair | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function SignsYouNeedANewRoofPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Signs You Need a Roof Replacement, Not Just a Repair
             </h1>
+            <ArticleMeta slug="signs-you-need-a-new-roof" headline={"Signs You Need a Roof Replacement, Not Just a Repair"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               A repair fixes a specific, isolated problem. These signs mean the roof itself —
               not just one spot on it — has moved past the point where patching makes sense.

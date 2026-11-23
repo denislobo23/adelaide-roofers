@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "How Long Does a Roof Replacement Actually Take? | Adelaide Roofers",
@@ -53,6 +54,7 @@ export default function HowLongDoesReplacementTakePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               How Long Does a Roof Replacement Actually Take?
             </h1>
+            <ArticleMeta slug="how-long-does-roof-replacement-take" headline={"How Long Does a Roof Replacement Actually Take?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Most standard residential replacements in Adelaide wrap up within a few days —
               here's a realistic breakdown of what those days actually involve.

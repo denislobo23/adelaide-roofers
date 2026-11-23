@@ -7,6 +7,7 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RepairVsReplaceQuiz from "@/components/RepairVsReplaceQuiz";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Repair, Restore or Replace Your Roof? How to Decide | Adelaide Roofers",
@@ -82,6 +83,7 @@ export default function RepairVsReplacePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Repair vs. Replace: Which Does Your Roof Need?
             </h1>
+            <ArticleMeta slug="repair-vs-replace" headline={"Repair vs. Replace: Which Does Your Roof Need?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               A few cracked tiles is a different problem to a roof that&apos;s leaking every
               winter — but it&apos;s not always obvious which side of that line your roof is

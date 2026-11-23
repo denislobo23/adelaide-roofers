@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Solar Panels and Your Roof: What to Check First | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function SolarPanelsAndYourRoofPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Solar Panels and Your Roof: What to Check First
             </h1>
+            <ArticleMeta slug="solar-panels-and-your-roof" headline={"Solar Panels and Your Roof: What to Check First"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Installing solar is fundamentally a roof decision as much as an electrical one —
               here's what's worth checking about your roof before the panels go up.

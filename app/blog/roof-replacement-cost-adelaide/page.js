@@ -7,6 +7,7 @@ import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import RoofCalculator from "@/components/RoofCalculator";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "How Much Does a Roof Replacement Cost in Adelaide? (2026) | Adelaide Roofers",
@@ -46,6 +47,7 @@ export default function ReplacementCostPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               How Much Does a Roof Replacement Cost in Adelaide?
             </h1>
+            <ArticleMeta slug="roof-replacement-cost-adelaide" headline={"How Much Does a Roof Replacement Cost in Adelaide?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               A full <strong>roof replacement cost in Adelaide</strong> typically runs{" "}
               <strong>$12,000–$25,000+</strong> for a standard single-storey home, depending on

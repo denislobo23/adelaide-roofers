@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Terracotta Roofs: Pros, Cons, and When to Restore vs Replace | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function TerracottaRoofsPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Terracotta Roofs: Pros, Cons, and When to Restore vs Replace
             </h1>
+            <ArticleMeta slug="terracotta-roofs-pros-cons" headline={"Terracotta Roofs: Pros, Cons, and When to Restore vs Replace"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Terracotta tile is common on Adelaide's older homes, and often confused with
               concrete tile at a glance — but the two behave quite differently over their

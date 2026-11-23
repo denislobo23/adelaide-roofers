@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Colorbond vs Tile: Which Is Better for Adelaide Homes? | Adelaide Roofers",
@@ -54,6 +55,7 @@ export default function ColorbondVsTilePage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Colorbond vs Tile: Which Is Better for Adelaide Homes?
             </h1>
+            <ArticleMeta slug="colorbond-vs-tile" headline={"Colorbond vs Tile: Which Is Better for Adelaide Homes?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               There's no universally &ldquo;better&rdquo; option between{" "}
               <strong>Colorbond and tile roofing in Adelaide</strong> — both perform well here.

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "Do I Need Council Approval to Replace My Roof in SA? | Adelaide Roofers",
@@ -45,6 +46,7 @@ export default function CouncilApprovalPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               Do I Need Council Approval to Replace My Roof in SA?
             </h1>
+            <ArticleMeta slug="council-approval-roof-replacement-sa" headline={"Do I Need Council Approval to Replace My Roof in SA?"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               For most Adelaide homes, no — but there's a genuine exception worth checking
               before you commit to a quote, not after.

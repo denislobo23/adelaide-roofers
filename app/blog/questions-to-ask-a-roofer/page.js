@@ -6,6 +6,7 @@ import Image from "next/image";
 import { site } from "@/data/config";
 import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import ArticleMeta from "@/components/ArticleMeta";
 
 export const metadata = {
   title: "10 Questions to Ask a Roofer Before You Sign | Adelaide Roofers",
@@ -88,6 +89,7 @@ export default function QuestionsToAskARooferPage() {
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
               10 Questions to Ask a Roofer Before You Sign
             </h1>
+            <ArticleMeta slug="questions-to-ask-a-roofer" headline={"10 Questions to Ask a Roofer Before You Sign"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               Most roofing disputes trace back to something that was never confirmed upfront —
               not necessarily bad workmanship. These ten questions cover the things worth
