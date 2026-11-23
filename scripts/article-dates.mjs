@@ -16,13 +16,8 @@ import { execSync } from "node:child_process";
 import { readdirSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-// Internal-link and SEO-only commits that shouldn't count as updates.
-const SKIP_COMMITS = [
-  "9a982fa", // service pages as keyword home (repair-vs-replace title/links)
-  "0c76c5f", // roof cleaning page (link paragraph in how-often-inspect)
-  "fd886cb", // roof restoration cluster links
-  "017c07b", // roof replacement cluster links
-];
+// Commits that shouldn't count as updates (add short hashes here if needed).
+const SKIP_COMMITS = [];
 const SKIP_TAG = "[skip-dates]";
 
 const blogDir = "app/blog";
