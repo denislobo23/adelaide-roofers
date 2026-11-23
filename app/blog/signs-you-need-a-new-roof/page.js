@@ -245,6 +245,21 @@ export default function SignsYouNeedANewRoofPage() {
                   </li>
                 </ol>
                 <p className={body}>
+                  If replacement looks likely, you&apos;ll probably also want to know whether{" "}
+                  <Link href="/blog/insurance-roof-replacement-sa" className={inlineLink}>
+                    insurance covers it
+                  </Link>
+                  ,{" "}
+                  <Link href="/blog/how-long-does-roof-replacement-take" className={inlineLink}>
+                    how long the job takes
+                  </Link>
+                  , and{" "}
+                  <Link href="/blog/financing-a-new-roof" className={inlineLink}>
+                    how to pay for it
+                  </Link>
+                  .
+                </p>
+                <p className={body}>
                   If you&apos;re already fairly sure it&apos;s time, here&apos;s how we can help
                   with{" "}
                   <Link href="/services/roof-replacement" className={inlineLink}>
