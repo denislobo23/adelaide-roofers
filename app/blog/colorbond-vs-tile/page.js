@@ -118,7 +118,12 @@ export default function ColorbondVsTilePage() {
                   For heritage-listed homes or character-overlay areas, tile is often specifically
                   protected and required by council rules. It's also the natural choice if you
                   simply prefer the traditional look, or your home is already tiled and a
-                  like-for-like replacement is the more cost-effective path.
+                  like-for-like replacement is the more cost-effective path. Either way, a local
+                  roofer can help with{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    re-roofing your home
+                  </Link>{" "}
+                  in whichever material suits it.
                 </p>
               </article>
 

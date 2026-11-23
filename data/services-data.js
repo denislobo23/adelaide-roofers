@@ -131,6 +131,58 @@ export const servicePages = {
       "Repeated leaks despite previous repairs",
     ],
     decisionGuide: true,
+    guides: {
+      heading: "Planning a re-roof?",
+      intro:
+        "These guides answer the questions most Adelaide homeowners ask before replacing a roof.",
+      links: [
+        {
+          href: "/blog/roof-replacement-cost-adelaide",
+          label: "Roof replacement cost in Adelaide",
+          text: "Typical price ranges and what pushes a quote up or down.",
+        },
+        {
+          href: "/blog/signs-you-need-a-new-roof",
+          label: "Signs you need a new roof, not a repair",
+          text: "How to tell when patching no longer makes sense.",
+        },
+        {
+          href: "/blog/how-long-does-roof-replacement-take",
+          label: "How long a roof replacement takes",
+          text: "A typical timeline, and what can stretch it out.",
+        },
+        {
+          href: "/blog/council-approval-roof-replacement-sa",
+          label: "Council approval for a new roof in SA",
+          text: "When heritage overlays or a material change need a check first.",
+        },
+        {
+          href: "/blog/insurance-roof-replacement-sa",
+          label: "Does insurance cover roof replacement?",
+          text: "Storm damage versus wear and tear, and how to document it.",
+        },
+        {
+          href: "/blog/financing-a-new-roof",
+          label: "Ways to finance a new roof",
+          text: "Payment plans, personal loans and home equity.",
+        },
+        {
+          href: "/blog/tile-to-metal-roofing",
+          label: "Switching from tile to metal",
+          text: "Weight, solar, colour and what to check before you convert.",
+        },
+        {
+          href: "/blog/colorbond-vs-tile",
+          label: "Colorbond vs tile for Adelaide homes",
+          text: "A side-by-side comparison to help you choose a material.",
+        },
+        {
+          href: "/blog/asbestos-roof-removal-guide",
+          label: "Replacing an asbestos roof",
+          text: "Why it needs a licensed removalist, and what that adds to the job.",
+        },
+      ],
+    },
     faqs: [
       {
         q: "How much does a roof replacement cost in Adelaide?",

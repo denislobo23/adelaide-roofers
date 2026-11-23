@@ -108,7 +108,11 @@ export default function HowLongDoesReplacementTakePage() {
                   once the old roof is off, a material conversion (tile to metal) rather than
                   like-for-like, and weather all add time. None of these are unusual — they're
                   just worth knowing about upfront rather than assuming every job takes exactly
-                  the same number of days.
+                  the same number of days. In heritage areas, a council check before work starts
+                  can add time too — see{" "}
+                  <Link href="/blog/council-approval-roof-replacement-sa" className="font-semibold text-clay hover:text-clay-deep">
+                    whether you need council approval to replace your roof
+                  </Link>.
                 </p>
               </article>
 
@@ -139,7 +143,10 @@ export default function HowLongDoesReplacementTakePage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   A local roofer can give you an accurate timeline once they've actually seen the
-                  roof, rather than a generic estimate.
+                  roof, rather than a generic estimate. To get matched with one, visit{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    our roof replacement page
+                  </Link>.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

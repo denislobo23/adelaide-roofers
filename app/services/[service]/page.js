@@ -275,6 +275,32 @@ export default async function ServiceDetailPage({ params }) {
         </section>
       )}
 
+      {/* ── OPTIONAL GUIDE LINKS (only pages with `guides`) ─────── */}
+      {s.guides && s.guides.links.length > 0 && (
+        <section className="mx-auto max-w-wrap px-5 py-16">
+          <div className="max-w-3xl">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-ink md:text-3xl">
+              {s.guides.heading}
+            </h2>
+            {s.guides.intro && (
+              <p className="mt-4 font-body leading-relaxed text-ink/70">{s.guides.intro}</p>
+            )}
+          </div>
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {s.guides.links.map((g) => (
+              <li key={g.href} className="rounded-xl border border-mortar bg-white p-5">
+                <Link href={g.href} className="font-display font-bold tracking-tight text-clay hover:text-clay-deep">
+                  {g.label} →
+                </Link>
+                {g.text && (
+                  <p className="mt-2 font-body text-sm leading-relaxed text-ink/65">{g.text}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* ── CALCULATOR — primary lead capture, right where cost   ── */}
       {/* ── intent peaks: after they've read what the job involves,── */}
       {/* ── right before the FAQ answers the same "how much" ─────── */}

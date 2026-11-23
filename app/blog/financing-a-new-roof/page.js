@@ -117,8 +117,18 @@ export default function FinancingANewRoofPage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Whatever route you're considering, it helps to know roughly what you're
-                  financing before comparing options. Use the calculator below for a
+                  financing before comparing options. Our{" "}
+                  <Link href="/blog/roof-replacement-cost-adelaide" className="font-semibold text-clay hover:text-clay-deep">
+                    roof replacement cost guide
+                  </Link>{" "}
+                  covers typical Adelaide prices, or use the calculator below for a
                   no-obligation figure.
+                </p>
+                <p className="mt-4 font-body leading-relaxed text-ink/70">
+                  Ready to get a quote? Start on{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    our roof replacement page
+                  </Link>.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

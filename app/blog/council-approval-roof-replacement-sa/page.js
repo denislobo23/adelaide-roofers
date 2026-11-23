@@ -104,7 +104,11 @@ export default function CouncilApprovalPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   If your home is older or sits in what feels like a heritage-flavoured area, a
                   quick check with your local council before committing to a quote avoids an
-                  unwelcome surprise partway through the process.
+                  unwelcome surprise partway through the process. Once you&apos;re clear, see our{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    roof replacement in Adelaide
+                  </Link>{" "}
+                  page to get matched with a local roofer.
                 </p>
               </article>
 

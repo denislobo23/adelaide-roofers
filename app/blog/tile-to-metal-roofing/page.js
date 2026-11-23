@@ -125,7 +125,11 @@ export default function TileToMetalPage() {
                 </p>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Council or heritage overlay questions aside, cost is usually the other big
-                  factor in this decision.
+                  factor in this decision. When you&apos;re ready to compare quotes, see our{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    roof replacement in Adelaide
+                  </Link>{" "}
+                  page.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

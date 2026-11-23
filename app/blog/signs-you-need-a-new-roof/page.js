@@ -118,7 +118,11 @@ export default function SignsYouNeedANewRoofPage() {
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Our quick repair-vs-replace framework and quiz walks through your specific
-                  situation, or a local roofer can give you a straight answer in person.
+                  situation, or a local roofer can give you a straight answer in person. If
+                  you&apos;re already sure, here&apos;s how we can help with{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    replacing your roof
+                  </Link>.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

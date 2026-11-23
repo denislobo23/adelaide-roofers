@@ -53,6 +53,13 @@ export default function ReplacementCostPage() {
               the single biggest roofing spend most homeowners make — here&apos;s what actually
               drives that number.
             </p>
+            <p className="mt-4 font-body leading-relaxed text-ink/70">
+              For what the job involves and how to get matched with a local roofer, see our{" "}
+              <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                roof replacement in Adelaide
+              </Link>{" "}
+              page.
+            </p>
 
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image

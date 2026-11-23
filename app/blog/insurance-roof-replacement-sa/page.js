@@ -84,7 +84,12 @@ export default function InsuranceRoofReplacementPage() {
                   falls under "wear and tear" or "lack of maintenance," which most standard
                   policies explicitly exclude. This is where most disappointed claims come from —
                   not insurers being unreasonable, but a genuine mismatch between what happened
-                  and what the policy was designed to cover.
+                  and what the policy was designed to cover. If your roof is simply worn out,
+                  these{" "}
+                  <Link href="/blog/signs-you-need-a-new-roof" className="font-semibold text-clay hover:text-clay-deep">
+                    signs you need a new roof rather than a repair
+                  </Link>{" "}
+                  will help you judge what it needs.
                 </p>
               </article>
 
@@ -118,7 +123,11 @@ export default function InsuranceRoofReplacementPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Whether or not insurance ends up covering it, it's worth knowing what the
                   actual repair or replacement would cost. Use the calculator below for a
-                  ballpark figure.
+                  ballpark figure, or read{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    how a roof replacement works
+                  </Link>{" "}
+                  with a local roofer.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link

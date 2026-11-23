@@ -100,7 +100,11 @@ export default function AsbestosRoofRemovalGuidePage() {
                   happen without releasing fibres into the property, followed by correct
                   transport and disposal at an approved facility. Once the old roofing is safely
                   removed, a new tile or Colorbond roof goes on in its place, the same as any
-                  other re-roof from that point.
+                  other re-roof from that point — see{" "}
+                  <Link href="/services/roof-replacement" className="font-semibold text-clay hover:text-clay-deep">
+                    our roof replacement and re-roofing page
+                  </Link>{" "}
+                  for that part of the job.
                 </p>
               </article>
 
