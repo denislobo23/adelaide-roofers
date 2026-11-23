@@ -74,7 +74,7 @@ export const articles = [
   },
   {
     slug: "roofing-scams-adelaide",
-    title: "Common Roofing Scams in Australia (and How to Avoid Them)",
+    title: "Common Roofing Scams in Adelaide (and How to Avoid Them)",
     category: "Choosing a roofer",
   },
   {

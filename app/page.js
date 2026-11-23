@@ -203,7 +203,7 @@ const resourceCards = [
     href: "/blog/questions-to-ask-a-roofer",
   },
   {
-    title: "Common Roofing Scams in Australia",
+    title: "Common Roofing Scams in Adelaide",
     body: "The tactics that show up again and again — and how to spot them before they cost you.",
     href: "/blog/roofing-scams-adelaide",
   },
