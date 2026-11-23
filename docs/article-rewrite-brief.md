@@ -1,5 +1,6 @@
 # Article rewrite brief
 
+0. Keywords: pick one main keyword for the article and 3–5 related questions people search (use Google Suggest and People Also Ask). Put the main keyword in the title tag, first paragraph, one H2 and the meta description, naturally. Answer the related questions in the article.
 1. Answer first: the first paragraph directly answers the title's question.
 2. Local: real Adelaide/SA detail (suburbs, climate, CBS, SA rules), never generic.
 3. Trust: specific numbers only if confirmed; add a short "Sources" section with official or manufacturer sources only (CBS, PlanSA, SafeWork SA, BlueScope, BoM, YourHome), opening in a new tab. Never link competitor roofers.

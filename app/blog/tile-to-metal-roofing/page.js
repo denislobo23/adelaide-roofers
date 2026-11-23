@@ -101,7 +101,11 @@ export default function TileToMetalPage() {
                   Metal roofing generally allows simpler, more secure mounting for solar panels
                   than tile does. If solar is on your radar at any point — now or in a few years —
                   it&apos;s worth factoring into the material decision now rather than re-doing
-                  mounting work later.
+                  mounting work later. Here&apos;s{" "}
+                  <Link href="/blog/solar-panels-and-your-roof" className="font-semibold text-clay hover:text-clay-deep">
+                    what to check on your roof before solar goes on
+                  </Link>
+                  .
                 </p>
               </article>
 
