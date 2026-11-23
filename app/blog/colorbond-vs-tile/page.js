@@ -72,8 +72,9 @@ export default function ColorbondVsTilePage() {
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               For most Adelaide re-roofs, Colorbond is the more popular choice: it&apos;s lighter,
               quicker to install, low-maintenance and handles Adelaide&apos;s hot summers well in
-              light colours. Tile is the better pick for heritage and character homes, for a
-              traditional look, or where you want a quieter roof and a like-for-like replacement.
+              light colours. Tile is often the better pick where it&apos;s the home&apos;s original
+              roof, such as some heritage and character homes, for a traditional look, or where
+              you want a quieter roof and a like-for-like replacement.
               Neither is wrong. The right answer depends on your home, your street and your
               budget.
             </p>
