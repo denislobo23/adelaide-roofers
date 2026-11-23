@@ -391,7 +391,7 @@ export default function RoofCalculator() {
                     { v: "zincalume", label: "Zincalume", note: "Silver metal, more corrosion-resistant than galvanised", img: "/images/roof-materials/material-zincalume.webp" },
                     { v: "concreteTile", label: "Concrete tile", note: "The most common Adelaide roof type", img: "/images/roof-materials/material-concrete-tile.webp" },
                     { v: "terracotta", label: "Terracotta tile", note: "Traditional, often on older homes", img: "/images/roof-materials/material-terracotta.webp" },
-                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on pre-1980s homes — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
+                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on homes built before 1990 — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
                   ].map((o) => (
                     <button
                       key={o.v}
@@ -456,7 +456,7 @@ export default function RoofCalculator() {
                     { v: "zincalume", label: "Zincalume", note: "Silver metal, more corrosion-resistant than galvanised", img: "/images/roof-materials/material-zincalume.webp" },
                     { v: "concreteTile", label: "Concrete tile", note: "The most common Adelaide roof type", img: "/images/roof-materials/material-concrete-tile.webp" },
                     { v: "terracotta", label: "Terracotta tile", note: "Traditional, often on older homes", img: "/images/roof-materials/material-terracotta.webp" },
-                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on pre-1980s homes — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
+                    { v: "asbestos", label: "Asbestos cement (fibro)", note: "Common on homes built before 1990 — requires a licensed removalist", img: "/images/roof-materials/material-asbestos.webp" },
                   ].map((o) => (
                     <button
                       key={o.v}

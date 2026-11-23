@@ -92,7 +92,7 @@ const faqGroups = [
       },
       {
         q: "How do I know if my roof has asbestos, and what do I do about it?",
-        a: "Corrugated cement sheet roofing on a home built before the early 1980s is the main giveaway, though it isn't always obvious just by looking. Don't drill, cut or disturb it — a licensed asbestos removalist needs to handle any work involving it, by law in South Australia.",
+        a: "Corrugated cement sheet roofing on homes built before 1990 is the main giveaway, though it isn't always obvious just by looking. Don't drill, cut or disturb it — a licensed asbestos removalist needs to handle any work involving it, by law in South Australia.",
         topics: ["materials", "asbestos"],
         link: { href: "/services/asbestos-roof-removal", label: "Read more on asbestos roof removal" },
       },

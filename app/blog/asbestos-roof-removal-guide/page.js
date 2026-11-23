@@ -48,7 +48,7 @@ export default function AsbestosRoofRemovalGuidePage() {
             </h1>
             <ArticleMeta slug="asbestos-roof-removal-guide" headline={"Asbestos Roof Removal: What Adelaide Homeowners Need to Know"} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              Plenty of Adelaide homes built before the early 1980s still have their original{" "}
+              Plenty of Adelaide homes built before 1990 still have their original{" "}
               <strong>asbestos roof</strong>, and most owners have never had a reason to think
               about it — until they're planning a renovation, or the roof starts showing its
               age. Here's what actually matters if that's you.
@@ -71,8 +71,8 @@ export default function AsbestosRoofRemovalGuidePage() {
                   How to tell if your roof has asbestos
                 </h2>
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  Corrugated cement sheet roofing — often called fibro — on a home built before
-                  the early 1980s is the main giveaway. It isn't always obvious just by looking,
+                  Corrugated cement sheet roofing — often called fibro — on homes built before
+                  1990 is the main giveaway. It isn't always obvious just by looking,
                   since some later materials have a similar corrugated profile. If you're not
                   sure, the safest move is simply not to drill, cut, or disturb it, and get a
                   professional to confirm rather than guessing.

@@ -122,7 +122,7 @@ export default function ReplacementCostPage() {
                 <p className="mt-4 font-body leading-relaxed text-ink/70">
                   Removing old tile or metal roofing and hauling it away is a standard, budgeted
                   part of any replacement quote. If your existing roof is asbestos cement
-                  (fibro) — common on Adelaide homes built before the early 1980s — that&apos;s
+                  (fibro) — common on Adelaide homes built before 1990 — that&apos;s
                   a different, licensed process with its own cost structure, not something a
                   standard roofing crew can just include as a line item.{" "}
                   <Link href="/services/asbestos-roof-removal" className="font-semibold text-clay hover:text-clay-deep">

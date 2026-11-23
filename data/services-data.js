@@ -665,7 +665,7 @@ export const servicePages = {
     intro:
       "Have an asbestos (fibro) roof in Adelaide? Adelaide Roofers connects you with a licensed asbestos removalist to safely remove it and get a new roof installed in its place. Tell us your suburb and we'll connect you with someone properly licensed for this specific work. Free, no obligation.",
     overview:
-      "Many Adelaide homes built before the early 1980s have corrugated asbestos cement roofing — often called fibro. Left undisturbed and in good condition it's generally not an immediate risk, but any work that cuts, drills, breaks or removes it can release airborne fibres, which is a genuine health hazard. Because of that, asbestos removal in South Australia legally has to be done by a licensed asbestos removalist, not a standard roofing crew. That's a different trade to general roofing, which is exactly why this is its own service: we connect you with someone who holds the right licence, handles the removal safely and legally, and can then install your new roof once the old one's gone.",
+      "Many Adelaide homes built before 1990 have corrugated asbestos cement roofing — often called fibro. Left undisturbed and in good condition it's generally not an immediate risk, but any work that cuts, drills, breaks or removes it can release airborne fibres, which is a genuine health hazard. Because of that, asbestos removal in South Australia legally has to be done by a licensed asbestos removalist, not a standard roofing crew. That's a different trade to general roofing, which is exactly why this is its own service: we connect you with someone who holds the right licence, handles the removal safely and legally, and can then install your new roof once the old one's gone.",
     included: [
       "Assessment to confirm whether your roofing sheets contain asbestos",
       "Safe, contained removal by a licensed asbestos removalist",
@@ -674,7 +674,7 @@ export const servicePages = {
       "All required safety and containment measures during the work",
     ],
     signs: [
-      "Corrugated cement sheet roofing, common on homes built before the early 1980s",
+      "Corrugated cement sheet roofing, common on homes built before 1990",
       "A roof that looks like older-style fibro sheeting rather than modern tile or metal",
       "Planning a renovation or extension and needing to know what's up there before work starts",
       "An ageing roof you're simply unsure about the material of",
@@ -708,7 +708,7 @@ export const servicePages = {
     faqs: [
       {
         q: "How do I know if my roof has asbestos?",
-        a: "Corrugated cement sheet roofing on a home built before the early 1980s is the main giveaway, but it isn't always obvious just by looking — some later materials look similar. If you're not sure, don't drill, cut or disturb it; a professional can confirm what it's actually made of before any work starts.",
+        a: "Corrugated cement sheet roofing on homes built before 1990 is the main giveaway, but it isn't always obvious just by looking — some later materials look similar. If you're not sure, don't drill, cut or disturb it; a professional can confirm what it's actually made of before any work starts.",
       },
       {
         q: "Is it safe to stay in the house while the asbestos is being removed?",

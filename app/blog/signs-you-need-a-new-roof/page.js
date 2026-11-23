@@ -184,8 +184,8 @@ export default function SignsYouNeedANewRoofPage() {
               <article>
                 <h2 className={h2}>10. An asbestos roof on an older home</h2>
                 <p className={body}>
-                  Asbestos cement roofing was common on Australian homes built before the late
-                  1980s, and it was banned in 2003. If yours is cracked, weathered or growing
+                  Asbestos cement roofing was common on Australian homes built before 1990, and
+                  it was banned in 2003. If yours is cracked, weathered or growing
                   moss, don&apos;t repair, clean or pressure-wash it. It needs{" "}
                   <Link href="/services/asbestos-roof-removal" className={inlineLink}>
                     licensed removal
