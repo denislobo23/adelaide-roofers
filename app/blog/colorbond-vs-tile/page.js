@@ -8,6 +8,8 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import RoofCalculator from "@/components/RoofCalculator";
 
 export const metadata = articleMetadata({
   slug: "colorbond-vs-tile",
@@ -15,7 +17,7 @@ export const metadata = articleMetadata({
   description:
     "Colorbond vs tile for Adelaide homes: weight, heat, noise, coastal rust, heritage rules and maintenance compared, plus when to choose each.",
   image: "/images/service-colorbond-roofing.webp",
-  imageAlt: "Colorbond metal roofing compared to tile roofing on Adelaide homes",
+  imageAlt: "Modern home with a dark Colorbond roof beside tiled roofs on neighbouring houses: Colorbond vs tile side by side",
 });
 
 const HEADLINE = "Colorbond vs Tile: Which Is Better for Adelaide Homes?";
@@ -46,6 +48,53 @@ const COMPARISON = [
   { factor: "Heritage areas", colorbond: "May need approval", tile: "May need approval; the original material is usually preferred" },
 ];
 
+const FAQS = [
+  {
+    q: "Is Colorbond cheaper than tile?",
+    a: "Usually, yes. Typical Adelaide guide ranges put a Colorbond re-roof at about $74 to $165 per m² and a tiled re-roof, including stripping the old roof, at about $92 to $200 per m². Your roof's size, pitch and access decide the real price, so get both materials quoted or use the calculator below for a ballpark.",
+  },
+  {
+    q: "Is a Colorbond roof hotter than a tile roof?",
+    a: "Not if it's specified well. A light Colorbond colour with good insulation and sarking keeps a home noticeably cooler. Dark roofs of either material soak up heat, and tiles absorb heat and release it slowly.",
+  },
+  {
+    q: "Is Colorbond noisier than tile in the rain?",
+    a: "Slightly. Tiles absorb more of the impact, but a modern Colorbond roof with an insulation blanket under the sheets is only a little louder than tile in normal rain. Heavy hail is loud on any metal roof.",
+  },
+  {
+    q: "Can I put Colorbond on a heritage home?",
+    a: "Sometimes. In heritage or character areas, changing from tile to metal can need approval, and the original roof material is usually preferred, which may be tile or corrugated iron. Check your address before you get quotes.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://whatsthedamage.com.au/roofing-cost-adelaide/",
+    label: "Roof replacement cost Adelaide",
+    note: " (What’s The Damage, independent price guide)",
+  },
+  {
+    href: "https://colorbond.com/products/roofing",
+    label: "Colorbond steel roofing",
+    note: " (Colorbond, BlueScope)",
+  },
+  {
+    href: "https://www.cfs.sa.gov.au/plan-prepare/before-a-fire-be-prepared/preparing-your-home-property/",
+    label: "Preparing your home and property",
+    note: " (SA Country Fire Service)",
+  },
+  {
+    href: "https://plan.sa.gov.au/__data/assets/pdf_file/0008/799847/Historic_Area_Overlay_Design_Advisory_Guidelines.pdf",
+    label: "Historic Area Overlay design advisory guidelines",
+    note: " (PlanSA, PDF)",
+  },
+  {
+    href: "https://dit.sa.gov.au/__data/assets/pdf_file/0020/613316/Historic_Area_Statements_and_Character_Area_Statements_-_Phase_3_-_City_of_Unley.pdf",
+    label: "Historic and Character Area Statements: City of Unley",
+    note: " (SA Government, PDF)",
+  },
+];
+
 const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
 const body = "mt-4 font-body leading-relaxed text-ink/70";
 const list = "mt-4 list-disc space-y-2 pl-5 font-body leading-relaxed text-ink/70 marker:text-clay";
@@ -70,7 +119,8 @@ export default function ColorbondVsTilePage() {
             </h1>
             <ArticleMeta slug="colorbond-vs-tile" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              For most Adelaide re-roofs, Colorbond is the more popular choice: it&apos;s lighter,
+              In the Colorbond vs tile choice, Colorbond is the more popular pick for most Adelaide
+              re-roofs: it&apos;s lighter,
               quicker to install, low-maintenance and handles Adelaide&apos;s hot summers well in
               light colours. Tile is often the better pick where it&apos;s the home&apos;s original
               roof, such as some heritage and character homes, for a traditional look, or where
@@ -82,7 +132,7 @@ export default function ColorbondVsTilePage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-colorbond-roofing.webp"
-                alt="Colorbond metal roofing compared to tile roofing on Adelaide homes"
+                alt="Modern home with a dark Colorbond roof beside tiled roofs on neighbouring houses: Colorbond vs tile side by side"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -92,7 +142,7 @@ export default function ColorbondVsTilePage() {
 
             <div className="mt-14 space-y-12">
               <article>
-                <h2 className={h2}>Side-by-side comparison</h2>
+                <h2 className={h2}>Colorbond vs tile: side-by-side comparison</h2>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
                     <thead>
@@ -118,9 +168,37 @@ export default function ColorbondVsTilePage() {
               <article>
                 <h2 className={h2}>Cost</h2>
                 <p className={body}>
-                  Prices depend on roof size, pitch, access and what&apos;s coming off. As a rule, a
-                  like-for-like re-roof in either material is a big spend, and switching from tile
-                  to Colorbond adds some extra work at the start. See our{" "}
+                  Colorbond is usually the cheaper re-roof. These are typical guide ranges from a
+                  published Adelaide price guide (November 2026, GST included), not quotes:
+                </p>
+                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-paper">
+                        <th className={th}>Re-roof in</th>
+                        <th className={th}>Typical guide range</th>
+                        <th className={th}>Typical middle</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm font-semibold text-ink">Colorbond</td>
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm text-ink/70">$74 to $165 per m²</td>
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm text-ink/70">About $110 per m²</td>
+                      </tr>
+                      <tr className="bg-paper/50">
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm font-semibold text-ink">Tile (old roof stripped off)</td>
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm text-ink/70">$92 to $200 per m²</td>
+                        <td className="border-t border-mortar px-4 py-3 font-body text-sm text-ink/70">About $140 per m²</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className={body}>
+                  The same guide puts a full new roof on a single-storey Adelaide home at about
+                  $12,900 to $27,600. Your price depends on roof size, pitch, access and
+                  what&apos;s coming off, and switching from tile to Colorbond adds some extra work
+                  at the start. See our{" "}
                   <Link href="/blog/roof-replacement-cost-adelaide" className={inlineLink}>
                     roof replacement cost guide
                   </Link>{" "}
@@ -249,11 +327,44 @@ export default function ColorbondVsTilePage() {
                   </Link>
                 </div>
               </article>
+
+              <ArticleFaq heading="Colorbond vs tile: common questions" faqs={FAQS} />
+
+              <article>
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-body text-sm leading-relaxed text-ink/60 marker:text-clay">
+                  {SOURCES.map((src) => (
+                    <li key={src.href}>
+                      <a href={src.href} target="_blank" rel="noopener noreferrer" className={inlineLink}>
+                        {src.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                      {src.note}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </div>
           </div>
 
           {/* ── SIDEBAR ──────────────────────────────────── */}
           <ArticleSidebar />
+        </div>
+      </section>
+
+      {/* ── INSTANT CALCULATOR (full-width, matches the cost articles) ── */}
+      <section className="mx-auto max-w-wrap px-5 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+            Price Colorbond and tile for your roof
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
+            Choose roof replacement, then try each material for a free, no-obligation ballpark
+            figure.
+          </p>
+        </div>
+        <div className="mt-10">
+          <RoofCalculator />
         </div>
       </section>
 

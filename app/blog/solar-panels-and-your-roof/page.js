@@ -8,14 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import ArticleFigure from "@/components/ArticleFigure";
 
 export const metadata = articleMetadata({
   slug: "solar-panels-and-your-roof",
-  title: "Solar Panels and Your Roof: What to Check First | Adelaide Roofers",
+  title: "Solar Panels on Your Roof: What to Check First | Adelaide Roofers",
   description:
-    "Before solar goes on your Adelaide roof: check its age, material and structure, whether SA rules need approval, and why roof work should come first.",
+    "Putting solar panels on your roof in Adelaide? Check its age, material and structure, whether SA rules need approval, and why roof work comes first.",
   image: "/images/service-colorbond-roofing.webp",
-  imageAlt: "Solar panel installation considerations on an Adelaide roof",
+  imageAlt: "Modern two-storey home with a dark Colorbond metal roof, the simplest roof type for mounting solar panels",
 });
 
 const HEADLINE = "Solar Panels and Your Roof: What to Check First";
@@ -104,6 +106,112 @@ const SOURCES = [
     label: "Colorbond steel FAQs: swarf",
     note: " (Colorbond, BlueScope)",
   },
+  {
+    href: "https://www.cbs.sa.gov.au/documents/solar-panels-installers-factsheet.pdf",
+    label: "Guide for solar panel installers",
+    note: " (Consumer and Business Services SA, PDF)",
+  },
+  {
+    href: "https://media.bom.gov.au/social/blog/1733/explainer-how-does-hail-form/",
+    label: "Explainer: how does hail form?",
+    note: " (Bureau of Meteorology)",
+  },
+];
+
+const FAQS = [
+  {
+    q: "Should I replace my roof before installing solar?",
+    a: "If the roof will need replacing or restoring well before the panels are due to be replaced, yes. Panels typically last 20 to 30 years, and taking them off and refitting them for roof work later adds cost.",
+  },
+  {
+    q: "Can you put solar panels on a tile roof?",
+    a: "Yes. Panels mount on hooks that sit under the tiles and fix to the roof frame. Older tiles can crack when walked on, so ask the installer to replace any they break and to photograph the roof before and after.",
+  },
+  {
+    q: "Can you put solar panels on an asbestos roof?",
+    a: "Don't let anyone drill or fix into asbestos cement sheeting. SafeWork SA treats asbestos roofing sheets as fragile, and work that disturbs asbestos is high-risk construction work. Plan for licensed removal and a new roof first.",
+  },
+  {
+    q: "Do solar panels have to come off to replace the roof?",
+    a: "Yes. The panels have to be taken off and refitted when the roof under them is replaced, which adds cost and needs a registered electrician as well as a roofer. That's why it's worth doing roof work first if the roof won't last as long as the panels.",
+  },
+  {
+    q: "Do I need council approval for solar panels in SA?",
+    a: "Usually not. Rooftop panels weighing 100 kg or less in total are exempt, and heavier systems are exempt if they meet set mounting conditions. The exemption doesn't apply to State heritage places, or to local heritage places where the panels can be seen from the street.",
+  },
+];
+
+// Point in the roof's rotated frame -> page coordinates (roof pitched at 20 degrees)
+const COS = Math.cos((20 * Math.PI) / 180);
+const SIN = Math.sin((20 * Math.PI) / 180);
+const at = (x, y) => [60 + x * COS + y * SIN, 268 - x * SIN + y * COS];
+
+function SolarExemptionDiagram() {
+  const gap = at(370, -7);
+  const mount = at(220, -7);
+  const edge = at(60, -22);
+  return (
+    <svg
+      viewBox="0 0 640 310"
+      role="img"
+      aria-labelledby="solar-rule-title solar-rule-desc"
+      className="mx-auto block h-auto w-full min-w-[520px] max-w-2xl"
+    >
+      <title id="solar-rule-title">When rooftop solar is exempt from approval in South Australia</title>
+      <desc id="solar-rule-desc">
+        A side view of solar panels on a pitched roof. Panels weighing 100 kg or less in total are
+        exempt. Heavier systems are exempt if the panels sit parallel to the roof with their
+        underside no more than 100 mm above it, nothing overhangs the roof, no single attachment
+        point carries more than 100 kg, and an accredited installer fits them. The exemption does
+        not apply to State heritage places, or local heritage places where the panels are visible
+        from the street.
+      </desc>
+
+      <g transform="translate(60 268) rotate(-20)">
+        <rect x="0" y="0" width="500" height="10" className="fill-ink" />
+        <rect x="60" y="-30" width="340" height="16" rx="2" className="fill-clay" />
+        {[100, 220, 340].map((x) => (
+          <rect key={x} x={x - 4} y="-14" width="8" height="14" className="fill-ink/70" />
+        ))}
+      </g>
+
+      <text x="20" y="28" className="fill-ink font-display" fontSize="15" fontWeight="700">Under 100 kg of panels in total: exempt.</text>
+      <text x="20" y="50" className="fill-ink font-body" fontSize="13">Heavier systems are exempt if all three below are met</text>
+      <text x="20" y="68" className="fill-ink font-body" fontSize="13">and an accredited installer fits them.</text>
+      <text x="20" y="92" className="fill-clay font-body" fontSize="13" fontWeight="700">Not exempt: State heritage places, or local heritage</text>
+      <text x="20" y="110" className="fill-clay font-body" fontSize="13" fontWeight="700">places where panels are visible from the street.</text>
+
+      <line x1={gap[0]} y1={gap[1]} x2="470" y2="168" className="stroke-ink/50" strokeWidth="1.5" />
+      <text x="474" y="174" className="fill-ink font-body" fontSize="13">Parallel to the roof,</text>
+      <text x="474" y="190" className="fill-ink font-body" fontSize="13">underside no more than</text>
+      <text x="474" y="206" className="fill-ink font-body" fontSize="13">100 mm above it</text>
+
+      <line x1={mount[0]} y1={mount[1]} x2="300" y2="236" className="stroke-ink/50" strokeWidth="1.5" />
+      <text x="304" y="242" className="fill-ink font-body" fontSize="13">No more than 100 kg at</text>
+      <text x="304" y="258" className="fill-ink font-body" fontSize="13">any one attachment point</text>
+
+      <line x1={edge[0]} y1={edge[1]} x2="120" y2="284" className="stroke-ink/50" strokeWidth="1.5" />
+      <text x="124" y="292" className="fill-ink font-body" fontSize="13">Nothing overhangs the roof</text>
+    </svg>
+  );
+}
+
+const JUMP_LINKS = [
+  { href: "#checklist", label: "The checklist" },
+  { href: "#roof-age", label: "Roof age" },
+  { href: "#roof-types", label: "Each roof type" },
+  { href: "#approval", label: "Approval in SA" },
+  { href: "#exemption-rule", label: "The exemption rule" },
+  { href: "#grid", label: "Grid connection" },
+  { href: "#order", label: "Order of work" },
+  { href: "#faq", label: "FAQs" },
+];
+
+const KEY_POINTS = [
+  "Do the roof work first if your roof won't outlast the panels (20 to 30 years).",
+  "Metal is the simplest to mount on, tile works with hooks, and asbestos cement should never be drilled.",
+  "Most rooftop solar in SA needs no approval, but heritage places can.",
+  "Panels must come off for any later re-roof, and that needs a registered electrician.",
 ];
 
 const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
@@ -133,10 +241,10 @@ export default function SolarPanelsAndYourRoofPage() {
             </h1>
             <ArticleMeta slug="solar-panels-and-your-roof" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              Before solar goes on, check four things: how long your roof has left, what
-              it&apos;s made of, whether the frame is sound, and whether you need approval. Panels
-              are expected to last 20 to 30 years, so if your roof will need replacing or restoring
-              well before then, do the roof work first. Metal roofs are the simplest to mount on,
+              Before putting solar panels on your roof, make sure the roof will outlast them:
+              panels are expected to last 20 to 30 years, so if your roof will need replacing or
+              restoring well before then, do the roof work first. Also check what it&apos;s made
+              of, whether the frame is sound, and whether you need approval. Metal roofs are the simplest to mount on,
               tile is fine with the right hooks, and an asbestos cement roof should be replaced
               before anyone drills into it. Most Adelaide homes don&apos;t need council approval for
               rooftop solar, but heritage places can.
@@ -146,10 +254,33 @@ export default function SolarPanelsAndYourRoofPage() {
               Australian rules, and the right order to do the work in.
             </p>
 
+            <div className="mt-6 rounded-2xl border border-mortar bg-paper p-5">
+              <p className="font-display text-sm font-bold uppercase tracking-wide text-clay">
+                Key points
+              </p>
+              <ul className={`${list} mt-2`}>
+                {KEY_POINTS.map((k) => (
+                  <li key={k}>{k}</li>
+                ))}
+              </ul>
+              <nav aria-label="Jump to a section" className="mt-4 border-t border-mortar pt-4">
+                <p className="font-display text-sm font-bold text-ink">Jump to:</p>
+                <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-body text-sm">
+                  {JUMP_LINKS.map((j) => (
+                    <li key={j.href}>
+                      <a href={j.href} className={inlineLink}>
+                        {j.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-colorbond-roofing.webp"
-                alt="Solar panel installation considerations on an Adelaide roof"
+                alt="Modern two-storey home with a dark Colorbond metal roof, the simplest roof type for mounting solar panels"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -158,8 +289,8 @@ export default function SolarPanelsAndYourRoofPage() {
             </div>
 
             <div className="mt-14 space-y-12">
-              <article>
-                <h2 className={h2}>The roof checklist before solar</h2>
+              <article id="checklist" className="scroll-mt-24">
+                <h2 className={h2}>Putting solar panels on your roof: the checklist</h2>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
                     <thead>
@@ -182,14 +313,15 @@ export default function SolarPanelsAndYourRoofPage() {
                 </div>
               </article>
 
-              <article>
+              <article id="roof-age" className="scroll-mt-24">
                 <h2 className={h2}>Roof age: match it to the life of the panels</h2>
                 <p className={body}>
                   Solar panels typically last 20 to 30 years, and most come with a performance
                   guarantee that they&apos;ll still produce 80 to 90% of their original output after
                   25 years. If your roof won&apos;t last that long, the panels will have to come off
-                  and go back on when the roof is redone, which adds cost and needs a licensed
-                  electrician as well as a roofer.
+                  and go back on when the roof is redone, which adds cost. It also needs a
+                  registered electrician as well as a roofer: CBS says any work on parts that carry
+                  electricity, including the panel array, must be done by a registered electrician.
                 </p>
                 <p className={body}>
                   A good rule: if your roof is already showing its age, get it assessed before you
@@ -201,7 +333,7 @@ export default function SolarPanelsAndYourRoofPage() {
                 </p>
               </article>
 
-              <article>
+              <article id="roof-types" className="scroll-mt-24">
                 <h2 className={h2}>What to watch for on each roof type</h2>
                 <div className="mt-6 space-y-6">
                   <div>
@@ -240,6 +372,12 @@ export default function SolarPanelsAndYourRoofPage() {
                   </div>
                 </div>
                 <p className={body}>
+                  <strong className="text-ink">Adelaide hail:</strong> large hail is most common in
+                  spring and early summer, according to the Bureau of Meteorology. Fix cracked tiles
+                  and loose ridge capping before the panels go on, because damage under the panels
+                  is much harder to reach afterwards.
+                </p>
+                <p className={body}>
                   Thinking of replacing a tile roof anyway? Metal makes solar mounting simpler, so
                   it&apos;s worth reading{" "}
                   <Link href="/blog/tile-to-metal-roofing" className={inlineLink}>
@@ -249,7 +387,7 @@ export default function SolarPanelsAndYourRoofPage() {
                 </p>
               </article>
 
-              <article>
+              <article id="approval" className="scroll-mt-24">
                 <h2 className={h2}>Do you need approval for solar in South Australia?</h2>
                 <p className={body}>
                   Usually not. Under South Australia&apos;s planning regulations, installing solar
@@ -280,7 +418,15 @@ export default function SolarPanelsAndYourRoofPage() {
                 </p>
               </article>
 
-              <article>
+              <ArticleFigure
+                id="exemption-rule"
+                heading="The SA exemption rule at a glance"
+                caption="Based on Schedule 4, clause 16 of the Planning, Development and Infrastructure (General) Regulations 2017. Your installer should confirm your system meets it."
+              >
+                <SolarExemptionDiagram />
+              </ArticleFigure>
+
+              <article id="grid" className="scroll-mt-24">
                 <h2 className={h2}>Connecting to the grid in SA</h2>
                 <p className={body}>
                   Your solar installer handles this, but it helps to know what to expect:
@@ -303,7 +449,7 @@ export default function SolarPanelsAndYourRoofPage() {
                 </ul>
               </article>
 
-              <article>
+              <article id="order" className="scroll-mt-24">
                 <h2 className={h2}>The right order if you&apos;re doing both</h2>
                 <ol className={olist}>
                   <li>
@@ -352,6 +498,8 @@ export default function SolarPanelsAndYourRoofPage() {
                   </Link>
                 </div>
               </article>
+
+              <ArticleFaq id="faq" heading="Solar panels on your roof: common questions" faqs={FAQS} />
 
               <article>
                 <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>

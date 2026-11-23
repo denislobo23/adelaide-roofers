@@ -8,6 +8,8 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import PrintableChecklist from "@/components/PrintableChecklist";
 
 export const metadata = articleMetadata({
   slug: "roofing-scams-adelaide",
@@ -15,7 +17,7 @@ export const metadata = articleMetadata({
   description:
     "How to spot common roofing scams in Adelaide, from door-knockers and storm chasers to cash-only deposits, plus how to check a roofer's licence with CBS.",
   image: "/images/blog-roofing-scams.webp",
-  imageAlt: "Homeowner checking a tradesperson's identification and licence before agreeing to work",
+  imageAlt: "Tradesman in hi-vis at a front door showing his licence card to a homeowner, a simple check against roofing scams",
 });
 
 const HEADLINE = "Common Roofing Scams in Adelaide (and How to Avoid Them)";
@@ -42,6 +44,56 @@ const RED_FLAGS = [
   { flag: "No licence number on the quote for licensed work", legit: "Licence number on every quote and invoice" },
   { flag: "Vague quote: “fix roof, $4,000”", legit: "Itemised scope, materials and warranty" },
   { flag: "Pressure: “price is only good today”", legit: "Price holds for a reasonable time" },
+];
+
+const CHECKLIST = [
+  "I contacted them, or they were referred to me (not a door-knock)",
+  "Their CBS licence number is on the quote and matches the public register",
+  "The ABN is checked and belongs to the business I'm dealing with",
+  "I've seen proof of public liability insurance",
+  "The quote is written and itemised: scope, materials, price, payment stages, warranty",
+  "The deposit is within the legal limit ($1,000, or 5% on contracts over $20,000)",
+  "Nothing is cash-only",
+  "Any damage was shown to me from the ground or confirmed by a second roofer",
+  "I have at least two quotes for anything bigger than a small repair",
+  "Any extras will be agreed in writing before work continues",
+];
+
+const FAQS = [
+  {
+    q: "How do I check a roofer's licence in South Australia?",
+    a: "Search the Consumer and Business Services (CBS) public register and make sure the name and licence number match the quote. Also check the ABN on the Australian Business Register and ask for proof of public liability insurance.",
+  },
+  {
+    q: "How much deposit can a roofer ask for in SA?",
+    a: "For domestic building work, the deposit is capped at $1,000 for contracts up to $20,000, and at 5% of the contract price for contracts over $20,000. Advance payments for third-party costs such as council fees are the exception.",
+  },
+  {
+    q: "Can I cancel a roofing deal I agreed to at my front door?",
+    a: "Yes. A deal made with an uninvited door-to-door seller is an unsolicited consumer agreement, so you have 10 business days to cancel without a reason. For agreements over $100, they can't take payment or start work during that time.",
+  },
+  {
+    q: "What should I do if a roofer says my roof is damaged?",
+    a: "Ask them to point the damage out from the ground, and don't rely on photos they took up there. Get a second opinion from a licensed roofer you contact yourself before agreeing to any work.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://www.cbs.sa.gov.au/find-a-licence-holder",
+    label: "Find a licence holder",
+    note: " (Consumer and Business Services SA)",
+  },
+  {
+    href: "https://www.cbs.sa.gov.au/documents/form-1-building-contract-rights-and-obligations.pdf",
+    label: "Form 1: Your building contract, your rights and obligations",
+    note: " (Consumer and Business Services SA, PDF)",
+  },
+  {
+    href: "https://www.accc.gov.au/business/selling-products-and-services/telemarketing-and-door-to-door-sales",
+    label: "Telemarketing and door-to-door sales",
+    note: " (ACCC)",
+  },
 ];
 
 const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
@@ -84,7 +136,7 @@ export default function RoofingScamsPage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/blog-roofing-scams.webp"
-                alt="Homeowner checking a tradesperson's identification and licence before agreeing to work"
+                alt="Tradesman in hi-vis at a front door showing his licence card to a homeowner, a simple check against roofing scams"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -302,6 +354,30 @@ export default function RoofingScamsPage() {
                     Try the free calculator →
                   </Link>
                 </div>
+              </article>
+
+              <PrintableChecklist
+                heading="Printable checklist: before you agree to any roof work"
+                intro="Keep this by the door or print it before quotes. If you can't tick every box, slow down."
+                items={CHECKLIST}
+                footer="Any box you can't tick is worth a question before you sign or pay."
+              />
+
+              <ArticleFaq heading="Roofing scams: common questions" faqs={FAQS} />
+
+              <article>
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-body text-sm leading-relaxed text-ink/60 marker:text-clay">
+                  {SOURCES.map((src) => (
+                    <li key={src.href}>
+                      <a href={src.href} target="_blank" rel="noopener noreferrer" className={inlineLink}>
+                        {src.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                      {src.note}
+                    </li>
+                  ))}
+                </ul>
               </article>
             </div>
           </div>

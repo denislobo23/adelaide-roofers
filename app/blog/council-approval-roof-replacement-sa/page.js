@@ -8,6 +8,8 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import ArticleFigure from "@/components/ArticleFigure";
 
 export const metadata = articleMetadata({
   slug: "council-approval-roof-replacement-sa",
@@ -15,7 +17,7 @@ export const metadata = articleMetadata({
   description:
     "Do you need council approval to replace your roof in SA? Usually not, unless your home is heritage-listed or in a character area. Here's how to check.",
   image: "/images/service-roof-replacement.webp",
-  imageAlt: "Roof replacement work on an Adelaide home",
+  imageAlt: "Roofers laying new dark Colorbond sheets over the exposed roof frame during a roof replacement",
 });
 
 const HEADLINE = "Do I Need Council Approval to Replace My Roof in SA?";
@@ -41,6 +43,114 @@ const body = "mt-4 font-body leading-relaxed text-ink/70";
 const list = "mt-4 list-disc space-y-2 pl-5 font-body leading-relaxed text-ink/70 marker:text-clay";
 const olist = "mt-4 list-decimal space-y-2 pl-5 font-body leading-relaxed text-ink/70 marker:font-semibold marker:text-clay";
 const inlineLink = "font-semibold text-clay hover:text-clay-deep";
+
+const FAQS = [
+  {
+    q: "Do I need council approval to re-roof with Colorbond?",
+    a: "On most homes, no: switching from tile to Colorbond is fine. In heritage and character areas, changing the roof material is the most common trigger for needing approval, so check your address first.",
+  },
+  {
+    q: "How do I check if my house is in a heritage or character area?",
+    a: "Enter your address in PlanSA's free Planning and Design Code lookup at code.plan.sa.gov.au. It lists the zone and any overlays that apply. If you're still unsure, call your local council's planning team.",
+  },
+  {
+    q: "Do I need council approval to repair my roof?",
+    a: "Generally not. Repairs such as replacing broken tiles, ridge capping, flashings, valleys and gutters, and restoration work like cleaning, re-bedding, re-pointing and re-coating usually don't need approval. The work must still meet building standards.",
+  },
+  {
+    q: "How long does council approval for a new roof take?",
+    a: "Expect several weeks, and longer if a heritage proposal is referred to Heritage SA. Build it into your replacement timeline, and match materials and colours to the original where you can to make approval smoother.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://plan.sa.gov.au/development_applications/before_you_lodge/find_out_if_you_need_approval",
+    label: "Find out if you need approval",
+    note: " (PlanSA)",
+  },
+  {
+    href: "https://plan.sa.gov.au/__data/assets/pdf_file/0004/698323/Fact_Sheet_-_Find_out_if_you_need_approval.pdf",
+    label: "Fact sheet: Find out if you need approval",
+    note: " (PlanSA, PDF)",
+  },
+  {
+    href: "https://code.plan.sa.gov.au/",
+    label: "Planning and Design Code lookup",
+    note: " (PlanSA)",
+  },
+  {
+    href: "https://cdn.environment.sa.gov.au/environment/docs/her-gen-heritage-places-developing-guide.pdf",
+    label: "Guide to developing State Heritage Places",
+    note: " (Heritage SA, PDF)",
+  },
+];
+
+const FLOW_ROWS = [
+  { y: 110, lines: ["Is your home a State or", "Local Heritage Place?"], out: ["Approval likely needed.", "Talk to council first."] },
+  { y: 220, lines: ["Is it in a heritage or character", "overlay, or a bushfire or", "flood-prone area?"], out: ["Check with council.", "Material changes can", "need approval."] },
+  { y: 330, lines: ["Are you changing the roof\u2019s", "shape, pitch, height", "or structure?"], out: ["Approval likely needed.", "Talk to council first."] },
+];
+
+function ApprovalFlowchart() {
+  const lineY = (top, count, i) => top + 41 - (count - 1) * 9 + i * 18;
+  return (
+    <svg
+      viewBox="0 0 640 530"
+      role="img"
+      aria-labelledby="approval-flow-title approval-flow-desc"
+      className="mx-auto block h-auto w-full min-w-[520px] max-w-2xl"
+    >
+      <title id="approval-flow-title">Do you need council approval to replace your roof?</title>
+      <desc id="approval-flow-desc">
+        A flowchart. If your home is a State or Local Heritage Place, approval is likely needed. If
+        it is in a heritage or character overlay, or a bushfire or flood-prone area, check with
+        council. If you are changing the roof&apos;s shape, pitch, height or structure, approval
+        is likely needed. Otherwise a like-for-like re-roof usually needs no approval, but you
+        should still check your address.
+      </desc>
+      <defs>
+        <marker id="approval-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" className="fill-ink" />
+        </marker>
+      </defs>
+
+      <rect x="80" y="10" width="240" height="44" rx="22" className="fill-ink" />
+      <text x="200" y="38" textAnchor="middle" className="fill-paper font-display" fontSize="16" fontWeight="700">
+        Replacing your roof
+      </text>
+
+      {FLOW_ROWS.map((row, r) => (
+        <g key={row.y}>
+          <line x1="200" y1={r === 0 ? 54 : row.y - 38} x2="200" y2={row.y - 4} className="stroke-ink" strokeWidth="2" markerEnd="url(#approval-arrow)" />
+          {r > 0 && (
+            <text x="212" y={row.y - 15} className="fill-ink/60 font-display" fontSize="13" fontWeight="700">No</text>
+          )}
+          <rect x="10" y={row.y} width="380" height="72" rx="10" className="fill-white stroke-mortar" strokeWidth="2" />
+          {row.lines.map((l, i) => (
+            <text key={l} x="200" y={lineY(row.y, row.lines.length, i)} textAnchor="middle" className="fill-ink font-body" fontSize="15">{l}</text>
+          ))}
+          <line x1="390" y1={row.y + 36} x2="436" y2={row.y + 36} className="stroke-ink" strokeWidth="2" markerEnd="url(#approval-arrow)" />
+          <text x="413" y={row.y + 28} textAnchor="middle" className="fill-clay font-display" fontSize="13" fontWeight="700">Yes</text>
+          <rect x="440" y={row.y} width="190" height="72" rx="10" className="fill-clay/10 stroke-clay" strokeWidth="2" />
+          {row.out.map((l, i) => (
+            <text key={l} x="535" y={lineY(row.y, row.out.length, i)} textAnchor="middle" className="fill-ink font-body" fontSize="14">{l}</text>
+          ))}
+        </g>
+      ))}
+
+      <line x1="200" y1="402" x2="200" y2="438" className="stroke-ink" strokeWidth="2" markerEnd="url(#approval-arrow)" />
+      <text x="212" y="425" className="fill-ink/60 font-display" fontSize="13" fontWeight="700">No</text>
+      <rect x="10" y="442" width="620" height="76" rx="10" className="fill-paper stroke-ink" strokeWidth="2" />
+      <text x="320" y="474" textAnchor="middle" className="fill-ink font-display" fontSize="16" fontWeight="700">
+        Like-for-like re-roof: usually no approval needed
+      </text>
+      <text x="320" y="498" textAnchor="middle" className="fill-ink font-body" fontSize="14">
+        Still check your address on PlanSA&apos;s Planning and Design Code lookup.
+      </text>
+    </svg>
+  );
+}
 
 function CodeLookupLink({ children }) {
   return (
@@ -69,9 +179,9 @@ export default function CouncilApprovalPage() {
             </h1>
             <ArticleMeta slug="council-approval-roof-replacement-sa" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              Usually not. In South Australia, replacing a roof like-for-like on an ordinary home
-              generally doesn&apos;t need development approval, but always check your address
-              first. The main exceptions are
+              Usually not. In South Australia, you generally don&apos;t need council approval to
+              replace your roof like-for-like on an ordinary home (the formal term is development
+              approval), but always check your address first. The main exceptions are
               heritage-listed homes, homes in heritage or character areas, and jobs that change
               the roof&apos;s shape, height or structure. The quickest way to check your address
               is PlanSA&apos;s free online{" "}
@@ -84,7 +194,7 @@ export default function CouncilApprovalPage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-roof-replacement.webp"
-                alt="Roof replacement work on an Adelaide home"
+                alt="Roofers laying new dark Colorbond sheets over the exposed roof frame during a roof replacement"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -109,7 +219,7 @@ export default function CouncilApprovalPage() {
               </article>
 
               <article>
-                <h2 className={h2}>When you probably do need approval</h2>
+                <h2 className={h2}>When you probably do need council approval to replace your roof</h2>
                 <ul className={list}>
                   <li>
                     <strong className="text-ink">Heritage places:</strong> State Heritage Places
@@ -164,6 +274,13 @@ export default function CouncilApprovalPage() {
                 </ol>
               </article>
 
+              <ArticleFigure
+                heading="Quick check: do you need approval?"
+                caption="A general guide only. Your address lookup and your council have the final say."
+              >
+                <ApprovalFlowchart />
+              </ArticleFigure>
+
               <article>
                 <h2 className={h2}>If you do need approval</h2>
                 <ul className={list}>
@@ -212,6 +329,23 @@ export default function CouncilApprovalPage() {
                     Try the free calculator →
                   </Link>
                 </div>
+              </article>
+
+              <ArticleFaq heading="Council approval to replace your roof: common questions" faqs={FAQS} />
+
+              <article>
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-body text-sm leading-relaxed text-ink/60 marker:text-clay">
+                  {SOURCES.map((src) => (
+                    <li key={src.href}>
+                      <a href={src.href} target="_blank" rel="noopener noreferrer" className={inlineLink}>
+                        {src.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                      {src.note}
+                    </li>
+                  ))}
+                </ul>
               </article>
             </div>
           </div>

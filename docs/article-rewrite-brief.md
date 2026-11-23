@@ -11,6 +11,10 @@
 8. Keep the existing image, byline, schema, Open Graph, sidebar and contact sections.
 9. Write a new meta description under 160 characters.
 10. Facts: soften or remove anything you can't confirm, and list what you softened.
+11. Image alt text: every image gets a short, accurate description, naturally including the main keyword where it fits.
+12. FAQ: end the article with 3–5 short FAQs answering the related 'People Also Ask' questions, with FAQPage schema.
+13. Original asset: every article includes at least one original asset (a simple SVG diagram, a printable checklist, a comparison table, or the embedded calculator where cost is discussed).
+14. Target score: 46+/50. If below, list what's holding it back, fix what you can, and re-score.
 
 ## Scoring
 

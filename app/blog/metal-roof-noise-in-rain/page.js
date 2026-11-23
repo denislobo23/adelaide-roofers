@@ -8,14 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import ArticleFigure from "@/components/ArticleFigure";
 
 export const metadata = articleMetadata({
   slug: "metal-roof-noise-in-rain",
-  title: "Is a Metal Roof Really Noisier in the Rain? | Adelaide Roofers",
+  title: "Metal Roof Noise in the Rain: Is It Really Louder? | Adelaide Roofers",
   description:
-    "Is a Colorbond roof noisy in the rain? Not when it's insulated properly. What really controls roof noise, where you'll notice it, and what to ask your Adelaide roofer.",
+    "Is a Colorbond roof noisy in the rain? Not if it's insulated properly. What controls metal roof noise, where you'll notice it, and what to ask your roofer.",
   image: "/images/service-colorbond-roofing.webp",
-  imageAlt: "Colorbond metal roof on an Adelaide home",
+  imageAlt: "Modern two-storey home with a dark Colorbond metal roof",
 });
 
 const HEADLINE = "Is a Metal Roof Really Noisier in the Rain?";
@@ -37,6 +39,11 @@ const breadcrumbJsonLd = {
 
 const SOURCES = [
   {
+    href: "https://www.bom.gov.au/climate/averages/tables/cw_023090.shtml",
+    label: "Climate statistics for Adelaide (Kent Town)",
+    note: " (Bureau of Meteorology)",
+  },
+  {
     href: "https://lysaght.com/support-technical/support/design/rain-noise-considerations-steel-roofs",
     label: "Rain noise considerations for steel roofs",
     note: " (Lysaght, part of BlueScope)",
@@ -52,6 +59,83 @@ const SOURCES = [
     note: " (Bureau of Meteorology)",
   },
 ];
+
+const FAQS = [
+  {
+    q: "How do I reduce rain noise on a metal roof?",
+    a: "The biggest fix is an insulation blanket laid directly under the sheets and pulled tight against them, which damps the vibration where the rain hits. Ceiling batts, a plasterboard ceiling and tight fixings reduce it further.",
+  },
+  {
+    q: "Is a metal roof louder than tile in the rain?",
+    a: "Slightly. Tiles are heavy and absorb more of the impact, so the difference can be noticeable on an uninsulated roof. Once a metal roof has a proper insulation blanket, the gap is small.",
+  },
+  {
+    q: "Can I add insulation under an existing metal roof?",
+    a: "The blanket sits directly under the sheets, so it's usually easiest to add when the roof is installed or replaced. On an existing roof, topping up the ceiling batts is the simpler way to cut noise.",
+  },
+  {
+    q: "Why is my verandah or carport so noisy in the rain?",
+    a: "Verandahs, pergolas, carports and sheds usually have no ceiling or insulation under the sheeting, so nothing damps the sound. They will always be noisier than the main roof.",
+  },
+];
+
+// Corrugated profile for the roof cross-section diagram
+const WAVE = Array.from({ length: 49 }, (_, i) => {
+  const x = 20 + i * 7.5;
+  const y = 70 + Math.sin(i * 1.05) * 6;
+  return (i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1);
+}).join(" ");
+
+// y = where the leader line touches the layer, ly = where its label sits
+const LAYERS = [
+  { y: 70, ly: 64, lines: ["Colorbond sheet"] },
+  { y: 88, ly: 96, lines: ["Insulation blanket, pulled tight", "under the sheets: the biggest factor"] },
+  { y: 107, ly: 138, lines: ["Battens, fixed tight so", "the sheets don\u2019t rattle"] },
+  { y: 160, ly: 174, lines: ["Roof space"] },
+  { y: 217, ly: 212, lines: ["Ceiling batts: a second layer"] },
+  { y: 238, ly: 240, lines: ["Plasterboard ceiling: blocks far more", "sound than a raked or open ceiling"] },
+  { y: 288, ly: 292, lines: ["Your room"] },
+];
+
+function RoofLayersDiagram() {
+  return (
+    <svg
+      viewBox="0 0 640 340"
+      role="img"
+      aria-labelledby="noise-layers-title noise-layers-desc"
+      className="mx-auto block h-auto w-full min-w-[520px] max-w-2xl"
+    >
+      <title id="noise-layers-title">What sits between the rain and your room</title>
+      <desc id="noise-layers-desc">
+        A cross-section of a metal roof. From the top: rain, the Colorbond sheet, an insulation
+        blanket pulled tight under the sheet, battens, the roof space, ceiling batts, a
+        plasterboard ceiling, and your room.
+      </desc>
+      {[40, 90, 140, 190, 240, 290, 340].map((x) => (
+        <line key={x} x1={x} y1="12" x2={x - 8} y2="40" className="stroke-clay" strokeWidth="2" strokeLinecap="round" />
+      ))}
+      <path d={WAVE} fill="none" className="stroke-ink" strokeWidth="4" />
+      <rect x="20" y="80" width="360" height="16" rx="3" className="fill-clay/25" />
+      <line x1="20" y1="97" x2="380" y2="97" className="stroke-ink/40" strokeWidth="2" strokeDasharray="6 4" />
+      {[40, 130, 220, 310].map((x) => (
+        <rect key={x} x={x} y="100" width="40" height="14" className="fill-ink/70" />
+      ))}
+      <rect x="20" y="118" width="360" height="86" className="fill-white stroke-mortar" />
+      <rect x="20" y="204" width="360" height="26" className="fill-mortar" />
+      <rect x="20" y="232" width="360" height="12" className="fill-ink/60" />
+      <rect x="20" y="248" width="360" height="80" className="fill-paper stroke-mortar" />
+
+      {LAYERS.map((l) => (
+        <g key={l.y}>
+          <line x1="384" y1={l.y} x2="404" y2={l.ly} className="stroke-ink/40" strokeWidth="1.5" />
+          {l.lines.map((t, i) => (
+            <text key={t} x="410" y={l.ly + 5 + i * 16} className="fill-ink font-body" fontSize="13">{t}</text>
+          ))}
+        </g>
+      ))}
+    </svg>
+  );
+}
 
 const h2 ="font-display text-2xl font-bold tracking-tight text-clay";
 const body = "mt-4 font-body leading-relaxed text-ink/70";
@@ -79,8 +163,8 @@ export default function MetalRoofNoisePage() {
             <p className="mt-6 font-body leading-relaxed text-ink/70">
               A modern Colorbond roof, installed properly with an insulation blanket and a ceiling
               underneath, is only a little louder than tile in normal rain, and most people barely
-              notice the difference inside. The loud &ldquo;tin roof&rdquo; sound comes from old
-              roofs with no insulation, or from verandahs, carports and sheds with nothing under
+              notice the difference inside. Loud metal roof noise, the &ldquo;tin roof&rdquo; sound,
+              comes from old roofs with no insulation, or from verandahs, carports and sheds with nothing under
               the sheeting. Heavy hail is the exception: you&apos;ll hear it on any metal roof.
             </p>
             <p className={body}>
@@ -90,7 +174,7 @@ export default function MetalRoofNoisePage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-colorbond-roofing.webp"
-                alt="Colorbond metal roof on an Adelaide home"
+                alt="Modern two-storey home with a dark Colorbond metal roof"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -110,7 +194,7 @@ export default function MetalRoofNoisePage() {
               </article>
 
               <article>
-                <h2 className={h2}>What actually controls the noise</h2>
+                <h2 className={h2}>What actually controls metal roof noise</h2>
                 <ul className={list}>
                   <li>
                     <strong className="text-ink">Insulation blanket:</strong> a foil-faced
@@ -136,6 +220,13 @@ export default function MetalRoofNoisePage() {
                 </ul>
               </article>
 
+              <ArticleFigure
+                heading="What sits between the rain and your room"
+                caption="Each layer under the sheet cuts more noise. The blanket directly under the sheets does the most."
+              >
+                <RoofLayersDiagram />
+              </ArticleFigure>
+
               <article>
                 <h2 className={h2}>Where you will notice it</h2>
                 <ul className={list}>
@@ -152,6 +243,13 @@ export default function MetalRoofNoisePage() {
                     in spring and early summer.
                   </li>
                 </ul>
+                <p className={body}>
+                  In Adelaide, you&apos;ll mostly hear rain in winter. Bureau of Meteorology figures
+                  for Kent Town show June, July and August each average around 68 to 78 mm of rain
+                  across 10 to 12 rainy days, against only 2 to 3 rainy days a month in January and
+                  February. That makes a winter visit the best time to listen to a friend&apos;s
+                  Colorbond roof before you choose your own.
+                </p>
               </article>
 
               <article>
@@ -218,6 +316,8 @@ export default function MetalRoofNoisePage() {
                   </Link>
                 </div>
               </article>
+
+              <ArticleFaq heading="Metal roof noise: common questions" faqs={FAQS} />
 
               <article>
                 <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>

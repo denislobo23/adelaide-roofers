@@ -8,14 +8,16 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import PrintableChecklist from "@/components/PrintableChecklist";
 
 export const metadata = articleMetadata({
   slug: "signs-you-need-a-new-roof",
   title: "Signs You Need a New Roof, Not Just a Repair | Adelaide Roofers",
   description:
-    "10 signs your Adelaide roof needs replacing, not another repair, from leaks that keep coming back to crumbling tiles, rust and sagging rooflines.",
+    "The 10 signs you need a new roof, not another repair: leaks that keep coming back, crumbling tiles, rust and sagging rooflines on Adelaide homes.",
   image: "/images/service-roof-repairs.webp",
-  imageAlt: "Assessing roof damage in Adelaide — signs a roof needs full replacement rather than a repair",
+  imageAlt: "Roofer kneeling on a terracotta tile roof, checking tiles near the ridge for signs the home needs a new roof",
 });
 
 const HEADLINE = "Signs You Need a New Roof, Not Just a Repair";
@@ -34,6 +36,61 @@ const breadcrumbJsonLd = {
     },
   ],
 };
+
+const CHECKLIST = [
+  "The roof is past its expected life (or 40+ years old)",
+  "The same leak has come back after two or more repairs",
+  "Tiles are crumbling, flaking or absorbing water",
+  "Rust has gone through the metal, not just the surface",
+  "The ridge or roofline dips, bows or sags",
+  "Daylight shows through the roof space",
+  "Water stains, mould or a damp smell inside",
+  "Handfuls of tile grit or granules in the gutters",
+  "Several repairs in the last few years",
+  "Cracked or weathered asbestos cement (fibro) sheets",
+];
+
+const FAQS = [
+  {
+    q: "How do I know if I need a new roof?",
+    a: "Look for two or more of the signs above: an old roof, leaks that keep coming back, crumbling tiles or rusted-through metal, a sagging roofline, or daylight in the roof space. One sign on its own is usually a repair. If you tick two or more, get a licensed roofer to inspect it before deciding.",
+  },
+  {
+    q: "How long does a roof last in Adelaide?",
+    a: "It depends on the material and how close you are to the sea. Bristile gives its concrete tiles a 50-year product warranty, and BlueScope warrants Colorbond roofing against rusting through for up to 45 years, with shorter cover near the coast. Terracotta tiles last a very long time, but the mortar bedding and pointing need redoing well before the tiles wear out.",
+  },
+  {
+    q: "Can I just repair my roof instead of replacing it?",
+    a: "Often, yes. A few cracked or slipped tiles, loose ridge capping, one leak on an otherwise sound roof, blocked gutters and surface rust caught early are normally fixable. Replacement makes sense when several signs show up together or repairs keep adding up.",
+  },
+  {
+    q: "Should I replace a roof that isn't leaking yet?",
+    a: "Not necessarily, but if it's 40 to 60 years old, start budgeting even if it looks fine from the street. Damage often starts in the timber, sarking and insulation before a stain shows on the ceiling, so an inspection is worth it.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://www.brickworks.com.au/articles/home/how-to-choose-the-best-roofing-material-for-your-home/",
+    label: "How to choose the best roofing material for your home",
+    note: " (Brickworks, maker of Bristile roof tiles)",
+  },
+  {
+    href: "https://bluescopesteel.com.au/resources/articles/bluescope-launches-new-colorbond-steel-colour-palette",
+    label: "Colorbond steel roofing warranty of up to 45 years",
+    note: " (BlueScope)",
+  },
+  {
+    href: "https://colorbond.com/faq",
+    label: "Colorbond steel FAQs: warranty cover by location",
+    note: " (Colorbond, BlueScope)",
+  },
+  {
+    href: "https://www.asbestossafety.gov.au/sites/default/files/2025-12/Chrysotile_Asbestos_factsheet.pdf",
+    label: "Chrysotile asbestos fact sheet: the 2003 ban",
+    note: " (Asbestos Safety and Eradication Agency, PDF)",
+  },
+];
 
 const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
 const body = "mt-4 font-body leading-relaxed text-ink/70";
@@ -58,10 +115,10 @@ export default function SignsYouNeedANewRoofPage() {
             </h1>
             <ArticleMeta slug="signs-you-need-a-new-roof" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              You probably need a new roof, not another repair, if you see two or more of these:
-              the roof is 30+ years old, leaks keep coming back after repairs, tiles are crumbling
+              The clearest signs you need a new roof, not another repair, are: the roof is 30+
+              years old, leaks keep coming back after repairs, tiles are crumbling
               or metal is rusted through, the roofline sags, or daylight shows through the roof
-              space. One sign on its own is usually fixable. Several together mean repairs are
+              space. One sign on its own is usually fixable. Two or more together mean repairs are
               just delaying the inevitable.
             </p>
             <p className={body}>
@@ -72,7 +129,7 @@ export default function SignsYouNeedANewRoofPage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-roof-repairs.webp"
-                alt="Assessing roof damage in Adelaide — signs a roof needs full replacement rather than a repair"
+                alt="Roofer kneeling on a terracotta tile roof, checking tiles near the ridge for signs the home needs a new roof"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -85,20 +142,23 @@ export default function SignsYouNeedANewRoofPage() {
                 <h2 className={h2}>1. Age: the roof is past its expected life</h2>
                 <ul className={list}>
                   <li>
-                    <strong className="text-ink">Terracotta tiles:</strong> can last 50+ years,
-                    but the bedding and pointing usually need redoing every 20 to 30.
+                    <strong className="text-ink">Terracotta tiles:</strong> among the longest-lasting
+                    roofing materials, but the mortar bedding and pointing under the ridge capping
+                    wear out much sooner and need redoing from time to time.
                   </li>
                   <li>
-                    <strong className="text-ink">Concrete tiles:</strong> around 30 to 50 years,
-                    with surfaces that get porous and brittle with age.
+                    <strong className="text-ink">Concrete tiles:</strong> Bristile, a major
+                    Australian maker, gives its concrete tiles a 50-year product warranty, but the
+                    surface gets porous and brittle with age.
                   </li>
                   <li>
-                    <strong className="text-ink">Colorbond / metal:</strong> around 30 to 50
-                    years, less near the coast.
+                    <strong className="text-ink">Colorbond / metal:</strong> BlueScope warrants
+                    Colorbond roofing against rusting through for up to 45 years, with shorter cover
+                    closer to the coast.
                   </li>
                 </ul>
                 <p className={body}>
-                  Many Adelaide homes built in the post-war boom still have their original roof.
+                  Plenty of older Adelaide homes still have their original roof.
                   If yours is 40 to 60 years old, start budgeting even if it looks fine from the
                   street.
                 </p>
@@ -281,6 +341,30 @@ export default function SignsYouNeedANewRoofPage() {
                     Try the free calculator →
                   </Link>
                 </div>
+              </article>
+
+              <PrintableChecklist
+                heading="Printable checklist: signs you need a new roof"
+                intro="Walk around the house and check the roof space on a sunny day, then tick what you find. Don't climb on the roof yourself."
+                items={CHECKLIST}
+                footer="Two or more ticks? Book an inspection with a licensed roofer before deciding."
+              />
+
+              <ArticleFaq heading="Signs you need a new roof: common questions" faqs={FAQS} />
+
+              <article>
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-body text-sm leading-relaxed text-ink/60 marker:text-clay">
+                  {SOURCES.map((src) => (
+                    <li key={src.href}>
+                      <a href={src.href} target="_blank" rel="noopener noreferrer" className={inlineLink}>
+                        {src.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                      {src.note}
+                    </li>
+                  ))}
+                </ul>
               </article>
             </div>
           </div>

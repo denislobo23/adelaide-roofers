@@ -8,6 +8,8 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import RoofCalculator from "@/components/RoofCalculator";
 
 export const metadata = articleMetadata({
   slug: "asbestos-roof-removal-guide",
@@ -15,7 +17,7 @@ export const metadata = articleMetadata({
   description:
     "Asbestos roof removal in Adelaide: how to spot it, SafeWork SA rules, what the job involves and typical costs of $40 to $150 per m².",
   image: "/images/service-asbestos-roof-removal.webp",
-  imageAlt: "Asbestos roof removal in Adelaide — licensed removalist assessing an older fibro roof",
+  imageAlt: "Removalist in a protective suit and respirator wet-wiping corrugated asbestos cement sheets during asbestos roof removal, with the work area taped off",
 });
 
 const HEADLINE = "Asbestos Roof Removal: What Adelaide Homeowners Need to Know";
@@ -38,6 +40,38 @@ const breadcrumbJsonLd = {
 const COSTS = [
   { item: "Licensed removal and disposal", range: "$40 to $150 per m²" },
   { item: "Removal bundled with a new roof", range: "Often adds $4,600 to $14,700 to the job" },
+];
+
+const FAQS = [
+  {
+    q: "How much does asbestos roof removal cost in Adelaide?",
+    a: "Licensed removal and disposal typically costs around $40 to $150 per m². Bundled with a new roof, removal often adds $4,600 to $14,700 to the job. Roof size, height, pitch, access and disposal fees all move the price.",
+  },
+  {
+    q: "How do I know if my roof is asbestos?",
+    a: "Only a lab test can confirm it. Strong clues are a home or extension built before 1990 and grey corrugated or flat cement sheeting, often called fibro. If you're unsure, get a licensed asbestos assessor or removalist to take a sample rather than breaking off a piece yourself.",
+  },
+  {
+    q: "Can I remove an asbestos roof myself?",
+    a: "Not a whole roof. In South Australia, removing more than 10 m² of non-friable (bonded) asbestos needs a removalist with at least a Class B licence from SafeWork SA, and almost every house roof is bigger than that.",
+  },
+  {
+    q: "Can an asbestos roof be painted or restored instead?",
+    a: "Usually not in any lasting way. Pressure cleaning is off the table and replacing even a few sheets means handling asbestos. If the roof has failed, replacement is normally the only compliant option.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://www.safework.sa.gov.au/licence-and-registration/apply-renew/asbestos",
+    label: "Asbestos licences",
+    note: " (SafeWork SA)",
+  },
+  {
+    href: "https://www.safework.sa.gov.au/workplaces/work-tasks-and-projects/fragile-roofing",
+    label: "Fragile roofing",
+    note: " (SafeWork SA)",
+  },
 ];
 
 const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
@@ -67,9 +101,8 @@ export default function AsbestosRoofRemovalGuidePage() {
               on the roof, it may contain asbestos. You shouldn&apos;t remove a whole asbestos
               roof yourself: in South Australia, removing more than 10 m² of bonded asbestos
               needs a SafeWork SA licensed removalist, and that&apos;s effectively every roof.
-              Removal on
-              its own typically costs around <strong>$40 to $150 per m²</strong> in Adelaide,
-              before the new roof goes on.
+              Asbestos roof removal on its own typically costs around{" "}
+              <strong>$40 to $150 per m²</strong> in Adelaide, before the new roof goes on.
             </p>
             <p className={body}>
               Below is how to tell if your roof has asbestos, what the rules are, what the job
@@ -79,7 +112,7 @@ export default function AsbestosRoofRemovalGuidePage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-asbestos-roof-removal.webp"
-                alt="Asbestos roof removal in Adelaide — licensed removalist assessing an older fibro roof"
+                alt="Removalist in a protective suit and respirator wet-wiping corrugated asbestos cement sheets during asbestos roof removal, with the work area taped off"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -197,7 +230,7 @@ export default function AsbestosRoofRemovalGuidePage() {
               </article>
 
               <article>
-                <h2 className={h2}>What it costs in Adelaide</h2>
+                <h2 className={h2}>What asbestos roof removal costs in Adelaide</h2>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
                     <thead>
@@ -283,11 +316,44 @@ export default function AsbestosRoofRemovalGuidePage() {
                   Prices checked against published Adelaide pricing guides, November 2026.
                 </p>
               </article>
+
+              <ArticleFaq heading="Asbestos roof removal: common questions" faqs={FAQS} />
+
+              <article>
+                <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
+                <ul className="mt-3 list-disc space-y-1.5 pl-5 font-body text-sm leading-relaxed text-ink/60 marker:text-clay">
+                  {SOURCES.map((src) => (
+                    <li key={src.href}>
+                      <a href={src.href} target="_blank" rel="noopener noreferrer" className={inlineLink}>
+                        {src.label}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                      {src.note}
+                    </li>
+                  ))}
+                </ul>
+              </article>
             </div>
           </div>
 
           {/* ── SIDEBAR ──────────────────────────────────── */}
           <ArticleSidebar />
+        </div>
+      </section>
+
+      {/* ── INSTANT CALCULATOR (full-width, matches the cost articles) ── */}
+      <section className="mx-auto max-w-wrap px-5 pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2 className="font-display text-3xl font-bold tracking-tight text-ink md:text-4xl">
+            Estimate your new roof after asbestos removal
+          </h2>
+          <p className="mx-auto mt-3 max-w-md font-body text-ink/65">
+            Choose roof replacement and pick &ldquo;Asbestos cement (fibro)&rdquo; as your current
+            roof for a free, no-obligation ballpark figure.
+          </p>
+        </div>
+        <div className="mt-10">
+          <RoofCalculator />
         </div>
       </section>
 

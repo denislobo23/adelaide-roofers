@@ -8,6 +8,8 @@ import ContactForm from "@/components/ContactForm";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import PrintableChecklist from "@/components/PrintableChecklist";
 
 export const metadata = articleMetadata({
   slug: "how-to-read-a-roofing-quote",
@@ -15,7 +17,7 @@ export const metadata = articleMetadata({
   description:
     "What every line of an Adelaide roofing quote should say, the red flags, SA deposit and contract rules, and how to compare three quotes fairly.",
   image: "/images/blog-how-to-read-a-quote.webp",
-  imageAlt: "Reading and comparing itemised roofing quotes",
+  imageAlt: "Roofer going through an itemised roofing quote on a clipboard with a homeowner outside a terracotta-tiled house",
 });
 
 const HEADLINE = "How to Read a Roofing Quote: What Should Be Included";
@@ -98,6 +100,44 @@ const QUOTE_LINES = [
   },
 ];
 
+const COMPARE_ITEMS = [
+  "CBS licence number and ABN shown",
+  "Scope: what comes off, what goes on, roof area in m²",
+  "Material brand, profile and colour named",
+  "Sarking, insulation blanket and battens specified",
+  "Flashings, ridges and valleys listed",
+  "Gutters and downpipes: included or not",
+  "Scaffolding or edge protection included",
+  "Skip, disposal and clean-up included",
+  "Total price including GST, provisional sums shown",
+  "Deposit within the legal limit",
+  "Workmanship warranty in years, in writing",
+  "Start date, job length and quote validity",
+];
+
+const FAQS = [
+  {
+    q: "What should a roofing quote include?",
+    a: "The roofer's business name, ABN and CBS licence number; what's coming off and going on, with the roof area; the exact materials; what's excluded; a total price including GST; the payment stages; the warranty in years; and how long the quote is valid.",
+  },
+  {
+    q: "How do I compare roofing quotes?",
+    a: "Put them side by side and check they're quoting the same job: the same roof area, material, sarking and gutters. Ask each roofer to fill any gaps in writing, compare the warranties as well as the price, and sense-check the total against typical Adelaide prices.",
+  },
+  {
+    q: "How much deposit can a roofer ask for in SA?",
+    a: "For domestic building work, no more than $1,000, or 5% of the contract price if the contract is over $20,000. Advance payments for third-party costs such as council fees are the exception.",
+  },
+  {
+    q: "Should I take the cheapest roofing quote?",
+    a: "Not automatically. Most big price gaps come from a different scope, not different margins, so a quote far below the others usually leaves something out. Compare what's included before you compare the totals.",
+  },
+  {
+    q: "Can I cancel a roofing contract after signing?",
+    a: "For contracts over $20,000, you have 5 clear business days after signing to cancel by written notice. If you agreed to the job with an uninvited door-to-door seller, the cooling-off period is 10 business days.",
+  },
+];
+
 const SOURCES = [
   {
     href: "https://www.cbs.sa.gov.au/documents/form-1-building-contract-rights-and-obligations.pdf",
@@ -113,6 +153,11 @@ const SOURCES = [
     href: "https://www.cbs.sa.gov.au/find-a-licence-holder",
     label: "Find a licence holder",
     note: " (Consumer and Business Services SA)",
+  },
+  {
+    href: "https://www.accc.gov.au/business/selling-products-and-services/telemarketing-and-door-to-door-sales",
+    label: "Telemarketing and door-to-door sales",
+    note: " (ACCC)",
   },
 ];
 
@@ -157,7 +202,7 @@ export default function HowToReadAQuotePage() {
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/blog-how-to-read-a-quote.webp"
-                alt="Reading and comparing itemised roofing quotes"
+                alt="Roofer going through an itemised roofing quote on a clipboard with a homeowner outside a terracotta-tiled house"
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -167,7 +212,7 @@ export default function HowToReadAQuotePage() {
 
             <div className="mt-14 space-y-12">
               <article>
-                <h2 className={h2}>What each part of the quote should say</h2>
+                <h2 className={h2}>What each part of a roofing quote should say</h2>
                 <p className={body}>
                   Use this as a checklist with the quote in front of you. Anything in the right-hand
                   column is worth a question.
@@ -317,6 +362,13 @@ export default function HowToReadAQuotePage() {
                 </ol>
               </article>
 
+              <PrintableChecklist
+                heading="Printable quote comparison sheet"
+                intro="Print this, then tick each box for every quote you get. Any gap is a question to ask before you sign."
+                items={COMPARE_ITEMS}
+                columns={["Roofer A", "Roofer B", "Roofer C"]}
+              />
+
               <article>
                 <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
                   Before you sign
@@ -345,6 +397,8 @@ export default function HowToReadAQuotePage() {
                   </Link>
                 </div>
               </article>
+
+              <ArticleFaq heading="Roofing quote: common questions" faqs={FAQS} />
 
               <article>
                 <h2 className="font-display text-lg font-bold tracking-tight text-ink">Sources</h2>
