@@ -38,7 +38,7 @@ const breadcrumbJsonLd = {
 };
 
 const CHECKLIST = [
-  "The roof is past its expected life (or 40+ years old)",
+  "The roof is past its expected life (or getting on in years)",
   "The same leak has come back after two or more repairs",
   "Tiles are crumbling, flaking or absorbing water",
   "Rust has gone through the metal, not just the surface",

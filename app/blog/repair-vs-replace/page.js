@@ -9,15 +9,23 @@ import ArticleSidebar from "@/components/ArticleSidebar";
 import RepairVsReplaceQuiz from "@/components/RepairVsReplaceQuiz";
 import ArticleMeta from "@/components/ArticleMeta";
 import { articleMetadata } from "@/lib/articleMetadata";
+import ArticleFaq from "@/components/ArticleFaq";
+import ArticleSources from "@/components/ArticleSources";
+import ArticleKeyPoints from "@/components/ArticleKeyPoints";
+
+const IMAGE_ALT =
+  "Roofers fitting new Colorbond sheets over the frame of a brick home, after deciding to replace rather than repair the roof";
 
 export const metadata = articleMetadata({
   slug: "repair-vs-replace",
-  title: "Repair, Restore or Replace Your Roof? How to Decide | Adelaide Roofers",
+  title: "Should You Repair or Replace Your Roof? How to Decide | Adelaide Roofers",
   description:
-    "A simple framework for telling whether your roof needs a repair, a restoration, or a full replacement — and why the real comparison isn't the price of one job.",
+    "Repair or replace your roof? A quick decision table, a 30-second quiz, typical Adelaide costs for each option, and why five years of repairs is the real test.",
   image: "/images/service-roof-replacement.webp",
-  imageAlt: "Roofer checking tile condition to decide between repair, restoration and replacement",
+  imageAlt: IMAGE_ALT,
 });
+
+const HEADLINE = "Repair vs. Replace: Which Does Your Roof Need?";
 
 const breadcrumbJsonLd = {
   "@context": "https://schema.org",
@@ -28,7 +36,7 @@ const breadcrumbJsonLd = {
     {
       "@type": "ListItem",
       position: 3,
-      name: "Repair vs. Replace: Which Does Your Roof Need?",
+      name: HEADLINE,
       item: `${site.url}/blog/repair-vs-replace`,
     },
   ],
@@ -36,39 +44,109 @@ const breadcrumbJsonLd = {
 
 const DECISION_TABLE = [
   {
-    situation: "A handful of cracked tiles or a single leak, roof otherwise sound",
+    situation: "A few cracked tiles or a single leak, roof otherwise sound",
     path: "Repair",
+    cost: "About $230 to $920",
     href: "/services/roof-repairs",
   },
   {
-    situation: "Roof is structurally sound but faded, chalky, or has moss/lichen build-up",
+    situation: "Structurally sound but faded, chalky or mossy, or ridge capping starting to crumble",
     path: "Restoration",
+    cost: "About $3,225 to $10,100",
     href: "/services/roof-restoration",
   },
   {
-    situation: "Repeated leaks in different spots, or repairs needed more than once a year",
+    situation: "Leaks in different spots, or repairs needed more than once a year",
     path: "Getting close to replacement",
+    cost: "Compare five years of repairs with one replacement",
     href: "/services/roof-replacement",
   },
   {
-    situation: "Roof is asbestos and showing any cracking or deterioration",
-    path: "Replacement (safety, not just cosmetics)",
+    situation: "Asbestos cement roof that's cracking or deteriorating",
+    path: "Replacement (a safety call, not just cosmetics)",
+    cost: "Licensed removal plus a new roof",
     href: "/services/roof-replacement",
   },
   {
-    situation: "Roof is 40+ years old with widespread wear, or you're planning solar",
-    path: "Replacement usually pays off over patch-repairing",
+    situation: "Wear across most of the roof, or you're about to add solar",
+    path: "Replacement usually pays off over patching",
+    cost: "About $12,900 to $27,600, single-storey",
     href: "/services/roof-replacement",
   },
 ];
 
-const SERVICE_LINKS = [
-  { href: "/services/roof-repairs", label: "Roof repairs in Adelaide" },
-  { href: "/services/roof-restoration", label: "Roof restoration in Adelaide" },
-  { href: "/services/roof-replacement", label: "Roof replacement in Adelaide" },
+// Illustration only: typical middle guide prices, five years.
+const FIVE_YEAR = [
+  ["Keep patching: two leak call-outs a year", "10 × $460", "$4,600", "Cause may still be there"],
+  ["Restore once", "1 × $6,900", "$6,900", "Only if the roof is sound"],
+  ["Replace once", "1 × $20,250", "$20,250", "New roof, new warranties"],
 ];
 
-const inlineLink = "font-semibold text-clay underline-offset-2 hover:underline";
+const FAQS = [
+  {
+    q: "Can a roof be repaired instead of replaced?",
+    a: "Yes, if the problem is isolated and the rest of the roof is sound, such as a few cracked tiles or one failed flashing. If problems are spread across the roof or keep coming back, repairs only delay a replacement.",
+  },
+  {
+    q: "Is it worth restoring an old roof?",
+    a: "It's worth it when the tiles or sheets and the frame are still sound and the problems are wear on the surface, such as faded coating, moss or crumbling ridge pointing. It isn't worth it when tiles are crumbling, metal is rusting through or the frame is sagging.",
+  },
+  {
+    q: "How do I know if my roof needs replacing?",
+    a: "The clearest signs are leaks that keep coming back in different places, tiles that crumble or break when walked on, rust holes in metal sheets, a sagging roofline, and a cracking asbestos cement roof.",
+  },
+  {
+    q: "Is it cheaper to repair or replace a roof?",
+    a: "A single repair is far cheaper. But if you're calling a roofer more than once a year, add up five years of repairs and compare that with a restoration or replacement, because repeated repairs often don't fix the cause.",
+  },
+];
+
+const SOURCES = [
+  {
+    href: "https://whatsthedamage.com.au/roofing-cost-adelaide/",
+    label: "Roofing costs in Adelaide",
+    note: " (What’s The Damage, independent price guide)",
+  },
+  {
+    href: "https://www.asbestossafety.gov.au/about-asbestos/practical-guidance/householders-and-home-renovators",
+    label: "Householders and home renovators",
+    note: " (Asbestos Safety and Eradication Agency)",
+  },
+  {
+    href: "https://www.safework.sa.gov.au/workplaces/work-tasks-and-projects/fragile-roofing",
+    label: "Fragile roofing",
+    note: " (SafeWork SA)",
+  },
+  {
+    href: "https://media.bom.gov.au/social/blog/1733/explainer-how-does-hail-form/",
+    label: "Explainer: how does hail form?",
+    note: " (Bureau of Meteorology)",
+  },
+];
+
+const KEY_POINTS = [
+  "Repair an isolated problem on an otherwise sound roof.",
+  "Restore a roof that's sound but worn on the surface.",
+  "Replace when problems keep coming back or are spread across the roof, or it's deteriorating asbestos.",
+  "Compare five years of repairs with one restoration or replacement, not one job's price.",
+];
+
+const JUMP_LINKS = [
+  { href: "#decision-table", label: "Decision table" },
+  { href: "#quiz", label: "30-second quiz" },
+  { href: "#signs", label: "Signs for each" },
+  { href: "#five-years", label: "Five-year cost" },
+  { href: "#adelaide", label: "Adelaide factors" },
+  { href: "#faq", label: "FAQs" },
+];
+
+const h2 = "font-display text-2xl font-bold tracking-tight text-clay";
+const h3 = "font-display text-lg font-bold tracking-tight text-ink";
+const body = "mt-4 font-body leading-relaxed text-ink/70";
+const list = "mt-4 list-disc space-y-2 pl-5 font-body leading-relaxed text-ink/70 marker:text-clay";
+const inlineLink = "font-semibold text-clay hover:text-clay-deep";
+const th = "border-b border-mortar px-4 py-3 font-display text-sm font-bold text-ink";
+const td = "border-b border-mortar px-4 py-3 font-body text-sm text-ink/75 align-top";
 
 export default function RepairVsReplacePage() {
   return (
@@ -84,20 +162,30 @@ export default function RepairVsReplacePage() {
           <div>
             <span className="eyebrow text-clay">Repair vs. replace</span>
             <h1 className="mt-3 font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-ink md:text-5xl">
-              Repair vs. Replace: Which Does Your Roof Need?
+              {HEADLINE}
             </h1>
-            <ArticleMeta slug="repair-vs-replace" headline={"Repair vs. Replace: Which Does Your Roof Need?"} />
+            <ArticleMeta slug="repair-vs-replace" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              A few cracked tiles is a different problem to a roof that&apos;s leaking every
-              winter — but it&apos;s not always obvious which side of that line your roof is
-              actually on. Here&apos;s a simple framework for working it out, and why the real
-              comparison isn&apos;t &ldquo;repair price vs. replacement price.&rdquo;
+              Whether to repair or replace your roof comes down to how widespread the problem
+              is. <strong className="text-ink">Repair</strong> an isolated problem on a roof
+              that&apos;s otherwise sound. <strong className="text-ink">Restore</strong> a roof
+              that&apos;s structurally fine but worn on the surface.{" "}
+              <strong className="text-ink">Replace</strong> it when problems keep coming back,
+              are spread across the roof, or it&apos;s an asbestos cement roof that&apos;s
+              deteriorating. Don&apos;t compare one repair with one replacement: compare what
+              you&apos;d spend on repairs over the next five years.
             </p>
+            <p className={body}>
+              Use the decision table or the 30-second quiz below, then check the signs and
+              typical Adelaide costs for each path.
+            </p>
+
+            <ArticleKeyPoints points={KEY_POINTS} jumpLinks={JUMP_LINKS} />
 
             <div className="relative mt-8 aspect-[16/10] w-full overflow-hidden rounded-2xl">
               <Image
                 src="/images/service-roof-replacement.webp"
-                alt="Roofer checking tile condition to decide between repair, restoration and replacement"
+                alt={IMAGE_ALT}
                 fill
                 className="object-cover"
                 sizes="(min-width: 768px) 700px, 100vw"
@@ -106,37 +194,31 @@ export default function RepairVsReplacePage() {
             </div>
 
             <div className="mt-14 space-y-12">
-              <article>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-clay">
-                  The quick decision table
-                </h2>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  This isn&apos;t exhaustive, but it covers most situations homeowners actually
-                  face:
+              <article id="decision-table" className="scroll-mt-24">
+                <h2 className={h2}>Repair or replace your roof: the quick decision table</h2>
+                <p className={body}>
+                  Costs are typical guide ranges from a published Adelaide price guide (November
+                  2026), not quotes.
                 </p>
-                <div className="mt-5 overflow-hidden rounded-xl border border-mortar">
+                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
                     <thead>
                       <tr className="bg-paper">
-                        <th className="border-b border-mortar px-4 py-3 font-display text-sm font-bold text-ink">
-                          Situation
-                        </th>
-                        <th className="border-b border-mortar px-4 py-3 font-display text-sm font-bold text-ink">
-                          Likely path
-                        </th>
+                        <th className={th}>Situation</th>
+                        <th className={th}>Likely path</th>
+                        <th className={th}>Typical guide cost</th>
                       </tr>
                     </thead>
                     <tbody>
                       {DECISION_TABLE.map((row, i) => (
                         <tr key={row.situation} className={i % 2 === 1 ? "bg-paper/50" : ""}>
-                          <td className="border-b border-mortar px-4 py-3 font-body text-sm text-ink/75">
-                            {row.situation}
-                          </td>
-                          <td className="border-b border-mortar px-4 py-3 font-body text-sm font-semibold text-ink">
+                          <td className={td}>{row.situation}</td>
+                          <td className={`${td} font-semibold text-ink`}>
                             <Link href={row.href} className="text-ink underline-offset-2 hover:text-clay hover:underline">
                               {row.path}
                             </Link>
                           </td>
+                          <td className={td}>{row.cost}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -144,91 +226,154 @@ export default function RepairVsReplacePage() {
                 </div>
               </article>
 
-              <article>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-clay">
-                  Or get a straight answer for your specific situation
-                </h2>
+              <article id="quiz" className="scroll-mt-24">
+                <h2 className={h2}>Or get a straight answer in 30 seconds</h2>
                 <div className="mt-5">
                   <RepairVsReplaceQuiz />
                 </div>
               </article>
 
-              <article>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-clay">
-                  Signs it&apos;s just a repair
-                </h2>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  A repair makes sense when the problem is isolated and the rest of the roof is
-                  sound: one or two cracked or slipped tiles, a single active leak with an
-                  identifiable source, or damage confined to a small, specific area — often
-                  after a storm. The rest of the roof holding up fine is the key signal here.
+              <article id="signs" className="scroll-mt-24">
+                <h2 className={h2}>The signs for each path</h2>
+                <div className="mt-6 space-y-6">
+                  <div>
+                    <h3 className={h3}>It&apos;s probably a repair if…</h3>
+                    <ul className={list}>
+                      <li>one or two tiles are cracked or have slipped</li>
+                      <li>there&apos;s a single leak with a clear source</li>
+                      <li>the damage is in one small area, often after a storm</li>
+                    </ul>
+                    <p className={body}>
+                      See{" "}
+                      <Link href="/blog/roof-repair-cost-factors" className={inlineLink}>
+                        what affects the cost of a roof repair
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className={h3}>It&apos;s probably a restoration if…</h3>
+                    <ul className={list}>
+                      <li>the coating is faded or chalky, or there&apos;s moss and lichen</li>
+                      <li>the ridge capping mortar is cracking</li>
+                      <li>nothing is failing yet, but it&apos;s heading that way</li>
+                    </ul>
+                    <p className={body}>
+                      See{" "}
+                      <Link href="/blog/roof-restoration-cost-adelaide" className={inlineLink}>
+                        what a restoration includes and costs
+                      </Link>
+                      .
+                    </p>
+                  </div>
+                  <div>
+                    <h3 className={h3}>It&apos;s probably a replacement if…</h3>
+                    <ul className={list}>
+                      <li>leaks keep appearing in different places</li>
+                      <li>tiles crumble or break when walked on, or metal is rusting through</li>
+                      <li>the roofline sags</li>
+                      <li>it&apos;s asbestos cement and cracking or deteriorating</li>
+                    </ul>
+                    <p className={body}>
+                      Our{" "}
+                      <Link href="/blog/signs-you-need-a-new-roof" className={inlineLink}>
+                        10 signs you need a new roof
+                      </Link>{" "}
+                      goes through each one with a printable checklist.
+                    </p>
+                  </div>
+                </div>
+              </article>
+
+              <article id="five-years" className="scroll-mt-24">
+                <h2 className={h2}>Compare five years, not one job</h2>
+                <p className={body}>
+                  An illustration using typical middle guide prices for a single-storey Adelaide
+                  home. Your numbers will differ, but the pattern is the point:
                 </p>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  If that sounds like your roof, see our{" "}
-                  <Link href="/services/roof-repairs" className={inlineLink}>
-                    roof repairs in Adelaide
-                  </Link>{" "}
-                  page, or read{" "}
-                  <Link href="/blog/roof-repair-cost-factors" className={inlineLink}>
-                    what affects the cost of a roof repair
+                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-paper">
+                        <th className={th}>Option</th>
+                        <th className={th}>Working</th>
+                        <th className={th}>Five-year spend</th>
+                        <th className={th}>Catch</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {FIVE_YEAR.map(([o, w, t, c], i) => (
+                        <tr key={o} className={i % 2 === 1 ? "bg-paper/50" : ""}>
+                          <td className={`${td} font-semibold text-ink`}>{o}</td>
+                          <td className={td}>{w}</td>
+                          <td className={td}>{t}</td>
+                          <td className={td}>{c}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className={body}>
+                  Patching looks cheapest on paper, but if the roof is failing across the board,
+                  you can spend thousands and still end up replacing it. If the roof is sound, a
+                  restoration usually ends the call-outs for far less than a new roof. For the
+                  full figures, see{" "}
+                  <Link href="/blog/roof-replacement-cost-adelaide" className={inlineLink}>
+                    roof replacement cost in Adelaide
                   </Link>
                   .
                 </p>
               </article>
 
-              <article>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-clay">
-                  Signs it&apos;s a restoration
-                </h2>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  Restoration — cleaning, sealing, and repainting, plus re-bedding and
-                  re-pointing ridge capping — fits when the roof is structurally fine but showing
-                  its age cosmetically: faded or chalky coating, moss or lichen build-up, or
-                  ridge capping that&apos;s started to crumble. Nothing&apos;s actively failing
-                  yet, but it&apos;s heading that way without attention.
-                </p>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  If that sounds like your roof, see our{" "}
-                  <Link href="/services/roof-restoration" className={inlineLink}>
-                    roof restoration in Adelaide
-                  </Link>{" "}
-                  page.
-                </p>
-              </article>
-
-              <article>
-                <h2 className="font-display text-2xl font-bold tracking-tight text-clay">
-                  Signs it&apos;s time to replace
-                </h2>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  Replacement is worth considering seriously once repairs start becoming a
-                  pattern rather than a one-off — multiple leaks in different spots, or call-outs
-                  more than once a year. It&apos;s also the right call regardless of pattern if
-                  the roof is asbestos and showing any cracking or deterioration, since that&apos;s
-                  a safety question, not just a cosmetic one. And a roof that&apos;s 40+ years
-                  old with widespread wear, or a home planning to add solar, often makes more
-                  sense to replace outright than to keep patching.
-                </p>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  If that sounds like your roof, see our{" "}
-                  <Link href="/services/roof-replacement" className={inlineLink}>
-                    roof replacement in Adelaide
-                  </Link>{" "}
-                  page.
-                </p>
+              <article id="adelaide" className="scroll-mt-24">
+                <h2 className={h2}>Adelaide factors that tip the decision</h2>
+                <ul className={list}>
+                  <li>
+                    <strong className="text-ink">Asbestos:</strong> the Asbestos Safety and
+                    Eradication Agency says a home built or renovated before 1990 probably has
+                    some asbestos. SafeWork SA treats asbestos cement roofing as fragile, so
+                    don&apos;t let anyone walk on or patch it without checking first. See the{" "}
+                    <Link href="/blog/asbestos-roof-removal-guide" className={inlineLink}>
+                      asbestos roof removal guide
+                    </Link>
+                    .
+                  </li>
+                  <li>
+                    <strong className="text-ink">Hail:</strong> large hail is most common in
+                    spring and early summer. If a storm caused the damage, check{" "}
+                    <Link href="/blog/insurance-roof-replacement-sa" className={inlineLink}>
+                      what your insurance will cover
+                    </Link>{" "}
+                    before choosing.
+                  </li>
+                  <li>
+                    <strong className="text-ink">Heritage and character areas:</strong> in
+                    overlays found in suburbs such as Unley and Norwood, a replacement that changes
+                    the roof&apos;s material or look can need council approval, while a like-for-like
+                    repair usually won&apos;t. Check{" "}
+                    <Link href="/blog/council-approval-roof-replacement-sa" className={inlineLink}>
+                      when a new roof needs council approval
+                    </Link>
+                    .
+                  </li>
+                  <li>
+                    <strong className="text-ink">Solar:</strong> if panels are coming, fix or
+                    replace the roof first. Here&apos;s{" "}
+                    <Link href="/blog/solar-panels-and-your-roof" className={inlineLink}>
+                      what to check before solar goes on
+                    </Link>
+                    .
+                  </li>
+                </ul>
               </article>
 
               <article>
                 <h2 className="font-display text-2xl font-bold tracking-tight text-ink">
-                  The real comparison isn&apos;t one job&apos;s price
+                  Not sure? Get it inspected first
                 </h2>
-                <p className="mt-4 font-body leading-relaxed text-ink/70">
-                  The comparison that actually matters isn&apos;t &ldquo;repair price vs.
-                  replacement price&rdquo; — it&apos;s repeated repair cost over the next five
-                  years vs. one replacement now. A roof needing several call-outs a year often
-                  costs more over time than a single replacement, without ever actually solving
-                  the underlying problem. If repairs are becoming routine rather than occasional,
-                  that pattern itself is the signal worth paying attention to.
+                <p className={body}>
+                  A roof inspection and report typically costs about $185 to $460 in Adelaide, a
+                  small spend before a big decision. Ask for photos of every problem area.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
@@ -245,7 +390,12 @@ export default function RepairVsReplacePage() {
                   </Link>
                 </div>
                 <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
-                  {SERVICE_LINKS.map((l) => (
+                  {[
+                    { href: "/services/roof-repairs", label: "Roof repairs in Adelaide" },
+                    { href: "/services/roof-restoration", label: "Roof restoration in Adelaide" },
+                    { href: "/services/roof-replacement", label: "Roof replacement in Adelaide" },
+                    { href: "/services/roof-inspection", label: "Roof inspections" },
+                  ].map((l) => (
                     <li key={l.href}>
                       <Link href={l.href} className="font-display text-sm font-semibold text-clay hover:text-clay-deep">
                         {l.label} →
@@ -254,6 +404,10 @@ export default function RepairVsReplacePage() {
                   ))}
                 </ul>
               </article>
+
+              <ArticleFaq id="faq" heading="Repair or replace: common questions" faqs={FAQS} />
+
+              <ArticleSources sources={SOURCES} />
             </div>
           </div>
 

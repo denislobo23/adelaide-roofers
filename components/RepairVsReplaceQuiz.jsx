@@ -35,7 +35,7 @@ const QUESTIONS = [
   },
   {
     key: "ageOrSolar",
-    question: "Is your roof 40+ years old, or are you planning to add solar panels?",
+    question: "Is your roof showing wear across most of it, or are you planning to add solar panels?",
     options: [
       { label: "Yes", value: "yes" },
       { label: "No", value: "no" },
@@ -64,7 +64,7 @@ const VERDICTS = {
   },
   replace_age: {
     title: "Replacement usually pays off here",
-    body: "A roof this old, or one about to carry solar panels, is generally better served by a full replacement than ongoing patching — especially if you want the new roof and any solar mounting done properly, once.",
+    body: "A roof worn across most of its surface, or one about to carry solar panels, is generally better served by a full replacement than ongoing patching — especially if you want the new roof and any solar mounting done properly, once.",
     jobType: "replacement",
   },
   restore: {
