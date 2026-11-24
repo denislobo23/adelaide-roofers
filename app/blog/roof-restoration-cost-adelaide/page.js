@@ -14,13 +14,13 @@ import ArticleSources from "@/components/ArticleSources";
 import ArticleKeyPoints from "@/components/ArticleKeyPoints";
 
 const IMAGE_ALT =
-  "Roofer on a freshly coated charcoal tile roof during a roof restoration on a single-storey brick home";
+  "Roofer in hi-vis working along a ridge of a charcoal tile hip roof on a single-storey cream brick home, with a ladder at the side";
 
 export const metadata = articleMetadata({
   slug: "roof-restoration-cost-adelaide",
   title: "Roof Restoration Cost in Adelaide: 2026 Price Guide | Adelaide Roofers",
   description:
-    "Roof restoration cost in Adelaide: typical 2026 guide ranges for tile and metal roofs, what the job includes, what moves the price, and when it isn't worth it.",
+    "Roof restoration cost in Adelaide: $4,500–$8,000 incl. GST for a typical tile roof. 2026 guide ranges, a worked example and quote red flags.",
   image: "/images/service-roof-restoration.webp",
   imageAlt: IMAGE_ALT,
 });
@@ -42,14 +42,43 @@ const breadcrumbJsonLd = {
   ],
 };
 
-const PRICE_ROWS = [
-  ["Tile roof restoration (clean, re-bed and re-point, recoat)", "$3,675 to $10,100", "About $6,900"],
-  ["Metal roof restoration (clean, rust treatment, recoat)", "$3,225 to $9,200", "About $6,000"],
-  ["Roof painting only, single-storey", "$2,300 to $5,500", "About $3,675"],
-  ["Ridge capping re-bed and re-point, full roof", "$735 to $3,225", "About $2,025"],
-  ["Ridge capping repair, a few caps or one section", "$370 to $1,100", "About $550"],
-  ["For comparison: full roof replacement, single-storey", "$12,900 to $27,600", "About $20,250"],
+// Typical guide ranges, 2026, all including GST.
+const TIERS = [
+  [
+    "Clean and recoat only",
+    "Roof in good shape, no ridge work",
+    "$3,500 to $5,000",
+  ],
+  [
+    "Full tile restoration",
+    "About 200 m² single-storey concrete tile: clean, replace broken tiles, ridge re-bed and repoint, sealer plus 2 coats",
+    "$4,500 to $8,000",
+  ],
+  [
+    "Metal / Colorbond restoration",
+    "Rust treatment, screws, flashings, coating",
+    "$3,500 to $7,000",
+  ],
+  [
+    "Double-storey, terracotta, steep or complex roofs",
+    "Extra access, scaffold, care or detailing",
+    "$7,500 to $12,000+",
+  ],
 ];
+
+// Illustrative worked example. Unit rates are typical guide figures, 2026,
+// shown before GST so the GST line is visible. Not a quote.
+const EXAMPLE_ROWS = [
+  ["Clean, sealer and 2 topcoats", "200 m² × $22 per m²", 4400],
+  ["Ridge caps re-bedded and repointed", "70 caps × $25 per cap", 1750],
+  ["Broken tiles replaced", "20 tiles × $15 per tile", 300],
+  ["Skip bin for debris and old mortar", "1 × $330", 330],
+];
+const EXAMPLE_SUBTOTAL = EXAMPLE_ROWS.reduce((t, r) => t + r[2], 0);
+const EXAMPLE_GST = Math.round(EXAMPLE_SUBTOTAL * 0.1);
+const EXAMPLE_TOTAL = EXAMPLE_SUBTOTAL + EXAMPLE_GST;
+const EXAMPLE_RIDGE = EXAMPLE_ROWS[1][2];
+const money = (n) => `$${n.toLocaleString("en-AU")}`;
 
 const TILE_STEPS = [
   "Inspect the roof and replace cracked or broken tiles.",
@@ -60,12 +89,39 @@ const TILE_STEPS = [
 ];
 
 const PRICE_DRIVERS = [
-  ["Roof size", "More area means more cleaning, coating and labour."],
-  ["Ridge capping", "A full re-bed costs far more than re-pointing a few sections."],
+  ["Roof size", "More area means more cleaning, coating and labour. The rough guide is $25 to $40 per m², including GST."],
+  ["Tile, terracotta or metal", "Concrete tile is the usual baseline. Terracotta needs gentler handling, and metal swaps ridge work for rust treatment, screws and flashings."],
+  ["Storeys and scaffold", "A second storey usually means scaffold or edge protection, which adds cost before any work starts."],
+  ["Pitch", "Steep roofs are slower and need more safety gear to work on."],
+  ["Ridge work", "Re-bedding and repointing the ridge capping is often the biggest single item on a tile roof."],
   ["Broken tiles", "Storm damage or years of foot traffic means more replacement tiles."],
-  ["Storeys and pitch", "Two-storey and steep roofs need more scaffolding and edge protection."],
-  ["Coating", "Premium membranes cost more than a basic paint, and come with longer product warranties."],
-  ["Rust", "On metal roofs, sheets that have rusted through need replacing, not painting."],
+  ["Solar panels and skylights", "Panels have to be worked around or lifted and refitted, and skylights need masking and resealing. Both add time."],
+  ["Access", "Tight side paths, steep blocks or no room for a skip bin slow the job down."],
+  ["Travel to outer areas", "Some roofers add a travel charge for outer areas such as Gawler, Mount Barker or Aldinga."],
+  ["Winter scheduling", "Winter is Adelaide's wettest season and coatings need dry days, so jobs can stretch out or be rescheduled."],
+];
+
+const RED_FLAGS = [
+  [
+    "A big “discount” off an inflated first price",
+    "A $12,000 quote “reduced to $7,000 if you sign today” was never a $12,000 job. Judge the final price against the ranges above.",
+  ],
+  [
+    "No itemised scope",
+    "One line that says “roof restoration” tells you nothing. You need the ridge work, broken tiles, coats and GST spelled out.",
+  ],
+  [
+    "Single-coat paint",
+    "A proper restoration uses a sealer or primer plus two topcoats. One coat is cheaper for a reason.",
+  ],
+  [
+    "No ridge work on a tile roof",
+    "Ridge mortar is usually the first part of a tile roof to fail. Leaving it out can make a quote look $1,500 to $2,500 cheaper.",
+  ],
+  [
+    "A salesperson who never gets on the roof",
+    "Nobody can see cracked tiles or loose ridge capping from the driveway. Ask who inspected it and what they found.",
+  ],
 ];
 
 const FAQS = [
@@ -85,13 +141,34 @@ const FAQS = [
     q: "Can you restore an asbestos roof?",
     a: "Not the usual way. Using high-pressure water on asbestos cement is prohibited in South Australia, and SafeWork SA has warned about homes contaminated this way. For an ageing asbestos roof, licensed removal and replacement is usually the better path.",
   },
+  {
+    q: "Is $3,500 too cheap?",
+    a: "Not for a clean and recoat on a sound roof, which typically runs $3,500 to $5,000. For a full restoration of a typical 200 m² concrete tile roof it's below the usual $4,500 to $8,000, so check what's missing: ridge re-bedding, a sealer plus two topcoats, broken tiles or GST.",
+  },
+  {
+    q: "Why do quotes vary so much?",
+    a: "Mostly scope and GST. One quote may leave out ridge re-bedding, which can add $1,500 to $2,500, and another may show its price “+ GST”, which makes the real price 10% higher. Compare quotes on the same scope with GST included.",
+  },
+  {
+    q: "Do quotes include GST?",
+    a: "Not always. Some roofers quote “+ GST”. The ACCC says businesses must show consumers the total price as a single figure, including GST, so ask every roofer for the GST-inclusive total before you compare.",
+  },
+  {
+    q: "Is it cheaper in winter?",
+    a: "Not reliably. Some roofers have more openings in quieter months, but winter is Adelaide's wettest season and coatings need dry days, so jobs can stretch out. If you're offered a winter price, check it still includes the same coats and ridge work.",
+  },
 ];
 
 const SOURCES = [
   {
-    href: "https://whatsthedamage.com.au/roofing-cost-adelaide/",
-    label: "Roof restoration and roofing costs in Adelaide",
-    note: " (What’s The Damage, independent price guide)",
+    href: "https://www.accc.gov.au/consumers/pricing/price-displays",
+    label: "Price displays: total price must include GST",
+    note: " (ACCC)",
+  },
+  {
+    href: "https://www.cbs.sa.gov.au/documents/form-1-building-contract-rights-and-obligations.pdf",
+    label: "Form 1: your building contract rights and obligations",
+    note: " (Consumer and Business Services SA, PDF)",
   },
   {
     href: "https://cdn.dcs.lysaght.com/download/tb-02",
@@ -108,25 +185,21 @@ const SOURCES = [
     label: "Climate statistics for Adelaide (Kent Town)",
     note: " (Bureau of Meteorology)",
   },
-  {
-    href: "https://www.cbs.sa.gov.au/documents/form-1-building-contract-rights-and-obligations.pdf",
-    label: "Form 1: your building contract rights and obligations",
-    note: " (Consumer and Business Services SA, PDF)",
-  },
 ];
 
 const KEY_POINTS = [
-  "Typical guide range: $3,675 to $10,100 for a tile roof, $3,225 to $9,200 for metal.",
-  "That's well under a full replacement, which starts around $12,900 for a single-storey home.",
-  "It only makes sense if the roof underneath is still sound.",
+  "Typical single-storey concrete tile restoration: $4,500 to $8,000, including GST.",
+  "Rough guide: $25 to $40 per m², including GST.",
+  "Quotes vary mainly because of scope (ridge work) and whether GST is shown.",
   "Painting Colorbond voids BlueScope's warranties, and asbestos roofs must never be pressure-cleaned.",
 ];
 
 const JUMP_LINKS = [
-  { href: "#ranges", label: "Price ranges" },
-  { href: "#tile", label: "Tile restoration" },
-  { href: "#metal", label: "Metal restoration" },
-  { href: "#drivers", label: "What moves the price" },
+  { href: "#ranges", label: "Price tiers" },
+  { href: "#why-quotes-vary", label: "Why quotes vary" },
+  { href: "#worked-example", label: "Worked example" },
+  { href: "#drivers", label: "What changes the price" },
+  { href: "#red-flags", label: "Red flags in a quote" },
   { href: "#not-worth-it", label: "When it isn't worth it" },
   { href: "#faq", label: "FAQs" },
 ];
@@ -138,6 +211,7 @@ const olist = "mt-4 list-decimal space-y-2 pl-5 font-body leading-relaxed text-i
 const inlineLink = "font-semibold text-clay hover:text-clay-deep";
 const th = "border-b border-mortar px-4 py-3 font-display text-sm font-bold text-ink";
 const td = "border-b border-mortar px-4 py-3 font-body text-sm text-ink/75 align-top";
+const tdNum = `${td} text-right whitespace-nowrap`;
 
 export default function RestorationCostPage() {
   return (
@@ -157,17 +231,18 @@ export default function RestorationCostPage() {
             </h1>
             <ArticleMeta slug="roof-restoration-cost-adelaide" headline={HEADLINE} />
             <p className="mt-6 font-body leading-relaxed text-ink/70">
-              A typical roof restoration cost in Adelaide is about{" "}
-              <strong className="text-ink">$3,675 to $10,100 for a tile roof</strong> (clean,
-              re-bed and re-point, recoat) and $3,225 to $9,200 for a metal roof (clean, rust
-              treatment, recoat), based on a published Adelaide price guide (November 2026).
-              That&apos;s well under the cost of a new roof, but it only makes sense if the roof
-              underneath is still sound.
+              <strong className="text-ink">
+                Most Adelaide roof restorations cost $4,500–$8,000 (incl. GST) for a typical
+                single-storey tile roof; quotes vary mainly because of what&apos;s included and
+                whether GST is shown.
+              </strong>{" "}
+              Every roof restoration cost in Adelaide on this page is a typical guide range for
+              2026, including GST, not a quote.
             </p>
             <p className={body}>
-              Below: the guide ranges, what each type of restoration includes, what moves the
-              price, and when your money is better spent on a replacement. For what the job
-              involves, see{" "}
+              Below: price tiers by roof type, why quotes vary so much, a worked example for a
+              200 m² tile roof, what changes the price, and the red flags to watch for in a quote.
+              For what the job involves, see{" "}
               <Link href="/services/roof-restoration" className={inlineLink}>
                 roof restoration in Adelaide
               </Link>
@@ -189,38 +264,173 @@ export default function RestorationCostPage() {
 
             <div className="mt-14 space-y-12">
               <article id="ranges" className="scroll-mt-24">
-                <h2 className={h2}>Roof restoration cost in Adelaide: typical guide ranges</h2>
+                <h2 className={h2}>Roof restoration cost in Adelaide: price tiers</h2>
                 <p className={body}>
-                  Typical guide ranges from a published Adelaide price guide (November 2026, GST
-                  included), not quotes:
+                  Typical guide ranges, 2026, all including GST:
                 </p>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
                     <thead>
                       <tr className="bg-paper">
                         <th className={th}>Job</th>
-                        <th className={th}>Typical guide range</th>
-                        <th className={th}>Typical middle</th>
+                        <th className={th}>What it covers</th>
+                        <th className={th}>Typical guide range (incl. GST)</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {PRICE_ROWS.map(([job, range, mid], i) => (
+                      {TIERS.map(([job, covers, range], i) => (
                         <tr key={job} className={i % 2 === 1 ? "bg-paper/50" : ""}>
                           <td className={`${td} font-semibold text-ink`}>{job}</td>
-                          <td className={td}>{range}</td>
-                          <td className={td}>{mid}</td>
+                          <td className={td}>{covers}</td>
+                          <td className={`${td} whitespace-nowrap`}>{range}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
                 <p className={body}>
-                  If only the ridge capping is failing, a ridge capping repair or re-point may be
-                  all you need. For the full replacement figures, see{" "}
+                  <strong className="text-ink">Rough guide:</strong> $25 to $40 per m² of roof,
+                  including GST. If only the ridge capping is failing, a ridge repair may be all you
+                  need. For the cost of starting again, see{" "}
                   <Link href="/blog/roof-replacement-cost-adelaide" className={inlineLink}>
                     what a new roof costs in Adelaide
                   </Link>
                   .
+                </p>
+              </article>
+
+              <article id="why-quotes-vary" className="scroll-mt-24">
+                <h2 className={h2}>Why roof restoration quotes vary so much</h2>
+                <p className={body}>
+                  Two quotes for the same roof can be thousands of dollars apart. Usually it comes
+                  down to two things:
+                </p>
+                <ul className={list}>
+                  <li>
+                    <strong className="text-ink">Scope.</strong> Some quotes leave out ridge
+                    re-bedding and repointing, which can add $1,500 to $2,500. Others skip the
+                    sealer, use one topcoat instead of two, or don&apos;t include broken tiles.
+                  </li>
+                  <li>
+                    <strong className="text-ink">GST.</strong> Some quotes show prices “+ GST”, so
+                    the real price is 10% higher. A $6,000 + GST quote is really $6,600. The ACCC
+                    says businesses must show consumers a single total price that includes GST.
+                  </li>
+                </ul>
+                <p className={body}>
+                  <strong className="text-ink">The fix:</strong> compare quotes on the same scope,
+                  with GST included. Ask each roofer to itemise the cleaning, ridge work, broken
+                  tiles, sealer and number of coats, and to give you the GST-inclusive total. Our
+                  guide to{" "}
+                  <Link href="/blog/how-to-read-a-roofing-quote" className={inlineLink}>
+                    reading a roofing quote
+                  </Link>{" "}
+                  shows what each line should say.
+                </p>
+              </article>
+
+              <article id="worked-example" className="scroll-mt-24">
+                <h2 className={h2}>Worked example: a 200 m² concrete tile roof</h2>
+                <p className={body}>
+                  A single-storey Adelaide home with a 200 m² concrete tile roof, a sound frame,
+                  ridge capping that needs re-bedding, and a handful of cracked tiles. Unit rates are
+                  typical guide figures, 2026, shown before GST so you can see the GST line. This is
+                  an illustration, not a quote.
+                </p>
+                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-paper">
+                        <th className={th}>Item</th>
+                        <th className={th}>Quantity × rate</th>
+                        <th className={`${th} text-right`}>Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {EXAMPLE_ROWS.map(([item, calc, cost], i) => (
+                        <tr key={item} className={i % 2 === 1 ? "bg-paper/50" : ""}>
+                          <td className={`${td} font-semibold text-ink`}>{item}</td>
+                          <td className={td}>{calc}</td>
+                          <td className={tdNum}>{money(cost)}</td>
+                        </tr>
+                      ))}
+                      <tr>
+                        <td className={`${td} text-ink`} colSpan={2}>Subtotal (before GST)</td>
+                        <td className={tdNum}>{money(EXAMPLE_SUBTOTAL)}</td>
+                      </tr>
+                      <tr className="bg-paper/50">
+                        <td className={`${td} text-ink`} colSpan={2}>GST (10%)</td>
+                        <td className={tdNum}>{money(EXAMPLE_GST)}</td>
+                      </tr>
+                      <tr className="bg-paper">
+                        <td className={`${td} font-display font-bold text-ink`} colSpan={2}>
+                          Total, including GST
+                        </td>
+                        <td className={`${tdNum} font-display font-bold text-ink`}>
+                          {money(EXAMPLE_TOTAL)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className={body}>
+                  That&apos;s about ${Math.round(EXAMPLE_TOTAL / 200)} per m², inside the $4,500 to
+                  $8,000 tier. Take out the ridge work and the same roof drops to about{" "}
+                  {money(Math.round((EXAMPLE_SUBTOTAL - EXAMPLE_RIDGE) * 1.1))}; quote it “+ GST” and it
+                  looks like {money(EXAMPLE_SUBTOTAL)}. That&apos;s how three honest quotes for one
+                  roof can look so different.
+                </p>
+              </article>
+
+              <article id="drivers" className="scroll-mt-24">
+                <h2 className={h2}>What changes the price</h2>
+                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="bg-paper">
+                        <th className={th}>Factor</th>
+                        <th className={th}>Why it matters</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {PRICE_DRIVERS.map(([f, why], i) => (
+                        <tr key={f} className={i % 2 === 1 ? "bg-paper/50" : ""}>
+                          <td className={`${td} font-semibold text-ink`}>{f}</td>
+                          <td className={td}>{why}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className={body}>
+                  <strong className="text-ink">Adelaide conditions:</strong> a roof coating here
+                  faces strong summer sun. Bureau of Meteorology figures for Kent Town show an
+                  average of 10.5 hours of sunshine a day in January. Ask which coating suits
+                  that, and what its manufacturer&apos;s warranty covers.
+                </p>
+              </article>
+
+              <article id="red-flags" className="scroll-mt-24">
+                <h2 className={h2}>Red flags in a quote</h2>
+                <ul className={list}>
+                  {RED_FLAGS.map(([flag, why]) => (
+                    <li key={flag}>
+                      <strong className="text-ink">{flag}.</strong> {why}
+                    </li>
+                  ))}
+                  <li>
+                    <strong className="text-ink">A deposit over the SA legal limit.</strong> For
+                    domestic building work in SA the deposit is capped at $1,000, or 5% if the
+                    contract is over $20,000 (CBS Form 1).
+                  </li>
+                </ul>
+                <p className={body}>
+                  Door-knockers offering a cheap restoration today tick several of these boxes at
+                  once. Our guide to{" "}
+                  <Link href="/blog/roofing-scams-adelaide" className={inlineLink}>
+                    roofing scams in Adelaide
+                  </Link>{" "}
+                  shows the usual tactics.
                 </p>
               </article>
 
@@ -246,7 +456,7 @@ export default function RestorationCostPage() {
                 <h2 className={h2}>Restoring a metal roof</h2>
                 <p className={body}>
                   A metal roof restoration means cleaning, treating any surface rust, replacing
-                  sheets or screws that have failed, and recoating. Two things to know first:
+                  failed screws and flashings, and recoating. Two things to know first:
                 </p>
                 <ul className={list}>
                   <li>
@@ -263,34 +473,6 @@ export default function RestorationCostPage() {
                     .
                   </li>
                 </ul>
-              </article>
-
-              <article id="drivers" className="scroll-mt-24">
-                <h2 className={h2}>What moves the price</h2>
-                <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
-                  <table className="w-full border-collapse text-left">
-                    <thead>
-                      <tr className="bg-paper">
-                        <th className={th}>Factor</th>
-                        <th className={th}>Why it matters</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {PRICE_DRIVERS.map(([f, why], i) => (
-                        <tr key={f} className={i % 2 === 1 ? "bg-paper/50" : ""}>
-                          <td className={`${td} font-semibold text-ink`}>{f}</td>
-                          <td className={td}>{why}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className={body}>
-                  <strong className="text-ink">Adelaide conditions:</strong> a roof coating here
-                  faces strong summer sun. Bureau of Meteorology figures for Kent Town show an
-                  average of 10.5 hours of sunshine a day in January. Ask which coating suits
-                  that, and what its manufacturer&apos;s warranty covers.
-                </p>
               </article>
 
               <article id="not-worth-it" className="scroll-mt-24">
@@ -321,19 +503,10 @@ export default function RestorationCostPage() {
               <article>
                 <h2 className={h2}>Before you book</h2>
                 <ul className={list}>
+                  <li>Get at least two itemised quotes on the same scope, with GST included.</li>
                   <li>Ask what coating will be used, how many coats, and what its warranty covers.</li>
                   <li>Ask whether broken tiles and ridge capping work are included or extra.</li>
-                  <li>
-                    Check the deposit: for domestic building work in SA it&apos;s capped at $1,000,
-                    or 5% if the contract is over $20,000.
-                  </li>
-                  <li>
-                    Be wary of door-knockers offering a cheap restoration today. Our guide to{" "}
-                    <Link href="/blog/roofing-scams-adelaide" className={inlineLink}>
-                      roofing scams in Adelaide
-                    </Link>{" "}
-                    shows the usual tactics.
-                  </li>
+                  <li>Get the workmanship warranty and the start date in writing.</li>
                 </ul>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <a

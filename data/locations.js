@@ -124,7 +124,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Salisbury?",
-        a: "It depends on the size and pitch of the roof and how much tile and mortar work is needed, so any honest figure has to come from an on-site look. As a rough guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — but treat that as a ballpark, not a quote. The roofer we connect you with will give you a proper price after inspecting it.",
+        a: "It depends on the size and pitch of the roof and how much tile and mortar work is needed, so any honest figure has to come from an on-site look. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark, not a quote. The roofer we connect you with will give you a proper price after inspecting it.",
       },
       {
         q: "Why does the ridge mortar on older Salisbury homes crack?",
@@ -330,7 +330,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Modbury?",
-        a: "It depends on the roof's size, pitch and how much tile and mortar work is needed, so it really needs an on-site look to price. As a rough guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark, not a quote. The roofer we connect you with will price it properly after inspecting it.",
+        a: "It depends on the roof's size, pitch and how much tile and mortar work is needed, so it really needs an on-site look to price. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark, not a quote. The roofer we connect you with will price it properly after inspecting it.",
       },
       {
         q: "Why do Modbury homes get blocked gutters and valley leaks?",
@@ -602,7 +602,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Paralowie?",
-        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark only. The roofer we connect you with will price it properly after a look.",
+        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark only. The roofer we connect you with will price it properly after a look.",
       },
       {
         q: "My Paralowie home is fairly modern — does the roof really need restoring?",
@@ -1080,7 +1080,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Findon?",
-        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark only. The roofer we connect you with will price it properly after a look.",
+        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark only. The roofer we connect you with will price it properly after a look.",
       },
       {
         q: "My Findon home is solidly built — is restoring the roof worth it?",
@@ -1764,7 +1764,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Morphett Vale?",
-        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. Many Morphett Vale homes are standard single-storey houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. Many Morphett Vale homes are standard single-storey houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Why do so many Morphett Vale roofs seem to need work at once?",
@@ -1900,7 +1900,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Marion?",
-        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. Many Marion homes are standard single-storey post-war houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size and pitch and how much tile and mortar work is needed, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. Many Marion homes are standard single-storey post-war houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
       },
       {
         q: "My Marion home is solidly built — is restoring the roof worth it?",
@@ -2172,7 +2172,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Reynella?",
-        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. Most of Reynella's homes are standard suburban houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. Most of Reynella's homes are standard suburban houses, which keeps things predictable. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Do I need council approval for roof work in Reynella?",
@@ -2240,7 +2240,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Christies Beach?",
-        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark only. Many Christies Beach homes are modest single-storey post-war houses, which can keep things at the more affordable end. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark only. Many Christies Beach homes are modest single-storey post-war houses, which can keep things at the more affordable end. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Does being near the beach affect my Christies Beach roof?",
@@ -2315,7 +2315,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Craigmore?",
-        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "My roof was hit by hail — what should I do first?",
@@ -2388,7 +2388,7 @@ export const suburbs = {
       },
       {
         q: "How much does a roof restoration cost in Gawler?",
-        a: "It depends on the roof's size, pitch, material and condition, so it needs to be quoted on site. As a general guide, standard tile restorations typically run $6,500–$10,000+ — heritage properties with slate or period materials can run higher due to specialist sourcing. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size, pitch, material and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Heritage properties with slate or period materials can run higher due to specialist sourcing. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Does Gawler's flood history affect roofing work?",
@@ -2449,7 +2449,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Ingle Farm?",
-        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on the roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "My Ingle Farm home is from the 1960s-70s — is restoring the roof worth it?",
@@ -2520,7 +2520,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Seaton?",
-        a: "It depends on your roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Does being near the coast affect my Seaton roof even though it's not beachfront?",
@@ -2585,7 +2585,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Fulham Gardens?",
-        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Is Fulham Gardens affected by coastal salt exposure?",
@@ -2721,7 +2721,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Campbelltown?",
-        a: "It depends on your roof's size, pitch and condition, so it has to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it has to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Do I need council approval for roof work in Campbelltown?",
@@ -2786,7 +2786,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Payneham?",
-        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Do I need council approval for roof work in Payneham?",
@@ -2855,7 +2855,7 @@ export const suburbs = {
       },
       {
         q: "How much does a roof restoration cost in Newton?",
-        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Do I need council approval for roof work in Newton?",
@@ -2922,7 +2922,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Flagstaff Hill?",
-        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Does Flagstaff Hill's elevated position affect roofing?",
@@ -2987,7 +2987,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Happy Valley?",
-        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "Do I need council approval for roof work in Happy Valley?",
@@ -3052,7 +3052,7 @@ export const suburbs = {
     faqs: [
       {
         q: "How much does a roof restoration cost in Seaford?",
-        a: "It depends on your roof's size, pitch, material and condition, so it needs to be quoted on site. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will price it after a look.",
+        a: "It depends on your roof's size, pitch, material and condition, so it needs to be quoted on site. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will price it after a look.",
       },
       {
         q: "How much does being beachfront affect my Seaford roof?",

@@ -45,7 +45,7 @@ const COMPARE = [
   ["What it is", "Fired clay", "Cement, sand and pigment, with a surface coating"],
   ["Colour over time", "Colour runs through the fired clay rather than sitting on the surface", "Surface coating fades and may need recoating"],
   ["Weight (example profiles)", "Monier Marseille: about 47 kg per m²", "Monier Elabana: about 50 kg per m²"],
-  ["Restoration", "Gentler cleaning and compatible pointing; a guide says 15 to 25% dearer than concrete", "Clean, re-point and recoat"],
+  ["Restoration", "Gentler cleaning and compatible pointing; typically in the higher $7,500 to $12,000+ tier (incl. GST)", "Clean, re-point and recoat"],
   ["Re-roof, per m² (guide)", "About $120 to $240, incl. strip-off", "About $92 to $200 for tile, incl. strip-off"],
 ];
 
@@ -67,7 +67,7 @@ const FAQS = [
   },
   {
     q: "How much does a terracotta roof restoration cost in Adelaide?",
-    a: "A published Adelaide price guide puts a tile roof restoration at about $3,675 to $10,100, and says terracotta restoration typically costs 15 to 25% more than concrete because it needs gentler cleaning and compatible pointing.",
+    a: "As a typical 2026 guide, including GST, a terracotta restoration usually falls in the higher $7,500 to $12,000+ tier, because it needs gentler cleaning and compatible pointing. A single-storey concrete tile restoration is typically $4,500 to $8,000.",
   },
   {
     q: "Should you paint terracotta roof tiles?",
@@ -88,7 +88,7 @@ const SOURCES = [
   },
   {
     href: "https://whatsthedamage.com.au/roofing-cost-adelaide/",
-    label: "Roofing costs in Adelaide: terracotta re-roofing and restoration",
+    label: "Roofing costs in Adelaide: terracotta re-roofing",
     note: " (What’s The Damage, independent price guide)",
   },
   {
@@ -188,8 +188,9 @@ export default function TerracottaPage() {
                   </table>
                 </div>
                 <p className={body}>
-                  Costs are typical guide ranges from a published Adelaide price guide (November
-                  2026), not quotes. Comparing tile with metal instead? See{" "}
+                  Re-roof costs are typical guide ranges from a published Adelaide price guide
+                  (November 2026); the restoration tier is our typical guide range for 2026,
+                  including GST. None of these are quotes. Comparing tile with metal instead? See{" "}
                   <Link href="/blog/colorbond-vs-tile" className={inlineLink}>
                     Colorbond vs tile
                   </Link>

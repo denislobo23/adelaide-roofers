@@ -52,7 +52,7 @@ const DECISION_TABLE = [
   {
     situation: "Structurally sound but faded, chalky or mossy, or ridge capping starting to crumble",
     path: "Restoration",
-    cost: "About $3,225 to $10,100",
+    cost: "About $3,500 to $8,000 single-storey; $7,500 to $12,000+ for double-storey or complex roofs",
     href: "/services/roof-restoration",
   },
   {
@@ -197,8 +197,8 @@ export default function RepairVsReplacePage() {
               <article id="decision-table" className="scroll-mt-24">
                 <h2 className={h2}>Repair or replace your roof: the quick decision table</h2>
                 <p className={body}>
-                  Costs are typical guide ranges from a published Adelaide price guide (November
-                  2026), not quotes.
+                  Costs are typical guide ranges for 2026, including GST, not quotes. Repair and
+                  replacement figures are from a published Adelaide price guide (November 2026).
                 </p>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">

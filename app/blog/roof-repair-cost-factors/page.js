@@ -47,7 +47,7 @@ const PRICE_ROWS = [
   ["Minor leak repair", "$230 to $735", "About $460"],
   ["Broken tile replacement", "$275 to $920", "About $550"],
   ["Ridge capping repair, a few caps or one section", "$370 to $1,100", "About $550"],
-  ["Ridge capping re-bed and re-point, full roof", "$735 to $3,225", "About $2,025"],
+  ["Ridge capping re-bed and re-point, full roof", "$1,500 to $2,500", "About $2,000"],
   ["Gutter replacement, per metre", "$37 to $100", "About $51"],
 ];
 
@@ -208,8 +208,9 @@ export default function RepairCostFactorsPage() {
               <article id="ranges" className="scroll-mt-24">
                 <h2 className={h2}>Roof repair cost in Adelaide: typical guide prices</h2>
                 <p className={body}>
-                  Typical guide ranges from a published Adelaide price guide (November 2026, GST
-                  included), not quotes:
+                  Typical guide ranges, GST included, not quotes. The full ridge re-bed figure is
+                  our 2026 guide range; the rest are from a published Adelaide price guide
+                  (November 2026):
                 </p>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">

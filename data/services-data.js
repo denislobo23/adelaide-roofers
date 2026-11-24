@@ -45,7 +45,7 @@ export const servicePages = {
     faqs: [
       {
         q: "How much does roof restoration cost in Adelaide?",
-        a: "It varies with the roof's size, pitch and condition, so it needs an on-site look. As a general guide, roof restorations across metro Adelaide typically run $6,500–$10,000+ — treat that as a ballpark. The roofer we connect you with will quote it properly after inspecting your roof.",
+        a: "It varies with the roof's size, pitch and condition, so it needs an on-site look. Most single-storey tile restorations cost $4,500–$8,000 including GST; double-storey, terracotta or complex roofs can reach $7,500–$12,000+. Treat that as a ballpark. The roofer we connect you with will quote it properly after inspecting your roof.",
         link: {
           text: "For what drives the price up or down, see our",
           href: "/blog/roof-restoration-cost-adelaide",
