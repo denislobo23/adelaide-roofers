@@ -34,6 +34,7 @@ import EstimatePDF from "@/components/pdf/EstimatePDF";
 import { buildEstimateBreakdown } from "@/lib/estimateBreakdown";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { sendSms } from "@/lib/sendSms";
+import { estimateCost, normaliseAnswers, RANGE_LABEL } from "@/lib/pricing";
 import { sendLeadEmail } from "@/lib/sendLeadEmail";
 import { site } from "@/data/config";
 
@@ -59,12 +60,12 @@ async function notifyLeadSms({ customer, answers, estimate }) {
     to: process.env.NOTIFY_PHONE_NUMBER,
     message: `New lead (calculator): ${customer.name}, ${customer.mobile}${
       location ? `, ${location}` : ""
-    }. Est: $${estimate.low}-$${estimate.high}.`,
+    }. Est: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
   });
 }
 
 function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdown, refNumber }) {
-  const subject = `New lead (calculator): ${customer.name} — $${estimate.low}-$${estimate.high}`;
+  const subject = `New lead (calculator): ${customer.name} — $${estimate.low}-$${estimate.high} (${RANGE_LABEL})`;
 
   const rows = [
     ["Name", customer.name],
@@ -72,10 +73,13 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
     ["Address", answers.address || "(not provided)"],
     ["Suburb", answers.suburb || "(not provided)"],
     ["Job type", breakdown.jobTypeLabel],
-    ["Estimate", `$${estimate.low} - $${estimate.high}`],
+    ["Estimate", `$${estimate.low} - $${estimate.high} (${RANGE_LABEL})`],
     ["Timeframe", timeframe || "(not provided)"],
     ["Ref number", refNumber],
   ];
+  if (answers.asbestosRedirect) {
+    rows.push(["Note", `Asked for ${answers.requestedJobType} on an asbestos roof; priced as replacement.`]);
+  }
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
 
@@ -102,10 +106,24 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { customer, answers, estimate, timeframe } = body;
+    const { customer, timeframe } = body;
 
-    if (!customer?.name || !customer?.mobile || !answers || !estimate || !timeframe) {
+    if (!customer?.name || !customer?.mobile || !body.answers || !timeframe) {
       return Response.json({ success: false, reason: "missing_fields" }, { status: 400 });
+    }
+
+    // Recompute from the answers with the shared pricing (lib/pricing.js)
+    // rather than trusting a figure sent from the browser.
+    // Asbestos restoration/painting requests become a replacement estimate.
+    const answers = normaliseAnswers(body.answers);
+    let estimate;
+    try {
+      estimate = estimateCost(answers);
+    } catch {
+      estimate = null;
+    }
+    if (!estimate || !Number.isFinite(estimate.low) || !Number.isFinite(estimate.high)) {
+      return Response.json({ success: false, reason: "invalid_answers" }, { status: 400 });
     }
 
     const refNumber = generateRefNumber();
@@ -170,7 +188,7 @@ export async function POST(request) {
           job_type: breakdown.jobTypeLabel,
           lead_source: "roof_calculator",
           pdf_url: publicUrl,
-          message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high}.`,
+          message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
           source_page: "get-my-estimate",
           ref_number: refNumber,
           created_at: new Date().toISOString(),

@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { normaliseAnswers, ASBESTOS_RESTORE_MESSAGE } from "@/lib/pricing";
 
 const JOB_TYPES = [
   { v: "restoration", label: "Roof Restoration", note: "Clean, re-bed, re-point, re-coat" },
@@ -173,7 +174,7 @@ export default function RoofCalculator() {
     : null;
 
   const goToEstimatePage = () => {
-    sessionStorage.setItem("roofEstimateAnswers", JSON.stringify(form));
+    sessionStorage.setItem("roofEstimateAnswers", JSON.stringify(normaliseAnswers(form)));
     router.push("/get-my-estimate");
   };
 
@@ -421,7 +422,15 @@ export default function RoofCalculator() {
                     </span>
                   </button>
                 </div>
-                {form.material === "asbestos" && (
+                {form.material === "asbestos" &&
+                  (form.jobType === "restoration" || form.jobType === "painting") && (
+                  <p className="mt-3 rounded-lg border-2 border-clay/40 bg-clay/5 px-3.5 py-2.5 text-xs text-ink/70">
+                    ⚠ {ASBESTOS_RESTORE_MESSAGE}
+                  </p>
+                )}
+                {form.material === "asbestos" &&
+                  form.jobType !== "restoration" &&
+                  form.jobType !== "painting" && (
                   <p className="mt-3 rounded-lg border-2 border-clay/40 bg-clay/5 px-3.5 py-2.5 text-xs text-ink/70">
                     ⚠ Asbestos roofing must be handled by a licensed removalist. This estimate is a
                     rough placeholder for planning purposes — your actual quote may vary more than

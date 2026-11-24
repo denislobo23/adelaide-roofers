@@ -9,6 +9,7 @@
 // out as a one-page PDF.
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import { RANGE_LABEL, ASBESTOS_RESTORE_MESSAGE } from "@/lib/pricing";
 
 const styles = StyleSheet.create({
   page: {
@@ -216,11 +217,15 @@ export default function EstimatePDF({ customer, answers, estimate, breakdown, re
 
         {/* Headline estimate */}
         <View style={styles.headlineBox}>
-          <Text style={styles.headlineLabel}>Estimated Cost Range</Text>
+          <Text style={styles.headlineLabel}>{RANGE_LABEL}</Text>
           <Text style={styles.headlineValue}>
             {formatCurrency(estimate.low)} – {formatCurrency(estimate.high)}
           </Text>
         </View>
+
+        {answers.asbestosRedirect && (
+          <Text style={styles.howToUseText}>{ASBESTOS_RESTORE_MESSAGE}</Text>
+        )}
 
         {/* Job details used */}
         <Text style={styles.sectionTitle}>Details Used For This Estimate</Text>
