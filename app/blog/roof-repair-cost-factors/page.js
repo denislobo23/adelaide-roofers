@@ -208,9 +208,9 @@ export default function RepairCostFactorsPage() {
               <article id="ranges" className="scroll-mt-24">
                 <h2 className={h2}>Roof repair cost in Adelaide: typical guide prices</h2>
                 <p className={body}>
-                  Typical guide ranges, GST included, not quotes. The full ridge re-bed figure is
-                  our 2026 guide range; the rest are from a published Adelaide price guide
-                  (November 2026):
+                  These 2026 prices include GST and are guides, not quotes: the full ridge re-bed
+                  is our own figure, and the rest come from a published Adelaide price guide
+                  (November 2026).
                 </p>
                 <div className="mt-5 overflow-x-auto rounded-xl border border-mortar">
                   <table className="w-full border-collapse text-left">
