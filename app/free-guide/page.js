@@ -15,6 +15,7 @@
 // (photographic 3D mockup, not the earlier SVG illustration — swapped in
 // once the real asset existed).
 
+import Link from "next/link";
 import Image from "next/image";
 import { site } from "@/data/config";
 import EbookCaptureForm from "@/components/EbookCaptureForm";
@@ -116,12 +117,12 @@ export default function FreeGuidePage() {
 
             <p className="mt-6 font-body text-sm text-ink/50">
               Would rather just get a price?{" "}
-              <a
+              <Link
                 href="/calculator"
                 className="font-semibold text-clay underline-offset-2 hover:underline"
               >
                 Try the free calculator
-              </a>{" "}
+              </Link>{" "}
               instead.
             </p>
           </div>

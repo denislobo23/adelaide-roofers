@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "smoke": "node scripts/smoke-estimate.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.10",
@@ -18,7 +19,10 @@
     "sharp": "^0.35.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.7",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "15.5",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"
   }

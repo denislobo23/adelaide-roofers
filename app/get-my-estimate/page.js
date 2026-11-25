@@ -26,6 +26,13 @@ import { sendGAEvent } from "@next/third-parties/google";
 import { site } from "@/data/config";
 import { estimateCost } from "@/lib/pricing";
 
+const TIMEFRAME_OPTIONS = [
+  { v: "immediately", label: "Immediately / ASAP" },
+  { v: "few_weeks", label: "Within the next few weeks" },
+  { v: "1_3_months", label: "In the next 1–3 months" },
+  { v: "exploring", label: "Just exploring, no rush" },
+];
+
 export default function GetMyEstimatePage() {
   const [answers, setAnswers] = useState(null);
   const [form, setForm] = useState({ name: "", mobile: "", timeframe: "" });
