@@ -8,12 +8,13 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { estimateCost } from "../lib/pricing.js";
+import { estimateCost, liveRange } from "../lib/pricing.js";
 import { buildEstimateBreakdown, allocate } from "../lib/estimateBreakdown.js";
 import { formatNominatimAddress, tidyAddress } from "../lib/formatAddress.js";
 
 const METALS = ["colorbond", "galvanised", "zincalume"];
 const TILES = ["concreteTile", "terracotta", "notSure"];
+const NEW = ["slate", "pressedMetal"];
 const SHAPES = ["flat", "gable", "hip", "dutchGable", "multiLevel"];
 
 function breakdownFor(answers) {
@@ -84,19 +85,68 @@ for (const jobType of ["restoration", "painting"]) {
   });
 }
 
+const base200 = { storeys: "single", complexity: "gable", roofSizeM2: 200 };
+
+test("slate restoration breakdown: slates, tingles, ridges, flashings; never coated", () => {
+  const { b } = breakdownFor({ ...base200, jobType: "restoration", material: "slate" });
+  const text = labels(b);
+  for (const needed of [/slates/i, /tingles/i, /ridge/i, /pointing/i, /flashing/i]) {
+    assert.match(text, needed, `missing ${needed} in: ${text}`);
+  }
+  assert.doesNotMatch(text, /coating|primer|paint|screw|rust/i, text);
+});
+
+test("slate painting is priced and broken down as a slate restoration", () => {
+  const a = { ...base200, jobType: "painting", material: "slate" };
+  const { b, estimate } = breakdownFor(a);
+  assert.equal(b.jobTypeLabel, "Roof Restoration");
+  assert.doesNotMatch(labels(b), /coating|primer|paint/i);
+  assert.deepEqual(estimate, estimateCost({ ...a, jobType: "restoration" }));
+});
+
+test("pressed metal tile restoration breakdown: metal-tile items, no ridge re-bed", () => {
+  const { b } = breakdownFor({ ...base200, jobType: "restoration", material: "pressedMetal" });
+  const text = labels(b);
+  for (const needed of [/pressed metal tiles/i, /re-fixing/i, /rust/i, /sealer|primer/i, /coating/i]) {
+    assert.match(text, needed, `missing ${needed} in: ${text}`);
+  }
+  assert.doesNotMatch(text, /bedding|re-bed|pointing|slate/i, text);
+  assert.doesNotMatch(b.includedItems.join(" "), /re-bed|pointing/i);
+});
+
+test("pressed metal tile painting breakdown: coating, no ridge re-bed", () => {
+  const { b } = breakdownFor({ ...base200, jobType: "painting", material: "pressedMetal" });
+  assert.match(labels(b), /coating/i);
+  assert.doesNotMatch(labels(b), /bedding|pointing/i);
+});
+
+test("slate and pressed metal price ranges (200 m², gable)", () => {
+  const p = (extra) => estimateCost({ ...base200, ...extra });
+  assert.deepEqual(p({ jobType: "restoration", material: "slate" }), { low: 9200, high: 15000 });
+  assert.deepEqual(p({ jobType: "restoration", material: "slate", storeys: "double" }), { low: 12200, high: 18800 });
+  assert.deepEqual(p({ jobType: "restoration", material: "pressedMetal" }), { low: 4500, high: 8000 });
+  assert.deepEqual(p({ jobType: "painting", material: "pressedMetal" }), { low: 3500, high: 5000 });
+});
+
+test("live range never widens a painting estimate with slate", () => {
+  const r = liveRange({ jobType: "painting", roofSizeM2: 200, storeys: "single" });
+  const slateRestore = estimateCost({ ...base200, jobType: "restoration", material: "slate" });
+  assert.ok(r.high < slateRestore.high, `painting high ${r.high}`);
+});
+
 test("line items add up to the midpoint for every job, material and size", () => {
   let cases = 0;
   for (const storeys of ["single", "double"]) {
     for (const roofSizeM2 of [80, 150, 200, 250, 500]) {
       for (const complexity of SHAPES) {
-        for (const material of [...METALS, ...TILES, "asbestos"]) {
+        for (const material of [...METALS, ...TILES, ...NEW, "asbestos"]) {
           for (const jobType of ["restoration", "painting"]) {
             const a = { jobType, material, storeys, complexity, roofSizeM2 };
             const { b, estimate } = breakdownFor(a);
             assertAddsUp(b, estimate, JSON.stringify(a));
             cases++;
           }
-          for (const desiredMaterial of [...METALS, "concreteTile", "terracotta"]) {
+          for (const desiredMaterial of [...METALS, ...NEW, "concreteTile", "terracotta"]) {
             const a = { jobType: "replacement", currentMaterial: material, desiredMaterial, storeys, complexity, roofSizeM2 };
             const { b, estimate } = breakdownFor(a);
             assertAddsUp(b, estimate, JSON.stringify(a));
@@ -105,7 +155,7 @@ test("line items add up to the midpoint for every job, material and size", () =>
         }
       }
     }
-    for (const material of [...METALS, ...TILES, "asbestos"]) {
+    for (const material of [...METALS, ...TILES, ...NEW, "asbestos"]) {
       for (const repairAreas of ["one", "few", "many"]) {
         const a = { jobType: "repairs", material, storeys, repairAreas };
         const { b, estimate } = breakdownFor(a);

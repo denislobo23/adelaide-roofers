@@ -60,3 +60,13 @@ body {
   outline: 3px solid theme("colors.clay");
   outline-offset: 2px;
 }
+
+/* Roof calculator: subtle step transition */
+@keyframes calc-step-in {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: none; }
+}
+.calc-step-in { animation: calc-step-in 260ms ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .calc-step-in { animation: none; }
+}

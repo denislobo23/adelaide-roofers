@@ -96,6 +96,9 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
   if (answers.asbestosRedirect) {
     rows.push(["Note", `Asked for ${answers.requestedJobType} on an asbestos roof; priced as replacement.`]);
   }
+  if (answers.slateRedirect) {
+    rows.push(["Note", "Asked for painting on a slate roof; priced as a slate restoration."]);
+  }
   if (problems.length) {
     rows.unshift(["ACTION NEEDED", problems.join("\n")]);
   }

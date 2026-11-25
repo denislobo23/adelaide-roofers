@@ -9,7 +9,7 @@
 // out as a one-page PDF.
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import { RANGE_LABEL, ASBESTOS_RESTORE_MESSAGE } from "@/lib/pricing";
+import { RANGE_LABEL, ASBESTOS_RESTORE_MESSAGE, SLATE_PAINT_MESSAGE } from "@/lib/pricing";
 import { PHONE_DISPLAY } from "@/lib/siteConfig";
 
 const styles = StyleSheet.create({
@@ -190,6 +190,9 @@ export default function EstimatePDF({ customer, answers, estimate, breakdown, re
 
         {answers.asbestosRedirect && (
           <Text style={styles.howToUseText}>{ASBESTOS_RESTORE_MESSAGE}</Text>
+        )}
+        {answers.slateRedirect && (
+          <Text style={styles.howToUseText}>{SLATE_PAINT_MESSAGE}</Text>
         )}
 
         {/* Job details used */}

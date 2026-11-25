@@ -304,11 +304,11 @@ async function calculatorCheck(c) {
   for (let i = 0; i < 40; i++) {
     await sleep(250);
     s = await state();
-    if (/what you need done/i.test(s?.heading || "")) break;
+    if (/need done/i.test(s?.heading || "")) break;
   }
   // Each step: [what to click, step heading pattern]
   const walk = [
-    [/Roof Restoration/, /what you need done/i],
+    [/Roof Restoration/, /need done/i],
     [/Not sure\? Use a typical/, /how big is your roof/i],
     [/^Single storey$/, /single or double/i],
     [/Concrete tile/, /roof made of/i],
