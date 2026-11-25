@@ -10,6 +10,7 @@
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { RANGE_LABEL, ASBESTOS_RESTORE_MESSAGE } from "@/lib/pricing";
+import { PHONE_DISPLAY } from "@/lib/siteConfig";
 
 const styles = StyleSheet.create({
   page: {
@@ -135,55 +136,19 @@ const styles = StyleSheet.create({
   },
 });
 
-// What's typically included, per job type — pulled from the site's own
-// service descriptions so the PDF stays consistent with the rest of Adelaide Roofers.
-const INCLUDED_ITEMS = {
-  restoration: [
-    "Cleaning and preparing the existing roof surface",
-    "Replacing broken or cracked tiles",
-    "Re-bedding and re-pointing ridge capping",
-    "Sealing and re-coating the roof",
-  ],
-  replacement: [
-    "Removal and disposal of the old roof",
-    "Supply and installation of new roofing material",
-    "New flashings, capping and fasteners",
-    "Final inspection and clean-up",
-  ],
-  repairs: [
-    "On-site assessment of the affected area(s)",
-    "Supply and fitting of replacement materials",
-    "Sealing and weatherproofing the repaired area",
-  ],
-  leak: [
-    "Tracing the leak to its actual source",
-    "Repairing or replacing the failed flashing, tile or seal",
-    "Checking surrounding areas for related damage",
-  ],
-  painting: [
-    "Cleaning and preparing the roof surface",
-    "Priming where required",
-    "Applying protective sealant / coating",
-  ],
-  gutters: [
-    "Removal of old, damaged guttering",
-    "Supply and installation of new gutters and downpipes",
-    "Checking fall/pitch for correct drainage",
-  ],
-};
-
 function formatCurrency(n) {
   return `$${Math.round(n).toLocaleString()}`;
 }
 
-export default function EstimatePDF({ customer, answers, estimate, breakdown, refNumber, site }) {
+export default function EstimatePDF({ customer, answers, estimate, breakdown, refNumber }) {
   const dateStr = new Date().toLocaleDateString("en-AU", {
     day: "numeric",
     month: "long",
     year: "numeric",
   });
 
-  const included = INCLUDED_ITEMS[answers.jobType] || [];
+  // Material-aware (metal vs tile) — see lib/estimateBreakdown.js.
+  const included = breakdown.includedItems || [];
 
   return (
     <Document>
@@ -324,7 +289,7 @@ export default function EstimatePDF({ customer, answers, estimate, breakdown, re
           <Text style={styles.ctaText}>
             Ready to move forward, or want to talk it through first?
           </Text>
-          <Text style={styles.ctaPhone}>{site.phoneDisplay}</Text>
+          <Text style={styles.ctaPhone}>{PHONE_DISPLAY}</Text>
         </View>
 
         {/* Footer */}

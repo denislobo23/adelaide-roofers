@@ -269,6 +269,76 @@ async function submitCheck(c, name, answers) {
   return ok;
 }
 
+// /calculator: every step must start unanswered, with Continue disabled
+// until a choice is made. Walks a restoration from the job-type step (the
+// address is pre-filled the same way the homepage mini-calculator does it).
+async function calculatorCheck(c) {
+  const { errors, off } = trackErrors(c);
+  const { result } = await c.send("Page.addScriptToEvaluateOnNewDocument", {
+    source: `sessionStorage.setItem("heroPrefillAddress", ${JSON.stringify(
+      JSON.stringify({ address: "4, Tintern Crescent, Morphett Vale", suburb: "Morphett Vale", lat: -35.13, lon: 138.52 })
+    )});`,
+  });
+  await c.send("Page.navigate", { url: `${BASE}/calculator` });
+  const problems = [];
+  const state = () =>
+    evaluate(
+      c,
+      `(() => {
+        const btns = [...document.querySelectorAll("button")];
+        const cont = btns.find((b) => /^(Continue|See my estimate)/.test(b.innerText.trim()));
+        const heading = document.querySelector("h3")?.innerText || "";
+        return { heading, continueDisabled: cont ? cont.disabled : null };
+      })()`
+    );
+  const click = (pattern) =>
+    evaluate(
+      c,
+      `(() => {
+        const b = [...document.querySelectorAll("button")].find((x) => ${pattern}.test(x.innerText));
+        if (b) b.click();
+        return !!b;
+      })()`
+    );
+  let s;
+  for (let i = 0; i < 40; i++) {
+    await sleep(250);
+    s = await state();
+    if (/what you need done/i.test(s?.heading || "")) break;
+  }
+  // Each step: [what to click, step heading pattern]
+  const walk = [
+    [/Roof Restoration/, /what you need done/i],
+    [/Not sure\? Use a typical/, /how big is your roof/i],
+    [/^Single storey$/, /single or double/i],
+    [/Concrete tile/, /roof made of/i],
+    [/Hip/, /which shape/i],
+  ];
+  for (const [choice, headingPattern] of walk) {
+    s = await state();
+    if (!headingPattern.test(s.heading)) problems.push(`expected step ${headingPattern}, got "${s.heading}"`);
+    if (s.continueDisabled !== true) problems.push(`"${s.heading}": Continue not disabled before answering`);
+    await click(choice);
+    await sleep(150);
+    s = await state();
+    if (s.continueDisabled !== false) problems.push(`"${s.heading}": Continue still disabled after choosing`);
+    const isLast = headingPattern.source.includes("shape");
+    if (!isLast) {
+      await click(/^Continue/);
+      await sleep(200);
+    }
+  }
+  await c.send("Page.removeScriptToEvaluateOnNewDocument", { identifier: result.identifier });
+  off();
+  const ok = !problems.length && !errors.length;
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  calculator: every step starts unanswered, Continue enabled only after a choice` +
+      (problems.length ? ` — ${problems.join("; ")}` : "") +
+      (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
+  );
+  return ok;
+}
+
 const profile = mkdtempSync(join(tmpdir(), "smoke-estimate-"));
 const browser = spawn(
   findBrowser(),
@@ -282,6 +352,7 @@ try {
   await c.send("Page.enable");
   await c.send("Runtime.enable");
   console.log(`Checking ${BASE}/get-my-estimate${SUBMIT ? " (render + end-to-end submit, test mode)" : ""}`);
+  if (!(await calculatorCheck(c))) allOk = false;
   for (const [name, answers] of Object.entries(SAMPLES)) {
     if (!(await renderCheck(c, name, answers))) allOk = false;
   }

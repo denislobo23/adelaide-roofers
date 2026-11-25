@@ -23,8 +23,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { sendGAEvent } from "@next/third-parties/google";
-import { site } from "@/data/config";
 import { estimateCost } from "@/lib/pricing";
+import { PHONE_DISPLAY, PHONE_HREF } from "@/lib/siteConfig";
 
 const TIMEFRAME_OPTIONS = [
   { v: "immediately", label: "Immediately / ASAP" },
@@ -150,7 +150,7 @@ export default function GetMyEstimatePage() {
             </p>
             <p className="mt-4 text-sm text-ink/50">
               Didn&apos;t get it? Call us on{" "}
-              <a href={site.phoneHref} className="font-semibold text-clay">{site.phoneDisplay}</a>{" "}
+              <a href={PHONE_HREF} className="font-semibold text-clay">{PHONE_DISPLAY}</a>{" "}
               and we&apos;ll help directly.
             </p>
 
@@ -215,10 +215,10 @@ export default function GetMyEstimatePage() {
               give us a call.
             </p>
             <a
-              href={site.phoneHref}
+              href={PHONE_HREF}
               className="mt-6 inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95"
             >
-              Call {site.phoneDisplay}
+              Call {PHONE_DISPLAY}
             </a>
           </div>
         ) : status === "sms_failed" ? (
@@ -232,10 +232,10 @@ export default function GetMyEstimatePage() {
               sort it out.
             </p>
             <a
-              href={site.phoneHref}
+              href={PHONE_HREF}
               className="mt-6 inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95"
             >
-              Call {site.phoneDisplay}
+              Call {PHONE_DISPLAY}
             </a>
           </div>
         ) : (
@@ -300,7 +300,7 @@ export default function GetMyEstimatePage() {
               {status === "error" && (
                 <p className="text-sm text-rose-600">
                   Something went wrong sending your estimate. Please check your details and try
-                  again, or call us on {site.phoneDisplay}.
+                  again, or call us on {PHONE_DISPLAY}.
                 </p>
               )}
 

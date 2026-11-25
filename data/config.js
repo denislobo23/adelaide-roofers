@@ -4,6 +4,8 @@
 // across every page, the header, footer, schema markup and CTAs.
 // ─────────────────────────────────────────────────────────────
 
+import { PHONE_DISPLAY, PHONE_HREF } from "../lib/siteConfig.js";
+
 export const site = {
   brand: "Adelaide Roofers",
   // The domain, no trailing slash. Used for canonical URLs + sitemap.
@@ -13,8 +15,9 @@ export const site = {
   // This is the catch-all number: shown in the header/footer, on the
   // homepage, and on any region that doesn't yet have its own roofer.
   // You answer it and route the enquiry. Swap for a tracked number later.
-  phoneDisplay: "0433 915 802",
-  phoneHref: "tel:+61433915802", // E.164 format for click-to-call
+  // Set in lib/siteConfig.js (the single source for the phone number).
+  phoneDisplay: PHONE_DISPLAY,
+  phoneHref: PHONE_HREF,
 
   // ── WHAT THIS BUSINESS HONESTLY IS ─────────────────────────
   shortDescription:

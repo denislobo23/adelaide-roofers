@@ -48,6 +48,8 @@ import { sendSms } from "@/lib/sendSms";
 import { estimateCost, normaliseAnswers, RANGE_LABEL } from "@/lib/pricing";
 import { sendLeadEmail } from "@/lib/sendLeadEmail";
 import { site } from "@/data/config";
+import { PHONE_DISPLAY } from "@/lib/siteConfig";
+import { tidyAddress } from "@/lib/formatAddress";
 
 function generateRefNumber() {
   const date = new Date();
@@ -98,7 +100,9 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
     rows.unshift(["ACTION NEEDED", problems.join("\n")]);
   }
 
-  const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
+  const text =
+    rows.map(([label, value]) => `${label}: ${value}`).join("\n") +
+    `\n\nCustomer-facing number on the site, PDF and SMS: ${PHONE_DISPLAY}`;
 
   const html = `
     <div style="font-family: sans-serif; font-size: 15px; color: #1a1a1a;">
@@ -114,6 +118,7 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
           )
           .join("")}
       </table>
+      <p style="margin-top: 16px; font-size: 12px; color: #777;">Customer-facing number on the site, PDF and SMS: ${escapeHtml(PHONE_DISPLAY)}</p>
     </div>
   `;
 
@@ -144,7 +149,7 @@ export async function POST(request) {
     // Recompute from the answers with the shared pricing (lib/pricing.js)
     // rather than trusting a figure sent from the browser.
     // Asbestos restoration/painting requests become a replacement estimate.
-    const answers = normaliseAnswers(body.answers);
+    const answers = normaliseAnswers({ ...body.answers, address: tidyAddress(body.answers.address) });
     let estimate;
     try {
       estimate = estimateCost(answers);
@@ -168,7 +173,6 @@ export async function POST(request) {
         estimate={estimate}
         breakdown={breakdown}
         refNumber={refNumber}
-        site={site}
       />
     );
     checks.pdfBytes = pdfBuffer.length;
@@ -201,13 +205,15 @@ export async function POST(request) {
     }
 
     // 3. Text the customer the link (only if we actually have a URL).
+    // Short branded link (app/e/[ref]/route.js) that redirects to the PDF.
+    const shortUrl = `${site.url}/e/${refNumber}`;
     let smsResult = { success: false, reason: "no_url" };
     if (publicUrl && !smoke.active) {
       const firstName = customer.name.split(" ")[0];
       try {
         smsResult = await sendSms({
           to: customer.mobile,
-          message: `Hi ${firstName}, here's your Adelaide Roofers estimate for ${answers.address}: ${publicUrl}`,
+          message: `Hi ${firstName}, here's your Adelaide Roofers estimate for ${answers.address}: ${shortUrl} Questions? Call ${PHONE_DISPLAY}.`,
         });
       } catch (smsErr) {
         console.error("Customer SMS threw:", smsErr);

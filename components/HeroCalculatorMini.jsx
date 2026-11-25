@@ -18,6 +18,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
+import { formatNominatimAddress, suburbOf } from "@/lib/formatAddress";
+
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -71,15 +73,14 @@ export default function HeroCalculatorMini() {
   }, []);
 
   const selectSuggestion = (item) => {
-    const a = item.address || {};
-    const suburb = a.suburb || a.city_district || a.town || a.city || a.municipality || "";
+    const address = formatNominatimAddress(item);
     setSelected({
-      address: item.display_name,
-      suburb,
+      address,
+      suburb: suburbOf(item),
       lat: parseFloat(item.lat),
       lon: parseFloat(item.lon),
     });
-    setAddressQuery(item.display_name);
+    setAddressQuery(address);
     setSuggestions([]);
     setShowSuggestions(false);
   };
@@ -129,7 +130,7 @@ export default function HeroCalculatorMini() {
                 onClick={() => selectSuggestion(item)}
                 className="block w-full border-b border-teal-50 px-4 py-3 text-left font-body text-sm text-ink/80 last:border-b-0 hover:bg-teal-50"
               >
-                {item.display_name}
+                {formatNominatimAddress(item)}
               </button>
             ))}
           </div>

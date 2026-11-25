@@ -14,6 +14,8 @@ const config = [
   { ignores: [".next/**", "node_modules/**", "public/**", "ebook/**", "Finding a partner/**"] },
   ...compat.extends("next/core-web-vitals"),
   {
+    // ESLint 9 only lints .js/.mjs/.cjs unless told otherwise.
+    files: ["**/*.{js,jsx,mjs,cjs}"],
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },

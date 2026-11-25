@@ -14,6 +14,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { normaliseAnswers, ASBESTOS_RESTORE_MESSAGE } from "@/lib/pricing";
+import { formatNominatimAddress, suburbOf, tidyAddress } from "@/lib/formatAddress";
 
 const JOB_TYPES = [
   { v: "restoration", label: "Roof Restoration", note: "Clean, re-bed, re-point, re-coat" },
@@ -47,6 +48,43 @@ const LEAK_DURATION_OPTIONS = [
   { v: "recurring", label: "Keeps coming back", note: "Recurring, possibly worsening" },
 ];
 
+// The answer each step needs before Continue is enabled. Nothing is
+// preselected: every step starts unanswered.
+const STEP_FIELD = {
+  jobType: "jobType",
+  size: "roofSizeM2",
+  storeys: "storeys",
+  material: "material",
+  currentMaterial: "currentMaterial",
+  desiredMaterial: "desiredMaterial",
+  complexity: "complexity",
+  repairAreas: "repairAreas",
+  leakDuration: "leakDuration",
+  gutterLength: "gutterLengthM",
+};
+
+const TYPICAL_ROOF_M2 = 200;
+const TYPICAL_GUTTER_M = 25;
+
+function PrimaryButton({ onClick, disabled, tone = "ink", children }) {
+  const enabled =
+    tone === "clay"
+      ? "bg-clay font-bold text-ink hover:brightness-95"
+      : "bg-ink font-semibold text-paper hover:bg-ink/85";
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`flex-1 rounded-lg px-6 py-3 tracking-tight transition-all ${
+        disabled ? "cursor-not-allowed bg-teal-100/70 font-semibold text-ink/30" : enabled
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
   useEffect(() => {
@@ -70,15 +108,15 @@ export default function RoofCalculator() {
     jobType: "",
     address: "",
     suburb: "",
-    roofSizeM2: 200,
-    storeys: "single",
-    material: "colorbond",
-    currentMaterial: "concreteTile",
-    desiredMaterial: "colorbond",
-    complexity: "gable",
-    repairAreas: "one",
-    leakDuration: "just_noticed",
-    gutterLengthM: 25,
+    roofSizeM2: null,
+    storeys: "",
+    material: "",
+    currentMaterial: "",
+    desiredMaterial: "",
+    complexity: "",
+    repairAreas: "",
+    leakDuration: "",
+    gutterLengthM: null,
   });
 
   // If the visitor already entered their address in the hero's mini
@@ -90,8 +128,9 @@ export default function RoofCalculator() {
     try {
       const prefill = JSON.parse(raw);
       if (prefill.address) {
-        setForm((f) => ({ ...f, address: prefill.address, suburb: prefill.suburb || "" }));
-        setAddressQuery(prefill.address);
+        const address = tidyAddress(prefill.address);
+        setForm((f) => ({ ...f, address, suburb: prefill.suburb || "" }));
+        setAddressQuery(address);
         if (prefill.lat && prefill.lon) {
           setSelectedCoords({ lat: prefill.lat, lon: prefill.lon });
         }
@@ -112,6 +151,8 @@ export default function RoofCalculator() {
   // is step 3 on a restoration but "storeys" is step 3 on a repair. Always
   // derive the number from position in the current branch's step list.
   const stepNumber = stepIndex + 1;
+  const field = STEP_FIELD[step];
+  const canContinue = !field || (form[field] !== "" && form[field] !== null && form[field] !== undefined);
 
   const next = () => setStepIndex((i) => Math.min(i + 1, steps.length - 1));
   const back = () => setStepIndex((i) => Math.max(i - 1, 0));
@@ -156,14 +197,10 @@ export default function RoofCalculator() {
   }, []);
 
   const selectSuggestion = (item) => {
-    update("address", item.display_name);
-    // Nominatim's address breakdown doesn't always use "suburb" — different
-    // areas get tagged as suburb/city_district/town depending on how OSM
-    // has mapped that region, so fall back through the likely fields.
-    const a = item.address || {};
-    const suburb = a.suburb || a.city_district || a.town || a.city || a.municipality || "";
-    update("suburb", suburb);
-    setAddressQuery(item.display_name);
+    const address = formatNominatimAddress(item);
+    update("address", address);
+    update("suburb", suburbOf(item));
+    setAddressQuery(address);
     setSelectedCoords({ lat: parseFloat(item.lat), lon: parseFloat(item.lon) });
     setSuggestions([]);
     setShowSuggestions(false);
@@ -174,7 +211,10 @@ export default function RoofCalculator() {
     : null;
 
   const goToEstimatePage = () => {
-    sessionStorage.setItem("roofEstimateAnswers", JSON.stringify(normaliseAnswers(form)));
+    sessionStorage.setItem(
+      "roofEstimateAnswers",
+      JSON.stringify(normaliseAnswers({ ...form, address: tidyAddress(form.address) }))
+    );
     router.push("/get-my-estimate");
   };
 
@@ -229,18 +269,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button
-                    type="button"
-                    disabled={!form.jobType}
-                    onClick={next}
-                    className={`flex-1 rounded-lg px-6 py-3 font-semibold tracking-tight transition-all ${
-                      form.jobType
-                        ? "bg-clay text-ink hover:brightness-95"
-                        : "cursor-not-allowed bg-teal-100/70 text-ink/30"
-                    }`}
-                  >
+                  <PrimaryButton tone="clay" onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -276,7 +307,7 @@ export default function RoofCalculator() {
                           onClick={() => selectSuggestion(item)}
                           className="block w-full border-b border-teal-50 px-3.5 py-2.5 text-left text-sm text-ink/80 last:border-b-0 hover:bg-teal-50"
                         >
-                          {item.display_name}
+                          {formatNominatimAddress(item)}
                         </button>
                       ))}
                     </div>
@@ -313,13 +344,26 @@ export default function RoofCalculator() {
                     min={80}
                     max={500}
                     step={10}
-                    value={form.roofSizeM2}
+                    value={form.roofSizeM2 ?? TYPICAL_ROOF_M2}
                     onChange={(e) => update("roofSizeM2", Number(e.target.value))}
-                    className="w-full accent-clay"
+                    onClick={(e) => update("roofSizeM2", Number(e.currentTarget.value))}
+                    aria-label="Roof size in square metres"
+                    className={`w-full accent-clay ${form.roofSizeM2 == null ? "opacity-50" : ""}`}
                   />
                   <div className="mt-2 text-center text-2xl font-extrabold text-ink">
-                    {form.roofSizeM2} m²
+                    {form.roofSizeM2 == null ? (
+                      <span className="text-base font-semibold text-ink/45">Drag the slider to set your roof size</span>
+                    ) : (
+                      <>{form.roofSizeM2} m²</>
+                    )}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => update("roofSizeM2", TYPICAL_ROOF_M2)}
+                    className="mx-auto mt-2 block text-xs font-semibold text-clay underline-offset-2 hover:underline"
+                  >
+                    Not sure? Use a typical {TYPICAL_ROOF_M2} m²
+                  </button>
                   <p className="mt-1 text-center text-xs text-ink/45">
                     A typical 4-bedroom Adelaide home is around 220–260 m² of roof.
                   </p>
@@ -328,9 +372,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button type="button" onClick={next} className="flex-1 rounded-lg bg-ink px-6 py-3 font-semibold tracking-tight text-paper transition-all hover:bg-ink/85">
+                  <PrimaryButton onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -367,9 +411,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button type="button" onClick={next} className="flex-1 rounded-lg bg-ink px-6 py-3 font-semibold tracking-tight text-paper transition-all hover:bg-ink/85">
+                  <PrimaryButton onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -441,9 +485,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button type="button" onClick={next} className="flex-1 rounded-lg bg-ink px-6 py-3 font-semibold tracking-tight text-paper transition-all hover:bg-ink/85">
+                  <PrimaryButton onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -507,9 +551,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button type="button" onClick={next} className="flex-1 rounded-lg bg-ink px-6 py-3 font-semibold tracking-tight text-paper transition-all hover:bg-ink/85">
+                  <PrimaryButton onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -553,9 +597,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button type="button" onClick={next} className="flex-1 rounded-lg bg-ink px-6 py-3 font-semibold tracking-tight text-paper transition-all hover:bg-ink/85">
+                  <PrimaryButton onClick={next} disabled={!canContinue}>
                     Continue →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -601,13 +645,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button
-                    type="button"
-                    onClick={goToEstimatePage}
-                    className="flex-1 rounded-lg bg-clay px-6 py-3 font-bold tracking-tight text-ink transition-all hover:brightness-95"
-                  >
+                  <PrimaryButton tone="clay" onClick={goToEstimatePage} disabled={!canContinue}>
                     See my estimate →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -638,13 +678,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button
-                    type="button"
-                    onClick={goToEstimatePage}
-                    className="flex-1 rounded-lg bg-clay px-6 py-3 font-bold tracking-tight text-ink transition-all hover:brightness-95"
-                  >
+                  <PrimaryButton tone="clay" onClick={goToEstimatePage} disabled={!canContinue}>
                     See my estimate →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -675,13 +711,9 @@ export default function RoofCalculator() {
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button
-                    type="button"
-                    onClick={goToEstimatePage}
-                    className="flex-1 rounded-lg bg-clay px-6 py-3 font-bold tracking-tight text-ink transition-all hover:brightness-95"
-                  >
+                  <PrimaryButton tone="clay" onClick={goToEstimatePage} disabled={!canContinue}>
                     See my estimate →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
@@ -701,25 +733,34 @@ export default function RoofCalculator() {
                     min={10}
                     max={80}
                     step={5}
-                    value={form.gutterLengthM}
+                    value={form.gutterLengthM ?? TYPICAL_GUTTER_M}
                     onChange={(e) => update("gutterLengthM", Number(e.target.value))}
-                    className="w-full accent-clay"
+                    onClick={(e) => update("gutterLengthM", Number(e.currentTarget.value))}
+                    aria-label="Gutter length in metres"
+                    className={`w-full accent-clay ${form.gutterLengthM == null ? "opacity-50" : ""}`}
                   />
                   <div className="mt-2 text-center text-2xl font-extrabold text-ink">
-                    {form.gutterLengthM} m
+                    {form.gutterLengthM == null ? (
+                      <span className="text-base font-semibold text-ink/45">Drag the slider to set the length</span>
+                    ) : (
+                      <>{form.gutterLengthM} m</>
+                    )}
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => update("gutterLengthM", TYPICAL_GUTTER_M)}
+                    className="mx-auto mt-2 block text-xs font-semibold text-clay underline-offset-2 hover:underline"
+                  >
+                    Not sure? Use a typical {TYPICAL_GUTTER_M} m
+                  </button>
                 </div>
                 <div className="mt-6 flex gap-3">
                   <button type="button" onClick={back} className="rounded-lg border-2 border-teal-100 px-5 py-3 text-sm font-semibold text-ink/70 hover:border-clay/50">
                     ← Back
                   </button>
-                  <button
-                    type="button"
-                    onClick={goToEstimatePage}
-                    className="flex-1 rounded-lg bg-clay px-6 py-3 font-bold tracking-tight text-ink transition-all hover:brightness-95"
-                  >
+                  <PrimaryButton tone="clay" onClick={goToEstimatePage} disabled={!canContinue}>
                     See my estimate →
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             )}
