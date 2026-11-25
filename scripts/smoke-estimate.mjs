@@ -1,17 +1,26 @@
 // scripts/smoke-estimate.mjs
 //
-// Smoke test for /get-my-estimate. The page only renders its form when the
-// calculator's answers are in sessionStorage, so a static build can't catch
-// a crash there. This opens the page in headless Chrome/Edge with sample
-// answers and checks the name / mobile / timeframe form appears with no
-// JavaScript errors. It never submits the form (no SMS, email or lead).
+// Smoke test for /get-my-estimate, in a real headless Chrome/Edge.
 //
-// Usage: npm run build && npm start   (in another terminal)
-//        npm run smoke                (defaults to http://localhost:3000)
-//        SMOKE_URL=https://... npm run smoke
+// Default (render check): opens the page with sample calculator answers and
+// checks the name / mobile / timeframe form appears with no JS errors.
+// Never submits anything.
 //
-// Needs Node 22+ (built-in WebSocket) and Chrome or Edge installed
-// (or set CHROME_PATH).
+// --submit (end-to-end): also fills in and submits the form for a roof
+// restoration. Every request to /api/send-estimate gets the header
+// `x-smoke-test: $SMOKE_TEST_TOKEN`, which makes the API run the whole
+// pipeline (pricing, PDF, Supabase upload, lead save) but send NO SMS and
+// NO email, then delete the test PDF and lead row. Passes only if the API
+// reports every step ok and the page shows "Check your phone".
+// Refuses to run without SMOKE_TEST_TOKEN, so it can never send a real text.
+// The token must match SMOKE_TEST_TOKEN on the server (.env.local / Vercel).
+//
+// Usage: npm run build && npm start          (in another terminal)
+//        npm run smoke                       (render check, localhost:3000)
+//        SMOKE_TEST_TOKEN=... npm run smoke -- --submit
+//        SMOKE_URL=https://adelaideroofers.com.au ...   (live site)
+//
+// Needs Node 22+ (built-in WebSocket) and Chrome or Edge (or CHROME_PATH).
 
 import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
@@ -19,21 +28,28 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 const BASE = (process.env.SMOKE_URL || "http://localhost:3000").replace(/\/$/, "");
+const SUBMIT = process.argv.includes("--submit");
+const TOKEN = process.env.SMOKE_TEST_TOKEN || "";
 const PORT = 9333;
 
+if (SUBMIT && !TOKEN) {
+  console.error("FAIL  --submit needs SMOKE_TEST_TOKEN (so no real SMS or email can be sent).");
+  process.exit(1);
+}
+
+const ADDRESS = { address: "1 Smoke Test St, Marion SA", suburb: "Marion" };
 const SAMPLES = {
   restoration: {
-    jobType: "restoration", address: "1 Test St, Marion SA", suburb: "Marion",
+    jobType: "restoration", ...ADDRESS,
     roofSizeM2: 200, storeys: "single", material: "concreteTile", complexity: "gable",
   },
   "asbestos restoration (redirected)": {
-    jobType: "replacement", requestedJobType: "restoration", asbestosRedirect: true,
-    address: "1 Test St, Marion SA", suburb: "Marion", roofSizeM2: 200, storeys: "single",
-    material: "asbestos", currentMaterial: "asbestos", desiredMaterial: "colorbond", complexity: "gable",
+    jobType: "replacement", requestedJobType: "restoration", asbestosRedirect: true, ...ADDRESS,
+    roofSizeM2: 200, storeys: "single", material: "asbestos", currentMaterial: "asbestos",
+    desiredMaterial: "colorbond", complexity: "gable",
   },
   repairs: {
-    jobType: "repairs", address: "1 Test St, Marion SA", suburb: "Marion",
-    storeys: "single", material: "concreteTile", repairAreas: "few",
+    jobType: "repairs", ...ADDRESS, storeys: "single", material: "concreteTile", repairAreas: "few",
   },
 };
 
@@ -69,7 +85,7 @@ function cdp(wsUrl) {
   const ws = new WebSocket(wsUrl);
   let id = 0;
   const pending = new Map();
-  const listeners = [];
+  const listeners = new Set();
   ws.onmessage = (e) => {
     const msg = JSON.parse(e.data);
     if (msg.id && pending.has(msg.id)) {
@@ -86,20 +102,20 @@ function cdp(wsUrl) {
             pending.set(n, res);
             ws.send(JSON.stringify({ id: n, method, params }));
           }),
-        on: (fn) => listeners.push(fn),
+        on: (fn) => {
+          listeners.add(fn);
+          return () => listeners.delete(fn);
+        },
         close: () => ws.close(),
       });
   });
 }
 
-async function checkSample(c, name, answers) {
-  const errors = [];
-  c.on((m) => {
-    if (m.method === "Runtime.exceptionThrown")
-      errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);
-    if (m.method === "Runtime.consoleAPICalled" && m.params.type === "error")
-      errors.push(m.params.args.map((a) => a.value ?? a.description).join(" "));
-  });
+const evaluate = async (c, expression) =>
+  (await c.send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })).result
+    ?.result?.value;
+
+async function openWithAnswers(c, answers, errors) {
   const { result } = await c.send("Page.addScriptToEvaluateOnNewDocument", {
     source: `sessionStorage.setItem("roofEstimateAnswers", ${JSON.stringify(JSON.stringify(answers))});`,
   });
@@ -107,25 +123,147 @@ async function checkSample(c, name, answers) {
   let state;
   for (let i = 0; i < 40; i++) {
     await sleep(250);
-    const r = await c.send("Runtime.evaluate", {
-      returnByValue: true,
-      expression: `({
+    state = await evaluate(
+      c,
+      `({
         name: !!document.querySelector("#name"),
         mobile: !!document.querySelector("#mobile"),
         timeframes: document.querySelectorAll("#timeframe option").length,
-        noAnswers: document.body.innerText.includes("We couldn't find your answers") || document.body.innerText.includes("We couldn’t find your answers"),
+        noAnswers: /couldn.t find your answers/i.test(document.body.innerText),
         crashed: /Application error|client-side exception/i.test(document.body.innerText),
-      })`,
-    });
-    state = r.result.result.value;
-    if (state.crashed || (state.name && state.mobile && state.timeframes)) break;
+      })`
+    );
+    if (state?.crashed || (state?.name && state?.mobile && state?.timeframes)) break;
   }
   await c.send("Page.removeScriptToEvaluateOnNewDocument", { identifier: result.identifier });
-  const ok = state.name && state.mobile && state.timeframes >= 4 && !state.crashed && !state.noAnswers && !errors.length;
+  const ok =
+    state?.name && state?.mobile && state?.timeframes >= 4 && !state.crashed && !state.noAnswers && !errors.length;
+  return { ok, state };
+}
+
+function describe(state, errors) {
+  return (
+    `name ${state?.name}, mobile ${state?.mobile}, timeframe options ${state?.timeframes}` +
+    (state?.crashed ? ", PAGE CRASHED" : "") +
+    (state?.noAnswers ? ", answers not found" : "") +
+    (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
+  );
+}
+
+function trackErrors(c) {
+  const errors = [];
+  const off = c.on((m) => {
+    if (m.method === "Runtime.exceptionThrown")
+      errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text);
+    if (m.method === "Runtime.consoleAPICalled" && m.params.type === "error")
+      errors.push(m.params.args.map((a) => a.value ?? a.description).join(" "));
+  });
+  return { errors, off };
+}
+
+async function renderCheck(c, name, answers) {
+  const { errors, off } = trackErrors(c);
+  const { ok, state } = await openWithAnswers(c, answers, errors);
+  off();
+  console.log(`${ok ? "PASS" : "FAIL"}  render ${name}: ${describe(state, errors)}`);
+  return ok;
+}
+
+async function submitCheck(c, name, answers) {
+  const { errors, off } = trackErrors(c);
+
+  // Add the smoke-test header to every /api/send-estimate request, and
+  // capture its response.
+  let apiResponse = null;
+  let apiStatus = null;
+  const offFetch = c.on(async (m) => {
+    if (m.method !== "Fetch.requestPaused") return;
+    const p = m.params;
+    if (p.responseStatusCode === undefined) {
+      const headers = Object.entries(p.request.headers).map(([n, v]) => ({ name: n, value: v }));
+      headers.push({ name: "x-smoke-test", value: TOKEN });
+      await c.send("Fetch.continueRequest", { requestId: p.requestId, headers });
+    } else {
+      apiStatus = p.responseStatusCode;
+      const body = await c.send("Fetch.getResponseBody", { requestId: p.requestId });
+      const raw = body.result?.base64Encoded
+        ? Buffer.from(body.result.body, "base64").toString("utf8")
+        : body.result?.body;
+      try {
+        apiResponse = JSON.parse(raw);
+      } catch {
+        apiResponse = { unparsed: raw };
+      }
+      await c.send("Fetch.continueRequest", { requestId: p.requestId });
+    }
+  });
+  await c.send("Fetch.enable", {
+    patterns: [
+      { urlPattern: "*/api/send-estimate*", requestStage: "Request" },
+      { urlPattern: "*/api/send-estimate*", requestStage: "Response" },
+    ],
+  });
+
+  const { ok: loaded, state } = await openWithAnswers(c, answers, errors);
+  if (!loaded) {
+    console.log(`FAIL  submit ${name}: form did not load (${describe(state, errors)})`);
+    await c.send("Fetch.disable");
+    offFetch();
+    off();
+    return false;
+  }
+
+  // Fill the form the way a person would (typed text, real select change).
+  await evaluate(c, `document.querySelector("#name").focus()`);
+  await c.send("Input.insertText", { text: "Smoke Test" });
+  await evaluate(c, `document.querySelector("#mobile").focus()`);
+  await c.send("Input.insertText", { text: "0400000000" });
+  await evaluate(
+    c,
+    `(() => {
+      const sel = document.querySelector("#timeframe");
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value").set;
+      setter.call(sel, "exploring");
+      sel.dispatchEvent(new Event("change", { bubbles: true }));
+    })()`
+  );
+  await sleep(200);
+  await evaluate(c, `document.querySelector("#timeframe").closest("form").requestSubmit()`);
+
+  let screen = "";
+  for (let i = 0; i < 120 && !(apiResponse && screen); i++) {
+    await sleep(250);
+    if (apiResponse) {
+      screen = await evaluate(
+        c,
+        `(() => {
+          const t = document.body.innerText;
+          if (/Check your phone/i.test(t)) return "Check your phone";
+          if (/Something went wrong/i.test(t)) return "Something went wrong";
+          if (/we.ve got your details/i.test(t)) return "Delayed: we've got your details";
+          if (/couldn.t reach that number/i.test(t)) return "SMS failed";
+          return "";
+        })()`
+      );
+    }
+  }
+  await c.send("Fetch.disable");
+  offFetch();
+  off();
+
+  const checks = apiResponse?.checks || {};
+  const ok =
+    apiStatus === 200 &&
+    apiResponse?.success === true &&
+    apiResponse?.smokeTest === true &&
+    screen === "Check your phone" &&
+    !errors.length;
   console.log(
-    `${ok ? "PASS" : "FAIL"}  ${name}: name ${state.name}, mobile ${state.mobile}, timeframe options ${state.timeframes}` +
-      (state.crashed ? ", PAGE CRASHED" : "") +
-      (state.noAnswers ? ", answers not found" : "") +
+    `${ok ? "PASS" : "FAIL"}  submit ${name}: HTTP ${apiStatus}, screen "${screen || "(none)"}"` +
+      (apiResponse?.estimate ? `, estimate $${apiResponse.estimate.low}-$${apiResponse.estimate.high}` : "") +
+      `, PDF ${checks.pdfBytes ?? "?"} bytes, storage ${checks.storage ?? "?"}, lead saved ${checks.leadSaved ?? "?"}` +
+      `, customer SMS ${checks.customerSms ?? "?"}` +
+      (apiResponse && !apiResponse.smokeTest ? `, response: ${JSON.stringify(apiResponse)}` : "") +
       (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
   );
   return ok;
@@ -143,10 +281,11 @@ try {
   const c = await cdp(await waitForDebugger());
   await c.send("Page.enable");
   await c.send("Runtime.enable");
-  console.log(`Checking ${BASE}/get-my-estimate`);
+  console.log(`Checking ${BASE}/get-my-estimate${SUBMIT ? " (render + end-to-end submit, test mode)" : ""}`);
   for (const [name, answers] of Object.entries(SAMPLES)) {
-    if (!(await checkSample(c, name, answers))) allOk = false;
+    if (!(await renderCheck(c, name, answers))) allOk = false;
   }
+  if (SUBMIT && !(await submitCheck(c, "restoration", SAMPLES.restoration))) allOk = false;
   c.close();
 } catch (err) {
   console.error("FAIL ", err.message);
@@ -154,6 +293,8 @@ try {
 } finally {
   browser.kill();
   await sleep(500);
-  try { rmSync(profile, { recursive: true, force: true }); } catch {}
+  try {
+    rmSync(profile, { recursive: true, force: true });
+  } catch {}
 }
 process.exit(allOk ? 0 : 1);

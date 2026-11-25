@@ -60,8 +60,11 @@ async function sendLeadSms({ name, phone, suburb }) {
   }
 }
 
-function buildContactEmail({ name, phone, email, suburb, message, consent }) {
-  const subject = `New lead (contact form): ${name}${suburb ? ` — ${suburb}` : ""}`;
+const escapeHtml = (v) =>
+  String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function buildContactEmail({ name, phone, email, suburb, message, consent, problem = "" }) {
+  const subject = `${problem ? "ACTION NEEDED: " : ""}New lead (contact form): ${name}${suburb ? ` — ${suburb}` : ""}`;
 
   const rows = [
     ["Name", name],
@@ -71,6 +74,7 @@ function buildContactEmail({ name, phone, email, suburb, message, consent }) {
     ["Consent to be contacted", consent ? "Yes" : "No"],
     ["Message", message || "(none)"],
   ];
+  if (problem) rows.unshift(["ACTION NEEDED", problem]);
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
 
@@ -82,8 +86,8 @@ function buildContactEmail({ name, phone, email, suburb, message, consent }) {
           .map(
             ([label, value]) => `
           <tr>
-            <td style="font-weight: 600; vertical-align: top;">${label}</td>
-            <td>${String(value).replace(/\n/g, "<br />")}</td>
+            <td style="font-weight: 600; vertical-align: top;">${escapeHtml(label)}</td>
+            <td>${escapeHtml(value).replace(/\n/g, "<br />")}</td>
           </tr>`
           )
           .join("")}
@@ -103,43 +107,54 @@ export async function POST(request) {
       return Response.json({ success: false, reason: "missing_fields" }, { status: 400 });
     }
 
+    // Save the lead, but don't stop if Supabase is down: the SMS and email
+    // below still go out, so the lead isn't lost.
+    let leadSaved = false;
+    let saveProblem = "";
     if (!supabaseAdmin) {
       console.warn("Supabase admin client not configured — contact form lead not saved.");
-      return Response.json({ success: false, reason: "storage_unavailable" }, { status: 500 });
-    }
-
-    const { error } = await supabaseAdmin.from("leads").insert([
-      {
-        name,
-        phone,
-        email: email || "",
-        suburb: suburb || "",
-        timeframe: "",
-        job_type: "General enquiry",
-        lead_source: "contact_form",
-        message: consent
-          ? `${message || ""} [Consent given to be contacted by matched roofer]`
-          : message || "",
-        source_page: "homepage",
-        created_at: new Date().toISOString(),
-      },
-    ]);
-
-    if (error) {
-      console.error("Contact form insert failed:", error);
-      return Response.json({ success: false, reason: "db_error" }, { status: 500 });
+      saveProblem = "Supabase is not configured, so this lead was NOT saved. This email is the only record of it.";
+    } else {
+      try {
+        const { error } = await supabaseAdmin.from("leads").insert([
+          {
+            name,
+            phone,
+            email: email || "",
+            suburb: suburb || "",
+            timeframe: "",
+            job_type: "General enquiry",
+            lead_source: "contact_form",
+            message: consent
+              ? `${message || ""} [Consent given to be contacted by matched roofer]`
+              : message || "",
+            source_page: "homepage",
+            created_at: new Date().toISOString(),
+          },
+        ]);
+        if (error) throw error;
+        leadSaved = true;
+      } catch (dbErr) {
+        console.error("Contact form insert failed:", dbErr);
+        saveProblem = "Saving this lead to Supabase failed. This email is the only record of it.";
+      }
     }
 
     // Fire-and-log SMS notification — never block or fail the lead save
     // over an SMS delivery problem.
+    let smsSent = false;
     try {
       await sendLeadSms({ name, phone, suburb });
+      smsSent = Boolean(
+        process.env.CLICKSEND_USERNAME && process.env.CLICKSEND_API_KEY && process.env.NOTIFY_PHONE_NUMBER
+      );
     } catch (smsErr) {
       console.error("Lead SMS notification failed:", smsErr);
     }
 
     // Fire-and-log email notification — same defensive pattern, runs
     // independently of the SMS above.
+    let emailSent = false;
     try {
       const { subject, html, text } = buildContactEmail({
         name,
@@ -148,12 +163,19 @@ export async function POST(request) {
         suburb,
         message,
         consent,
+        problem: saveProblem,
       });
-      await sendLeadEmail({ subject, html, text });
+      const emailResult = await sendLeadEmail({ subject, html, text });
+      emailSent = Boolean(emailResult?.success);
     } catch (emailErr) {
       console.error("Lead email notification failed:", emailErr);
     }
 
+    // Only fail if the lead was neither saved nor sent anywhere.
+    if (!leadSaved && !smsSent && !emailSent) {
+      console.error("Contact form lead could not be saved or notified.");
+      return Response.json({ success: false, reason: "lead_not_saved" }, { status: 500 });
+    }
     return Response.json({ success: true });
   } catch (err) {
     console.error("Contact form pipeline failed:", err);

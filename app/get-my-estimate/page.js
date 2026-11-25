@@ -36,7 +36,7 @@ const TIMEFRAME_OPTIONS = [
 export default function GetMyEstimatePage() {
   const [answers, setAnswers] = useState(null);
   const [form, setForm] = useState({ name: "", mobile: "", timeframe: "" });
-  const [status, setStatus] = useState("form"); // form | sending | sent | sms_failed | error
+  const [status, setStatus] = useState("form"); // form | sending | sent | sms_failed | delivery_delayed | error
   const [refNumber, setRefNumber] = useState(null);
 
   // Optional post-submit email capture — entirely separate from the main
@@ -74,14 +74,18 @@ export default function GetMyEstimatePage() {
       });
       const data = await res.json();
 
-      if (data.success) {
+      if (data.success || data.leadSaved) {
         sendGAEvent("event", "generate_lead", {
           lead_source: "roof_calculator",
         });
         setRefNumber(data.refNumber || null);
+      }
+      if (data.success) {
         setStatus("sent");
       } else if (data.reason === "sms_failed") {
         setStatus("sms_failed");
+      } else if (data.reason === "delivery_delayed") {
+        setStatus("delivery_delayed");
       } else {
         setStatus("error");
       }
@@ -199,6 +203,23 @@ export default function GetMyEstimatePage() {
             >
               ← Back to Adelaide Roofers
             </Link>
+          </div>
+        ) : status === "delivery_delayed" ? (
+          <div className="rounded-2xl border-2 border-clay/50 bg-white p-6 text-center shadow-2xl md:p-8">
+            <h1 className="text-2xl font-bold tracking-tight text-ink">
+              Thanks, we&apos;ve got your details
+            </h1>
+            <p className="mt-3 text-ink/70">
+              We couldn&apos;t text your estimate just now, so we&apos;ll send it to{" "}
+              <span className="text-ink">{form.mobile}</span> shortly. If you&apos;d rather not wait,
+              give us a call.
+            </p>
+            <a
+              href={site.phoneHref}
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-clay px-6 py-3.5 font-bold tracking-tight text-ink transition-all hover:brightness-95"
+            >
+              Call {site.phoneDisplay}
+            </a>
           </div>
         ) : status === "sms_failed" ? (
           <div className="rounded-2xl border-2 border-clay/50 bg-white p-6 text-center shadow-2xl md:p-8">

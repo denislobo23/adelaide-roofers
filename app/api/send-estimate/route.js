@@ -22,6 +22,17 @@
 //   notification — see lib/sendLeadEmail.js for Resend domain setup)
 // - A Supabase Storage bucket named "estimates", set to public read access
 //
+// RESILIENCE: every step is attempted even if an earlier one fails (e.g.
+// Supabase down). Denis's email always carries the PDF as an attachment and
+// says what failed, so a lead is never silently lost. The customer is told
+// the truth: estimate texted, delayed, or (only if nothing worked) an error.
+//
+// SMOKE TEST MODE: a request with header `x-smoke-test: <SMOKE_TEST_TOKEN>`
+// runs the whole pipeline but sends NO SMS and NO email; the PDF upload and
+// lead row are written and then deleted. See scripts/smoke-estimate.mjs.
+// A wrong or unconfigured token is rejected (403) so a test can never fall
+// through to a real send.
+//
 // UPDATE: fires a second SMS via sendSms() AND an email via
 // sendLeadEmail() once the lead is saved, so calculator leads notify
 // Denis the same way contact form leads already do (see
@@ -64,8 +75,11 @@ async function notifyLeadSms({ customer, answers, estimate }) {
   });
 }
 
-function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdown, refNumber }) {
-  const subject = `New lead (calculator): ${customer.name} — $${estimate.low}-$${estimate.high} (${RANGE_LABEL})`;
+const escapeHtml = (v) =>
+  String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdown, refNumber, problems = [] }) {
+  const subject = `${problems.length ? "ACTION NEEDED: " : ""}New lead (calculator): ${customer.name} — $${estimate.low}-$${estimate.high} (${RANGE_LABEL})`;
 
   const rows = [
     ["Name", customer.name],
@@ -80,6 +94,9 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
   if (answers.asbestosRedirect) {
     rows.push(["Note", `Asked for ${answers.requestedJobType} on an asbestos roof; priced as replacement.`]);
   }
+  if (problems.length) {
+    rows.unshift(["ACTION NEEDED", problems.join("\n")]);
+  }
 
   const text = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
 
@@ -91,8 +108,8 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
           .map(
             ([label, value]) => `
           <tr>
-            <td style="font-weight: 600; vertical-align: top;">${label}</td>
-            <td>${String(value).replace(/\n/g, "<br />")}</td>
+            <td style="font-weight: 600; vertical-align: top;">${escapeHtml(label)}</td>
+            <td>${escapeHtml(value).replace(/\n/g, "<br />")}</td>
           </tr>`
           )
           .join("")}
@@ -103,8 +120,20 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
   return { subject, html, text };
 }
 
+function smokeTestMode(request) {
+  const header = request.headers.get("x-smoke-test");
+  if (!header) return { active: false };
+  const token = process.env.SMOKE_TEST_TOKEN;
+  return { active: true, valid: Boolean(token) && header === token };
+}
+
 export async function POST(request) {
   try {
+    const smoke = smokeTestMode(request);
+    if (smoke.active && !smoke.valid) {
+      return Response.json({ success: false, reason: "bad_smoke_token" }, { status: 403 });
+    }
+
     const body = await request.json();
     const { customer, timeframe } = body;
 
@@ -128,6 +157,8 @@ export async function POST(request) {
 
     const refNumber = generateRefNumber();
     const breakdown = buildEstimateBreakdown({ answers, estimate });
+    const checks = {};
+    const problems = [];
 
     // 1. Generate the PDF
     const pdfBuffer = await renderToBuffer(
@@ -140,64 +171,114 @@ export async function POST(request) {
         site={site}
       />
     );
+    checks.pdfBytes = pdfBuffer.length;
 
-    // 2. Upload to Supabase Storage
+    // 2. Upload to Supabase Storage. A failure here must not stop the rest.
+    const filePath = smoke.active ? `smoke-tests/${refNumber}.pdf` : `${refNumber}.pdf`;
     let publicUrl = null;
     if (supabaseAdmin) {
-      const filePath = `${refNumber}.pdf`;
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("estimates")
-        .upload(filePath, pdfBuffer, {
-          contentType: "application/pdf",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error("Storage upload failed:", uploadError);
-        return Response.json({ success: false, reason: "storage_error" }, { status: 500 });
+      try {
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("estimates")
+          .upload(filePath, pdfBuffer, { contentType: "application/pdf", upsert: false });
+        if (uploadError) throw uploadError;
+        const { data: urlData } = supabaseAdmin.storage.from("estimates").getPublicUrl(filePath);
+        publicUrl = urlData?.publicUrl || null;
+        checks.storage = "ok";
+      } catch (uploadErr) {
+        console.error("Storage upload failed:", uploadErr);
+        checks.storage = `failed: ${uploadErr?.message || uploadErr}`;
+        problems.push(
+          "PDF upload to Supabase failed, so the customer was NOT texted their estimate. The PDF is attached: please send it to them."
+        );
       }
-
-      const { data: urlData } = supabaseAdmin.storage.from("estimates").getPublicUrl(filePath);
-      publicUrl = urlData?.publicUrl || null;
     } else {
       console.warn("Supabase admin client not configured — skipping storage upload.");
+      checks.storage = "not configured";
+      problems.push(
+        "Supabase is not configured, so the customer was NOT texted their estimate. The PDF is attached: please send it to them."
+      );
     }
 
-    // 3. Send the SMS with the link (only if we actually have a URL)
+    // 3. Text the customer the link (only if we actually have a URL).
     let smsResult = { success: false, reason: "no_url" };
-    if (publicUrl) {
+    if (publicUrl && !smoke.active) {
       const firstName = customer.name.split(" ")[0];
-      smsResult = await sendSms({
-        to: customer.mobile,
-        message: `Hi ${firstName}, here's your Adelaide Roofers estimate for ${answers.address}: ${publicUrl}`,
-      });
+      try {
+        smsResult = await sendSms({
+          to: customer.mobile,
+          message: `Hi ${firstName}, here's your Adelaide Roofers estimate for ${answers.address}: ${publicUrl}`,
+        });
+      } catch (smsErr) {
+        console.error("Customer SMS threw:", smsErr);
+        smsResult = { success: false, reason: "exception" };
+      }
+      if (!smsResult.success) {
+        problems.push(`The text to the customer failed (${smsResult.reason}). Estimate link: ${publicUrl}`);
+      }
     }
+    checks.customerSms = smoke.active
+      ? "skipped (smoke test)"
+      : smsResult.success
+      ? "ok"
+      : smsResult.reason;
 
-    // 4. Save the lead regardless of SMS outcome — a failed text shouldn't
-    // mean the lead is lost, just that follow-up may need to be manual.
-    // ref_number is stored so the optional post-submit "email me a copy"
-    // capture (see /api/save-email) can find this exact row again.
+    // 4. Save the lead. A failure here must not stop the notifications.
+    let leadSaved = false;
     if (supabaseAdmin) {
-      await supabaseAdmin.from("leads").insert([
-        {
-          name: customer.name,
-          phone: customer.mobile,
-          address: answers.address,
-          suburb: answers.suburb || "",
-          timeframe,
-          job_type: breakdown.jobTypeLabel,
-          lead_source: "roof_calculator",
-          pdf_url: publicUrl,
-          message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
-          source_page: "get-my-estimate",
-          ref_number: refNumber,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      try {
+        const { error: insertError } = await supabaseAdmin.from("leads").insert([
+          {
+            name: customer.name,
+            phone: customer.mobile,
+            address: answers.address,
+            suburb: answers.suburb || "",
+            timeframe,
+            job_type: breakdown.jobTypeLabel,
+            lead_source: smoke.active ? "smoke_test" : "roof_calculator",
+            pdf_url: publicUrl,
+            message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
+            source_page: "get-my-estimate",
+            ref_number: refNumber,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+        if (insertError) throw insertError;
+        leadSaved = true;
+        checks.leadSaved = "ok";
+      } catch (insertErr) {
+        console.error("Lead insert failed:", insertErr);
+        checks.leadSaved = `failed: ${insertErr?.message || insertErr}`;
+        problems.push("Saving the lead to Supabase failed. This email is the only record of it.");
+      }
+    } else {
+      checks.leadSaved = "not configured";
+      problems.push("Supabase is not configured, so the lead was not saved. This email is the only record of it.");
     }
 
-    // 5. Notify Denis of the new lead — SMS and email, both fire-and-log,
-    // neither blocks the response to the customer or each other.
+    // Smoke test: clean up what it wrote, report, and stop before any notification.
+    if (smoke.active) {
+      if (supabaseAdmin) {
+        if (checks.storage === "ok") {
+          await supabaseAdmin.storage.from("estimates").remove([filePath]).catch(() => {});
+        }
+        if (leadSaved) {
+          await supabaseAdmin.from("leads").delete().eq("ref_number", refNumber).then(
+            () => {},
+            () => {}
+          );
+        }
+      }
+      const ok = checks.pdfBytes > 1000 && checks.storage === "ok" && checks.leadSaved === "ok";
+      return Response.json(
+        { success: ok, smokeTest: true, refNumber, estimate, checks, problems },
+        { status: ok ? 200 : 500 }
+      );
+    }
+
+    // 5. Notify Denis — SMS and email, each fire-and-log. The email carries
+    // the PDF and says what failed, so the lead can be followed up by hand.
+    let notified = false;
     try {
       await notifyLeadSms({ customer, answers, estimate });
     } catch (notifyErr) {
@@ -212,22 +293,29 @@ export async function POST(request) {
         timeframe,
         breakdown,
         refNumber,
+        problems,
       });
-      await sendLeadEmail({ subject, html, text });
+      const emailResult = await sendLeadEmail({
+        subject,
+        html,
+        text,
+        attachments: [{ filename: `${refNumber}.pdf`, content: pdfBuffer.toString("base64") }],
+      });
+      notified = Boolean(emailResult?.success);
     } catch (emailErr) {
       console.error("Calculator lead email notification failed:", emailErr);
     }
 
-    if (!smsResult.success) {
-      // Lead is saved, but the customer didn't get their text — be honest
-      // about it rather than pretending it worked.
-      return Response.json(
-        { success: false, reason: "sms_failed", leadSaved: true },
-        { status: 200 }
-      );
+    if (smsResult.success) {
+      return Response.json({ success: true, refNumber });
     }
-
-    return Response.json({ success: true, refNumber });
+    if (leadSaved || notified) {
+      // We have the lead, but the customer didn't get their text.
+      const reason = publicUrl ? "sms_failed" : "delivery_delayed";
+      return Response.json({ success: false, reason, leadSaved: true, refNumber }, { status: 200 });
+    }
+    console.error(`send-estimate: lead ${refNumber} could not be saved or notified`, checks);
+    return Response.json({ success: false, reason: "lead_not_saved" }, { status: 500 });
   } catch (err) {
     console.error("send-estimate pipeline failed:", err);
     return Response.json({ success: false, reason: "server_error" }, { status: 500 });
