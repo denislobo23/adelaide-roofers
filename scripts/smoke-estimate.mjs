@@ -15,6 +15,22 @@
 // Refuses to run without SMOKE_TEST_TOKEN, so it can never send a real text.
 // The token must match SMOKE_TEST_TOKEN on the server (.env.local / Vercel).
 //
+// Address lookup: checks /api/address/suggest (OpenStreetMap Nominatim via
+// our server) answers, then types an address on /calculator and the
+// homepage, picks a suggestion and carries on. The browser checks type the
+// same query, which the server has cached, so a run sends Nominatim about
+// one request. If Nominatim doesn't answer, the browser checks use mocked
+// suggestions and the API check fails. Also forces the lookup to fail and
+// checks the customer can carry on with a typed address.
+//
+// Also checks /api/send-estimate refuses a wrong smoke token (403), and the
+// --submit check shows the address the test lead was saved with.
+//
+// SMOKE_SUBMIT_ADDRESS="128 King William Street Adelaide" (with --submit):
+// types that address on /calculator, picks the first suggestion, walks the
+// calculator to the estimate page and submits the answers it produced, so
+// the report shows exactly what a real customer's lead would save.
+//
 // Usage: npm run build && npm start          (in another terminal)
 //        npm run smoke                       (render check, localhost:3000)
 //        SMOKE_TEST_TOKEN=... npm run smoke -- --submit
@@ -263,6 +279,7 @@ async function submitCheck(c, name, answers) {
       (apiResponse?.estimate ? `, estimate $${apiResponse.estimate.low}-$${apiResponse.estimate.high}` : "") +
       `, PDF ${checks.pdfBytes ?? "?"} bytes, storage ${checks.storage ?? "?"}, lead saved ${checks.leadSaved ?? "?"}` +
       `, customer SMS ${checks.customerSms ?? "?"}` +
+      (apiResponse?.savedLead ? `, saved address "${apiResponse.savedLead.address}" (suburb "${apiResponse.savedLead.suburb}")` : "") +
       (apiResponse && !apiResponse.smokeTest ? `, response: ${JSON.stringify(apiResponse)}` : "") +
       (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
   );
@@ -339,6 +356,163 @@ async function calculatorCheck(c) {
   return ok;
 }
 
+// ── Address lookup (OpenStreetMap Nominatim, via our server) ─────────────
+// A public building that OpenStreetMap has mapped (Marion Cultural Centre).
+const ADDRESS_TYPED = "287 Diagonal Road Oaklands Park";
+const MOCK_SUGGEST = {
+  suggestions: [
+    { id: "1", address: "287 Diagonal Road, Oaklands Park SA 5046", suburb: "Oaklands Park", lat: -35.0136, lon: 138.5434 },
+  ],
+};
+
+// Straight API check. Returns "live" (Nominatim answered via our route) or
+// "broken".
+async function addressApiCheck() {
+  try {
+    const res = await fetch(`${BASE}/api/address/suggest?q=${encodeURIComponent(ADDRESS_TYPED)}`);
+    const body = await res.json().catch(() => ({}));
+    const first = body.suggestions?.[0];
+    const ok = res.ok && first && first.lat < -30 && first.lon > 130;
+    console.log(
+      `${ok ? "PASS" : "FAIL"}  address API: HTTP ${res.status}, ` +
+        (ok
+          ? `${body.suggestions.length} suggestions: ${body.suggestions.map((x) => `"${x.address}"`).join(", ")}; ` +
+            `first: suburb "${first.suburb}", ${first.lat}, ${first.lon}`
+          : JSON.stringify(body))
+    );
+    return ok ? "live" : "broken";
+  } catch (err) {
+    console.log(`FAIL  address API: ${err.message}`);
+    return "broken";
+  }
+}
+
+// The smoke-test read-back must never work without the right token.
+async function wrongTokenCheck() {
+  try {
+    const res = await fetch(`${BASE}/api/send-estimate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-smoke-test": "wrong-token" },
+      body: "{}",
+    });
+    const body = await res.json().catch(() => ({}));
+    const ok = res.status === 403 && body.reason === "bad_smoke_token";
+    console.log(`${ok ? "PASS" : "FAIL"}  estimate API refuses a wrong smoke token: HTTP ${res.status} ${JSON.stringify(body)}`);
+    return ok;
+  } catch (err) {
+    console.log(`FAIL  estimate API wrong-token check: ${err.message}`);
+    return false;
+  }
+}
+
+// Types an address on `path`, then either picks the suggestion ("pick") or,
+// with the lookup forced to fail ("down"), carries on with the typed text.
+async function addressUiCheck(c, path, mode, mock) {
+  const { errors, off } = trackErrors(c);
+  const intercept = mode === "down" || mock;
+  const offFetch = c.on(async (m) => {
+    if (m.method !== "Fetch.requestPaused") return;
+    const body = mode === "down" ? { error: "smoke_forced_failure" } : MOCK_SUGGEST;
+    await c.send("Fetch.fulfillRequest", {
+      requestId: m.params.requestId,
+      responseCode: mode === "down" ? 503 : 200,
+      responseHeaders: [{ name: "Content-Type", value: "application/json" }],
+      body: Buffer.from(JSON.stringify(body)).toString("base64"),
+    });
+  });
+  if (intercept) await c.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/address/*" }] });
+  const problems = [];
+  const until = async (expr, ms = 8000) => {
+    for (let t = 0; t < ms; t += 250) {
+      const v = await evaluate(c, expr);
+      if (v) return v;
+      await sleep(250);
+    }
+    return null;
+  };
+  const button = (re) => `[...document.querySelectorAll("button")].find((b) => ${re}.test(b.innerText))`;
+  try {
+    await c.send("Page.navigate", { url: BASE + path });
+    const input = `document.querySelector('input[placeholder="Start typing your address"]')`;
+    if (!(await until(`!!${input}`))) throw new Error("address box not found");
+    await sleep(800);
+    await evaluate(c, `${input}.focus()`);
+    await c.send("Input.insertText", { text: ADDRESS_TYPED });
+    if (!(await until(`/Address data © OpenStreetMap contributors/.test(document.body.innerText)`, 1000)))
+      problems.push("credit line missing");
+    if (mode === "pick") {
+      if (!(await until(`!!${button("/Diagonal/i")}`))) throw new Error("no suggestions appeared");
+      await evaluate(c, `${button("/Diagonal/i")}.click()`);
+      if (!(await until(`${button("/That.s my roof/")}?.disabled === false`))) throw new Error(`"That's my roof" never enabled`);
+      if (!(await until(`!!document.querySelector('iframe[src*="maps.google.com"]')`, 3000))) problems.push("no satellite view");
+      await evaluate(c, `${button("/That.s my roof/")}.click()`);
+    } else {
+      if (!(await until(`/isn.t available right now/.test(document.body.innerText)`))) problems.push("no fallback message");
+      if (!(await until(`${button("/Use this address/")}?.disabled === false`))) throw new Error(`"Use this address" never enabled`);
+      await evaluate(c, `${button("/Use this address/")}.click()`);
+    }
+    if (!(await until(`/need done/i.test(document.querySelector("h3")?.innerText || "")`)))
+      problems.push("didn't reach the job-type step");
+    // Back to the address step: the box should still hold the address.
+    await evaluate(c, `${button("/Back/")}?.click()`);
+    const kept = await until(`${input}?.value`, 3000);
+    if (!/Diagonal/i.test(kept || "")) problems.push(`address not kept (box shows "${kept}")`);
+  } catch (err) {
+    problems.push(err.message);
+  } finally {
+    // Leave the page first, so no late lookup from it lands in the next check.
+    await c.send("Page.navigate", { url: "about:blank" });
+    await sleep(300);
+    if (intercept) await c.send("Fetch.disable");
+    offFetch();
+    off();
+  }
+  const unexpected = errors.filter((e) => !(mode === "down" && /Address lookup unavailable/.test(e)));
+  const ok = !problems.length && !unexpected.length;
+  const label = mode === "pick" ? `pick a suggestion${mock ? " (mocked)" : ""}` : "lookup down, typed address";
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  address ${path === "/" ? "homepage" : path}: ${label}` +
+      (problems.length ? ` — ${problems.join("; ")}` : "") +
+      (unexpected.length ? `, JS errors: ${unexpected.join(" | ")}` : "")
+  );
+  return ok;
+}
+
+// Type `typed` on /calculator, pick the first suggestion, walk a roof
+// restoration to the estimate page, and return the answers it stored.
+async function answersFromTypedAddress(c, typed) {
+  const until = async (expr, ms = 8000) => {
+    for (let t = 0; t < ms; t += 250) {
+      const v = await evaluate(c, expr);
+      if (v) return v;
+      await sleep(250);
+    }
+    return null;
+  };
+  const click = (re) =>
+    evaluate(c, `(() => { const b = [...document.querySelectorAll("button")].find((x) => ${re}.test(x.innerText)); if (b) b.click(); return !!b; })()`);
+  await c.send("Page.navigate", { url: `${BASE}/calculator` });
+  const input = `document.querySelector('input[placeholder="Start typing your address"]')`;
+  if (!(await until(`!!${input}`))) throw new Error("address box not found");
+  await sleep(800);
+  await evaluate(c, `${input}.focus()`);
+  await c.send("Input.insertText", { text: typed });
+  const list = await until(
+    `(() => { const box = ${input}.parentElement.querySelector("div.absolute"); return box ? [...box.querySelectorAll("button")].map((b) => b.innerText) : null; })()`
+  );
+  if (!list?.length) throw new Error(`no suggestions for "${typed}"`);
+  console.log(`INFO  suggestions for "${typed}": ${list.map((x) => `"${x}"`).join(", ")}`);
+  await evaluate(c, `${input}.parentElement.querySelector("div.absolute button").click()`);
+  console.log(`INFO  address box after picking the first: "${await evaluate(c, `${input}.value`)}"`);
+  await sleep(300);
+  for (const re of [/That.s my roof/, /Roof Restoration/, /^Continue/, /Not sure\? Use a typical/, /^Continue/, /^Single storey$/, /^Continue/, /Concrete tile/, /^Continue/, /Hip/, /See my estimate/]) {
+    if (!(await click(re))) throw new Error(`couldn't click ${re}`);
+    await sleep(250);
+  }
+  if (!(await until(`location.pathname === "/get-my-estimate"`))) throw new Error("didn't reach the estimate page");
+  return JSON.parse(await evaluate(c, `sessionStorage.getItem("roofEstimateAnswers")`));
+}
+
 const profile = mkdtempSync(join(tmpdir(), "smoke-estimate-"));
 const browser = spawn(
   findBrowser(),
@@ -352,11 +526,27 @@ try {
   await c.send("Page.enable");
   await c.send("Runtime.enable");
   console.log(`Checking ${BASE}/get-my-estimate${SUBMIT ? " (render + end-to-end submit, test mode)" : ""}`);
+  if (!(await wrongTokenCheck())) allOk = false;
+  const api = await addressApiCheck();
+  if (api === "broken") allOk = false;
+  for (const path of ["/calculator", "/"]) {
+    if (!(await addressUiCheck(c, path, "pick", api !== "live"))) allOk = false;
+    if (!(await addressUiCheck(c, path, "down", false))) allOk = false;
+  }
   if (!(await calculatorCheck(c))) allOk = false;
   for (const [name, answers] of Object.entries(SAMPLES)) {
     if (!(await renderCheck(c, name, answers))) allOk = false;
   }
   if (SUBMIT && !(await submitCheck(c, "restoration", SAMPLES.restoration))) allOk = false;
+  if (SUBMIT && process.env.SMOKE_SUBMIT_ADDRESS) {
+    try {
+      const answers = await answersFromTypedAddress(c, process.env.SMOKE_SUBMIT_ADDRESS);
+      if (!(await submitCheck(c, `typed "${process.env.SMOKE_SUBMIT_ADDRESS}"`, answers))) allOk = false;
+    } catch (err) {
+      console.log(`FAIL  submit typed address: ${err.message}`);
+      allOk = false;
+    }
+  }
   c.close();
 } catch (err) {
   console.error("FAIL ", err.message);

@@ -11,11 +11,12 @@
 // Mobile + Timeframe are MANDATORY before they see any figure. Answers
 // (including jobType) are passed via sessionStorage.
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { normaliseAnswers, liveRange, ASBESTOS_RESTORE_MESSAGE, SLATE_PAINT_MESSAGE, RANGE_LABEL } from "@/lib/pricing";
-import { formatNominatimAddress, suburbOf, tidyAddress } from "@/lib/formatAddress";
+import { suburbFromAddress, tidyAddress } from "@/lib/formatAddress";
+import AddressSearch from "@/components/AddressSearch";
 import TrustStrip from "@/components/TrustStrip";
 
 // Simple line icons (24×24, stroke = currentColor) for the job-type cards.
@@ -281,25 +282,13 @@ function useIsDesktop() {
   return isDesktop;
 }
 
-function useDebouncedValue(value, delay) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-  return debounced;
-}
-
 export default function RoofCalculator() {
   const router = useRouter();
   const isDesktop = useIsDesktop();
   const [stepIndex, setStepIndex] = useState(0);
-  const [addressQuery, setAddressQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  // Latest state of the address box: { text, pick, manualOk }.
+  const [addressBox, setAddressBox] = useState({ text: "", pick: null, manualOk: false });
   const [selectedCoords, setSelectedCoords] = useState(null);
-  const suggestionsBoxRef = useRef(null);
-  const debouncedQuery = useDebouncedValue(addressQuery, 300);
 
   const [form, setForm] = useState({
     jobType: "",
@@ -326,8 +315,9 @@ export default function RoofCalculator() {
       const prefill = JSON.parse(raw);
       if (prefill.address) {
         const address = tidyAddress(prefill.address);
-        setForm((f) => ({ ...f, address, suburb: prefill.suburb || "" }));
-        setAddressQuery(address);
+        const suburb = prefill.suburb || suburbFromAddress(address);
+        setForm((f) => ({ ...f, address, suburb }));
+        setAddressBox({ text: address, pick: { address, suburb, lat: prefill.lat ?? null, lon: prefill.lon ?? null }, manualOk: false });
         if (prefill.lat && prefill.lon) {
           setSelectedCoords({ lat: prefill.lat, lon: prefill.lon });
         }
@@ -368,49 +358,18 @@ export default function RoofCalculator() {
     update("jobType", v);
   };
 
-  useEffect(() => {
-    const query = debouncedQuery.trim();
-    if (query.length < 4 || (selectedCoords && query === form.address)) {
-      setSuggestions([]);
-      return;
-    }
-    const controller = new AbortController();
-    fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&q=${encodeURIComponent(
-        query
-      )}&countrycodes=au&limit=5`,
-      { signal: controller.signal }
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setSuggestions(Array.isArray(data) ? data : []);
-        setShowSuggestions(true);
-      })
-      .catch((err) => {
-        if (err.name !== "AbortError") console.error("Address lookup failed:", err);
-      });
-    return () => controller.abort();
-  }, [debouncedQuery, selectedCoords, form.address]);
-
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (suggestionsBoxRef.current && !suggestionsBoxRef.current.contains(e.target)) {
-        setShowSuggestions(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+  const onAddressChange = useCallback((box) => {
+    setAddressBox(box);
+    setForm((f) => ({
+      ...f,
+      address: box.pick ? box.pick.address : tidyAddress(box.text),
+      suburb: box.pick ? box.pick.suburb : suburbFromAddress(box.text),
+    }));
+    setSelectedCoords(box.pick?.lat != null ? { lat: box.pick.lat, lon: box.pick.lon } : null);
   }, []);
-
-  const selectSuggestion = (item) => {
-    const address = formatNominatimAddress(item);
-    update("address", address);
-    update("suburb", suburbOf(item));
-    setAddressQuery(address);
-    setSelectedCoords({ lat: parseFloat(item.lat), lon: parseFloat(item.lon) });
-    setSuggestions([]);
-    setShowSuggestions(false);
-  };
+  // Continue with a chosen suggestion, or (if the lookup is down or can't
+  // find it) with the address as typed.
+  const addressReady = !!addressBox.pick || addressBox.manualOk;
 
   const mapSrc = selectedCoords
     ? `https://maps.google.com/maps?q=${selectedCoords.lat},${selectedCoords.lon}&z=20&t=k&output=embed`
@@ -516,45 +475,20 @@ export default function RoofCalculator() {
                   ask a few quick questions for a price range.
                 </p>
 
-                <div ref={suggestionsBoxRef} className="relative">
-                  <input
-                    type="text"
-                    value={addressQuery}
-                    onChange={(e) => {
-                      setAddressQuery(e.target.value);
-                      update("address", e.target.value);
-                      setSelectedCoords(null);
-                    }}
-                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-                    placeholder="Start typing your address"
-                    autoComplete="off"
-                    aria-label="Your address"
-                    className="mt-5 w-full rounded-xl border-2 border-ink/25 bg-white py-4 pl-12 pr-4 text-lg text-ink shadow-sm outline-none transition-all placeholder:text-ink/40 focus:border-clay focus:ring-4 focus:ring-clay/15"
-                  />
-                  <svg className="pointer-events-none absolute left-4 top-[2.5rem] h-5 w-5 text-clay" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-
-                  {showSuggestions && suggestions.length > 0 && (
-                    <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border-2 border-mortar bg-white shadow-xl">
-                      {suggestions.map((item) => (
-                        <button
-                          key={item.place_id}
-                          type="button"
-                          onClick={() => selectSuggestion(item)}
-                          className="block w-full border-b border-mortar/70 px-4 py-3 text-left text-sm text-ink/85 last:border-b-0 hover:bg-paper"
-                        >
-                          {formatNominatimAddress(item)}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <AddressSearch
+                  className="mt-5"
+                  initialText={addressBox.text}
+                  initialPick={addressBox.pick}
+                  onChange={onAddressChange}
+                />
 
                 <div className="mt-5 flex">
-                  <PrimaryButton tone="clay" onClick={next} disabled={!mapSrc}>
-                    {mapSrc ? "That's my roof →" : "Pick your address from the list"}
+                  <PrimaryButton tone="clay" onClick={next} disabled={!addressReady}>
+                    {addressReady
+                      ? addressBox.pick
+                        ? "That's my roof →"
+                        : "Use this address →"
+                      : "Pick your address from the list"}
                   </PrimaryButton>
                 </div>
               </div>

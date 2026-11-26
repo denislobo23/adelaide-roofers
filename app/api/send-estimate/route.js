@@ -267,7 +267,19 @@ export async function POST(request) {
 
     // Smoke test: clean up what it wrote, report, and stop before any notification.
     if (smoke.active) {
+      let savedLead = null;
       if (supabaseAdmin) {
+        if (leadSaved && smoke.valid) {
+          // Read the row back so the smoke test can show what was stored
+          // (only ever with a valid SMOKE_TEST_TOKEN; see the 403 above).
+          const { data } = await supabaseAdmin
+            .from("leads")
+            .select("address, suburb")
+            .eq("ref_number", refNumber)
+            .maybeSingle()
+            .then((r) => r, () => ({ data: null }));
+          savedLead = data;
+        }
         if (checks.storage === "ok") {
           await supabaseAdmin.storage.from("estimates").remove([filePath]).catch(() => {});
         }
@@ -280,7 +292,7 @@ export async function POST(request) {
       }
       const ok = checks.pdfBytes > 1000 && checks.storage === "ok" && checks.leadSaved === "ok";
       return Response.json(
-        { success: ok, smokeTest: true, refNumber, estimate, checks, problems },
+        { success: ok, smokeTest: true, refNumber, estimate, checks, problems, savedLead },
         { status: ok ? 200 : 500 }
       );
     }

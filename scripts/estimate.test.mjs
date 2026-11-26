@@ -10,7 +10,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { estimateCost, liveRange, MAX_RANGE_RATIO } from "../lib/pricing.js";
 import { buildEstimateBreakdown, allocate } from "../lib/estimateBreakdown.js";
-import { formatNominatimAddress, tidyAddress } from "../lib/formatAddress.js";
+import { formatNominatimAddress, suburbFromAddress, looksLikeAddress, tidyAddress, withTypedNumber } from "../lib/formatAddress.js";
+import { parseResults } from "../lib/nominatim.js";
 
 const METALS = ["colorbond", "galvanised", "zincalume"];
 const TILES = ["concreteTile", "terracotta", "notSure"];
@@ -193,15 +194,19 @@ test("restoration price tiers still match the article (200 m², single storey)",
   assert.deepEqual(estimateCost({ ...base, material: "terracotta" }), { low: 7500, high: 12000 });
 });
 
+const TINTERN = {
+  place_id: 1,
+  lat: "-35.1327",
+  lon: "138.5208",
+  display_name: "4, Tintern Crescent, Morphett Vale, Adelaide, City of Onkaparinga, South Australia, 5162, Australia",
+  address: {
+    house_number: "4", road: "Tintern Crescent", suburb: "Morphett Vale",
+    city: "Adelaide", state: "South Australia", postcode: "5162", country: "Australia",
+  },
+};
+
 test("addresses have no comma after the street number", () => {
-  const item = {
-    display_name: "4, Tintern Crescent, Morphett Vale, Adelaide, City of Onkaparinga, South Australia, 5162, Australia",
-    address: {
-      house_number: "4", road: "Tintern Crescent", suburb: "Morphett Vale",
-      city: "Adelaide", state: "South Australia", postcode: "5162", country: "Australia",
-    },
-  };
-  assert.equal(formatNominatimAddress(item), "4 Tintern Crescent, Morphett Vale SA 5162");
+  assert.equal(formatNominatimAddress(TINTERN), "4 Tintern Crescent, Morphett Vale SA 5162");
   assert.equal(tidyAddress("4, Tintern Crescent, Morphett Vale"), "4 Tintern Crescent, Morphett Vale");
   assert.equal(tidyAddress("12A, Smith St, Marion"), "12A Smith St, Marion");
   assert.equal(tidyAddress("3/14, King Rd, Unley"), "3/14 King Rd, Unley");
@@ -210,6 +215,46 @@ test("addresses have no comma after the street number", () => {
     formatNominatimAddress({ display_name: "7, Some Lane, Aldinga, South Australia", address: { state: "South Australia" } }),
     "7 Some Lane, Aldinga, South Australia"
   );
+});
+
+test("suburb is taken from a chosen or typed address", () => {
+  assert.equal(suburbFromAddress("4 Tintern Crescent, Morphett Vale SA 5162"), "Morphett Vale");
+  assert.equal(suburbFromAddress("4 Tintern Cres, Morphett Vale"), "Morphett Vale");
+  assert.equal(suburbFromAddress("4 Tintern Cres Morphett Vale"), "");
+});
+
+test("a typed address is accepted only if it looks like one", () => {
+  assert.ok(looksLikeAddress("4 Tintern Cres Morphett Vale"));
+  assert.ok(looksLikeAddress("Lot 12, New Road, Aldinga"));
+  assert.ok(!looksLikeAddress("Morphett Vale"));
+  assert.ok(!looksLikeAddress("4 Tin"));
+});
+
+test("Nominatim results become suggestions with a location", () => {
+  assert.deepEqual(parseResults([TINTERN, { ...TINTERN, place_id: 2 }, { place_id: 3, lat: "x", lon: "y", address: {} }]), [
+    { id: "1", address: "4 Tintern Crescent, Morphett Vale SA 5162", suburb: "Morphett Vale", lat: -35.1327, lon: 138.5208 },
+  ]);
+  assert.deepEqual(parseResults({ error: "Access denied" }), []);
+});
+
+test("suggestions are South Australian addresses only", () => {
+  const vic = {
+    place_id: 9, lat: "-37.8868", lon: "145.2229",
+    address: { house_number: "4", road: "Tintern Crescent", suburb: "Wantirna South", state: "Victoria", postcode: "3152" },
+  };
+  assert.deepEqual(parseResults([vic, TINTERN]).map((x) => x.address), ["4 Tintern Crescent, Morphett Vale SA 5162"]);
+});
+
+test("the typed house number is kept when the suggestion has none", () => {
+  const street = "King William Street, Adelaide SA 5000";
+  assert.equal(withTypedNumber(street, "128 King William Street Adelaide"), "128 King William Street, Adelaide SA 5000");
+  assert.equal(withTypedNumber(street, "128A King William St"), "128A King William Street, Adelaide SA 5000");
+  assert.equal(withTypedNumber(street, "3 / 14 King William"), "3/14 King William Street, Adelaide SA 5000");
+  assert.equal(withTypedNumber(street, "Unit 3 14 King William"), "Unit 3 14 King William Street, Adelaide SA 5000");
+  assert.equal(withTypedNumber(street, "12 3rd Avenue"), "12 King William Street, Adelaide SA 5000");
+  // Nothing typed to restore, or the suggestion already has its number.
+  assert.equal(withTypedNumber(street, "King William Street"), street);
+  assert.equal(withTypedNumber("287 Diagonal Road, Oaklands Park SA 5046", "300 Diagonal"), "287 Diagonal Road, Oaklands Park SA 5046");
 });
 
 // ── Replacement, repairs, leaks, gutters (2026 guide targets) ─────────────
