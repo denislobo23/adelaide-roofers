@@ -16,6 +16,7 @@ import { rankSuggestions } from "../lib/rankSuggestions.js";
 import { roofFromInsights, shapeFromSegments, distanceM } from "../lib/roofFromSolar.js";
 import { takeSolarCall, dailyLimit } from "../lib/solarBudget.js";
 import { solarEnabled } from "../lib/solar.js";
+import { satelliteEmbedSrc } from "../lib/satelliteEmbed.js";
 
 const METALS = ["colorbond", "galvanised", "zincalume"];
 const TILES = ["concreteTile", "terracotta", "notSure"];
@@ -459,4 +460,20 @@ test("only suggestions with OpenStreetMap's own house number are exact", () => {
   assert.equal(street.exact, false);
   // Putting the typed number back doesn't make the point the house.
   assert.notEqual(withTypedNumber(street.address, "4 Tintern Crescent"), street.address);
+});
+
+test("satellite map: official Maps Embed API with a key, keyless embed without", () => {
+  const withKey = new URL(satelliteEmbedSrc(-34.935852, 138.6313694, "test-key"));
+  assert.equal(withKey.origin + withKey.pathname, "https://www.google.com/maps/embed/v1/place");
+  assert.equal(withKey.searchParams.get("key"), "test-key");
+  assert.equal(withKey.searchParams.get("q"), "-34.935852,138.6313694");
+  assert.equal(withKey.searchParams.get("maptype"), "satellite");
+  assert.equal(withKey.searchParams.get("zoom"), "20");
+  assert.equal(
+    satelliteEmbedSrc(-34.935852, 138.6313694, ""),
+    "https://maps.google.com/maps?q=-34.935852,138.6313694&z=20&t=k&output=embed"
+  );
+  assert.equal(satelliteEmbedSrc(null, 138.6, "k"), null);
+  assert.equal(satelliteEmbedSrc(-34.9, undefined, "k"), null);
+  assert.equal(satelliteEmbedSrc("x", 138.6, "k"), null);
 });

@@ -430,6 +430,8 @@ async function wrongTokenCheck() {
 
 // Types an address on `path`, then either picks the suggestion ("pick") or,
 // with the lookup forced to fail ("down"), carries on with the typed text.
+const mapKinds = new Set(); // which satellite embed the pages used
+
 async function addressUiCheck(c, path, mode, mock) {
   const { errors, off } = trackErrors(c);
   const intercept = mode !== "pick" || mock;
@@ -467,7 +469,14 @@ async function addressUiCheck(c, path, mode, mock) {
       if (!(await until(`!!${button("/Diagonal/i")}`))) throw new Error("no suggestions appeared");
       await evaluate(c, `${button("/Diagonal/i")}.click()`);
       if (!(await until(`${button("/That.s my roof/")}?.disabled === false`))) throw new Error(`"That's my roof" never enabled`);
-      if (!(await until(`!!document.querySelector('iframe[src*="maps.google.com"]')`, 3000))) problems.push("no satellite view");
+      // Official Maps Embed API (with NEXT_PUBLIC_GOOGLE_MAPS_EMBED_KEY) or
+      // the keyless fallback.
+      const mapKind = await until(
+        `(() => { const f = document.querySelector('iframe[title="Your roof"]'); if (!f) return ""; const s = f.src; return s.includes("/maps/embed/v1/place") && /maptype=satellite/.test(s) ? "official Maps Embed API" : s.includes("maps.google.com/maps") && s.includes("t=k") ? "keyless fallback" : ""; })()`,
+        3000
+      );
+      if (!mapKind) problems.push("no satellite view");
+      else mapKinds.add(mapKind);
       await evaluate(c, `${button("/That.s my roof/")}.click()`);
     } else if (mode === "typed") {
       // The typed option must exist and be the first entry in the list.
@@ -745,6 +754,7 @@ try {
     if (!(await addressUiCheck(c, path, "down", false))) allOk = false;
     if (!(await addressUiCheck(c, path, "typed", true))) allOk = false;
   }
+  console.log(`INFO  satellite view: ${[...mapKinds].join(", ") || "not seen"}`);
   if (!(await calculatorCheck(c))) allOk = false;
   if (!(await roofEstimateRouteCheck())) allOk = false;
   for (const variant of ["use", "ignore", "none", "street"]) {

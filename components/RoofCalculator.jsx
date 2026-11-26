@@ -17,6 +17,7 @@ import Image from "next/image";
 import { normaliseAnswers, liveRange, ASBESTOS_RESTORE_MESSAGE, SLATE_PAINT_MESSAGE, RANGE_LABEL } from "@/lib/pricing";
 import { suburbFromAddress, tidyAddress } from "@/lib/formatAddress";
 import AddressSearch from "@/components/AddressSearch";
+import { satelliteEmbedSrc } from "@/lib/satelliteEmbed";
 import TrustStrip from "@/components/TrustStrip";
 
 // Simple line icons (24×24, stroke = currentColor) for the job-type cards.
@@ -410,9 +411,7 @@ export default function RoofCalculator() {
   // find it) with the address as typed.
   const addressReady = !!addressBox.pick || addressBox.manualOk;
 
-  const mapSrc = selectedCoords
-    ? `https://maps.google.com/maps?q=${selectedCoords.lat},${selectedCoords.lon}&z=20&t=k&output=embed`
-    : null;
+  const mapSrc = selectedCoords ? satelliteEmbedSrc(selectedCoords.lat, selectedCoords.lon) : null;
 
   const goToEstimatePage = () => {
     sessionStorage.setItem(

@@ -18,6 +18,7 @@ import Image from "next/image";
 
 import { suburbFromAddress, tidyAddress } from "@/lib/formatAddress";
 import AddressSearch from "@/components/AddressSearch";
+import { satelliteEmbedSrc } from "@/lib/satelliteEmbed";
 import TrustStrip from "@/components/TrustStrip";
 
 export default function HeroCalculatorMini() {
@@ -26,10 +27,7 @@ export default function HeroCalculatorMini() {
   const [box, setBox] = useState({ text: "", pick: null, manualOk: false });
   const ready = !!box.pick || box.manualOk;
 
-  const mapSrc =
-    box.pick?.lat != null
-      ? `https://maps.google.com/maps?q=${box.pick.lat},${box.pick.lon}&z=20&t=k&output=embed`
-      : null;
+  const mapSrc = box.pick ? satelliteEmbedSrc(box.pick.lat, box.pick.lon) : null;
 
   const continueToCalculator = () => {
     sessionStorage.setItem(
