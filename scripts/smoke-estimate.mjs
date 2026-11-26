@@ -677,9 +677,25 @@ async function solarCheck(c, variant, typed) {
       if (shown) problems.push("card shown for a street-only pick");
       info = `${roofRequests} roof-estimate requests`;
     } else if (variant === "live") {
-      info = shown
-        ? `suggestion: ${await evaluate(c, `document.body.innerText.match(/about\\s+(\\d+) m²/)?.[1]`)} m²`
-        : "no suggestion (no data, limit reached, switched off, or outside the rules)";
+      if (!shown) {
+        info = "no suggestion (no data, limit reached, switched off, or outside the rules)";
+      } else {
+        // Use the suggestion and walk to the shape step to read the satellite
+        // shape label (no further Solar calls: one per picked address).
+        const m2 = await evaluate(c, `document.body.innerText.match(/about\\s+(\\d+) m²/)?.[1]`);
+        await click(new RegExp(`^Use ${m2} m²$`));
+        await click(/^Continue/);
+        await click(/^Single storey$/);
+        await click(/^Continue/);
+        await click(/Concrete tile/);
+        await click(/^Continue/);
+        await until(`/which shape/i.test(document.querySelector("h3")?.innerText || "")`);
+        const shape = await evaluate(
+          c,
+          `(() => { const b = [...document.querySelectorAll("button")].find((x) => /Looks like this from satellite/.test(x.innerText)); return b ? (b.innerText.match(/Dutch Gable|Skillion|Gable|Hip|Multi-level/) || ["labelled"])[0] : "none"; })()`
+        );
+        info = `suggestion: ${m2} m², satellite shape label: ${shape}`;
+      }
     }
   } catch (err) {
     problems.push(err.message);
