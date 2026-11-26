@@ -10,7 +10,7 @@ const operator = {
   entity: "NETLOCAL CONSULTING PTY LTD",
   abn: "69 607 380 638",
   tradingAs: "Roofing Digital",
-  email: "denislobo23@gmail.com",
+  email: "denis.lobo@adelaideroofers.com.au",
   address: "1/20 Rosella St, Murrumbeena VIC 3163",
 };
 
