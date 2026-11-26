@@ -31,6 +31,15 @@
 // calculator to the estimate page and submits the answers it produced, so
 // the report shows exactly what a real customer's lead would save.
 //
+// Satellite roof-size suggestion (Google Solar): with mocked answers from
+// /api/roof-estimate, checks the "Use … m²" card (never pre-selected), that
+// ignoring it works, that no suggestion leaves the step as before, and that
+// a street-only address never asks. With --submit, the saved size and
+// roof_size_from_satellite flag are read back from the test lead. These
+// spend no Solar calls. The route check uses a point outside SA (also free).
+// SMOKE_SOLAR_LIVE=1 SMOKE_SOLAR_ADDRESS="..." makes ONE real Solar call
+// (counts toward SOLAR_DAILY_LIMIT) and reports the suggestion.
+//
 // Usage: npm run build && npm start          (in another terminal)
 //        npm run smoke                       (render check, localhost:3000)
 //        SMOKE_TEST_TOKEN=... npm run smoke -- --submit
@@ -185,8 +194,11 @@ async function renderCheck(c, name, answers) {
   return ok;
 }
 
+let lastSavedLead = null; // from the last submitCheck, for the solar checks
+
 async function submitCheck(c, name, answers) {
   const { errors, off } = trackErrors(c);
+  lastSavedLead = null;
 
   // Add the smoke-test header to every /api/send-estimate request, and
   // capture its response.
@@ -268,6 +280,7 @@ async function submitCheck(c, name, answers) {
   off();
 
   const checks = apiResponse?.checks || {};
+  lastSavedLead = apiResponse?.savedLead || null;
   const ok =
     apiStatus === 200 &&
     apiResponse?.success === true &&
@@ -279,7 +292,12 @@ async function submitCheck(c, name, answers) {
       (apiResponse?.estimate ? `, estimate $${apiResponse.estimate.low}-$${apiResponse.estimate.high}` : "") +
       `, PDF ${checks.pdfBytes ?? "?"} bytes, storage ${checks.storage ?? "?"}, lead saved ${checks.leadSaved ?? "?"}` +
       `, customer SMS ${checks.customerSms ?? "?"}` +
-      (apiResponse?.savedLead ? `, saved address "${apiResponse.savedLead.address}" (suburb "${apiResponse.savedLead.suburb}")` : "") +
+      (apiResponse?.savedLead
+        ? `, saved address "${apiResponse.savedLead.address}" (suburb "${apiResponse.savedLead.suburb}")` +
+          (apiResponse.savedLead.roofSizeM2 != null
+            ? `, roof size ${apiResponse.savedLead.roofSizeM2} m², roof_size_from_satellite ${apiResponse.savedLead.roofSizeFromSatellite}`
+            : "")
+        : "") +
       (apiResponse && !apiResponse.smokeTest ? `, response: ${JSON.stringify(apiResponse)}` : "") +
       (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
   );
@@ -533,6 +551,163 @@ async function answersFromTypedAddress(c, typed) {
   return JSON.parse(await evaluate(c, `sessionStorage.getItem("roofEstimateAnswers")`));
 }
 
+// ── Satellite roof-size suggestion ──────────────────────────────────────
+const SOLAR_PICK = { id: "s1", address: "287 Diagonal Road, Oaklands Park SA 5046", suburb: "Oaklands Park", lat: -35.0136, lon: 138.5434 };
+
+// Free: a point outside SA is answered {} before any Solar call or count.
+async function roofEstimateRouteCheck() {
+  try {
+    const res = await fetch(`${BASE}/api/roof-estimate?lat=-33.87&lon=151.21`);
+    const body = await res.json().catch(() => null);
+    const ok = res.status === 200 && body && Object.keys(body).length === 0;
+    console.log(`${ok ? "PASS" : "FAIL"}  roof-estimate route: non-SA point gives no suggestion (HTTP ${res.status} ${JSON.stringify(body)})`);
+    return ok;
+  } catch (err) {
+    console.log(`FAIL  roof-estimate route: ${err.message}`);
+    return false;
+  }
+}
+
+// variant: "use" (tap Use 210 m²), "ignore" (set 150 m² on the slider),
+// "none" (no suggestion), "street" (street-only pick: must not ask),
+// "live" (real call; only with SMOKE_SOLAR_LIVE=1).
+async function solarCheck(c, variant, typed) {
+  const { errors, off } = trackErrors(c);
+  let roofRequests = 0;
+  const live = variant === "live";
+  const offFetch = c.on(async (m) => {
+    if (m.method !== "Fetch.requestPaused") return;
+    const url = m.params.request.url;
+    let body;
+    if (url.includes("/api/roof-estimate")) {
+      roofRequests++;
+      body = variant === "none" ? {} : { areaM2: 210, shape: "hip" };
+    } else {
+      body = { suggestions: [{ ...SOLAR_PICK, exact: variant !== "street" }] };
+    }
+    await c.send("Fetch.fulfillRequest", {
+      requestId: m.params.requestId,
+      responseCode: 200,
+      responseHeaders: [{ name: "Content-Type", value: "application/json" }],
+      body: Buffer.from(JSON.stringify(body)).toString("base64"),
+    });
+  });
+  if (!live) {
+    await c.send("Fetch.enable", { patterns: [{ urlPattern: "*/api/address/*" }, { urlPattern: "*/api/roof-estimate*" }] });
+  }
+  const problems = [];
+  let answers = null;
+  let info = "";
+  const until = async (expr, ms = 8000) => {
+    for (let t = 0; t < ms; t += 250) {
+      const v = await evaluate(c, expr);
+      if (v) return v;
+      await sleep(250);
+    }
+    return null;
+  };
+  const button = (re) => `[...document.querySelectorAll("button")].find((b) => ${re}.test(b.innerText))`;
+  const click = async (re) => {
+    if (!(await until(`!!${button(re)} && !${button(re)}.disabled`))) throw new Error(`couldn't click ${re}`);
+    await evaluate(c, `${button(re)}.click()`);
+    await sleep(250);
+  };
+  const continueLocked = () => evaluate(c, `${button("/^Continue/")}?.disabled === true`);
+  const hasCard = () => evaluate(c, `/Satellite data suggests your roof is about/.test(document.body.innerText)`);
+  try {
+    await c.send("Page.navigate", { url: `${BASE}/calculator` });
+    const input = `document.querySelector('input[placeholder="Start typing your address"]')`;
+    if (!(await until(`!!${input}`))) throw new Error("address box not found");
+    await sleep(800);
+    await evaluate(c, `${input}.focus()`);
+    await c.send("Input.insertText", { text: typed || "287 Diagonal Road Oaklands Park" });
+    if (!(await until(`!!${input}.parentElement.querySelector("div.absolute button")`))) throw new Error("no suggestions");
+    await evaluate(c, `${input}.parentElement.querySelector("div.absolute button").click()`);
+    await click(/That.s my roof/);
+    await click(/Roof Restoration/);
+    await click(/^Continue/);
+    if (!(await until(`/how big is your roof/i.test(document.querySelector("h3")?.innerText || "")`))) throw new Error("size step not reached");
+    // Give the suggestion time to arrive.
+    const shown = await until(`/Satellite data suggests your roof is about/.test(document.body.innerText)`, live ? 6000 : 3000);
+    const unanswered = await evaluate(c, `/Drag the slider to set your roof size/.test(document.body.innerText)`);
+    if (!unanswered) problems.push("size was pre-selected");
+    if (!(await continueLocked())) problems.push("Continue unlocked before choosing a size");
+
+    if (variant === "use" || variant === "ignore") {
+      if (!shown) throw new Error("suggestion card not shown");
+      if (!(await evaluate(c, `!!${button("/^Use 210 m²$/")}`))) problems.push(`no "Use 210 m²" button`);
+      if (!(await evaluate(c, `/Source: Includes solar data from Google/.test(document.body.innerText)`))) problems.push("no Google attribution");
+      if (variant === "use") {
+        await click(/^Use 210 m²$/);
+      } else {
+        await evaluate(
+          c,
+          `(() => { const s = document.querySelector('input[type=range]'); Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set.call(s, "150"); s.dispatchEvent(new Event("input", { bubbles: true })); })()`
+        );
+        await sleep(250);
+      }
+      if (await continueLocked()) problems.push("Continue still locked after choosing");
+      await click(/^Continue/);
+      await click(/^Single storey$/);
+      await click(/^Continue/);
+      await click(/Concrete tile/);
+      await click(/^Continue/);
+      if (!(await until(`/which shape/i.test(document.querySelector("h3")?.innerText || "")`))) throw new Error("shape step not reached");
+      const label = await evaluate(
+        c,
+        `(() => { const b = [...document.querySelectorAll("button")].find((x) => /Looks like this from satellite/.test(x.innerText)); return b ? b.innerText.replace(/\\s+/g, " ") : ""; })()`
+      );
+      if (!/slopes down on all four sides/.test(label)) problems.push(`satellite label not on the Hip card ("${label}")`);
+      if (await evaluate(c, `${button("/See my estimate/")}?.disabled === false`)) problems.push("a shape was pre-selected");
+      await click(/A roof that slopes down on all four sides/);
+      await click(/See my estimate/);
+      if (!(await until(`location.pathname === "/get-my-estimate"`))) throw new Error("estimate page not reached");
+      answers = JSON.parse(await evaluate(c, `sessionStorage.getItem("roofEstimateAnswers")`));
+      const want = variant === "use" ? { size: 210, flag: true } : { size: 150, flag: false };
+      if (answers.roofSizeM2 !== want.size || answers.roofSizeFromSatellite !== want.flag) {
+        problems.push(`answers: ${answers.roofSizeM2} m², flag ${answers.roofSizeFromSatellite} (expected ${want.size}, ${want.flag})`);
+      }
+      info = `answers ${answers.roofSizeM2} m², roofSizeFromSatellite ${answers.roofSizeFromSatellite}`;
+    } else if (variant === "none") {
+      if (shown) problems.push("card shown with no suggestion");
+      info = "size step unchanged";
+    } else if (variant === "street") {
+      await sleep(1500);
+      if (roofRequests) problems.push(`${roofRequests} roof-estimate request(s) for a street-only pick`);
+      if (shown) problems.push("card shown for a street-only pick");
+      info = `${roofRequests} roof-estimate requests`;
+    } else if (variant === "live") {
+      info = shown
+        ? `suggestion: ${await evaluate(c, `document.body.innerText.match(/about\\s+(\\d+) m²/)?.[1]`)} m²`
+        : "no suggestion (no data, limit reached, switched off, or outside the rules)";
+    }
+  } catch (err) {
+    problems.push(err.message);
+  } finally {
+    await c.send("Page.navigate", { url: "about:blank" });
+    await sleep(300);
+    if (!live) await c.send("Fetch.disable");
+    offFetch();
+    off();
+  }
+  const ok = !problems.length && !errors.length;
+  console.log(
+    `${ok ? "PASS" : "FAIL"}  solar ${variant}: ${info}` +
+      (problems.length ? ` — ${problems.join("; ")}` : "") +
+      (errors.length ? `, JS errors: ${errors.join(" | ")}` : "")
+  );
+  if (ok && SUBMIT && answers && (variant === "use" || variant === "ignore")) {
+    const submitted = await submitCheck(c, `solar ${variant}`, answers);
+    const saved = lastSavedLead;
+    const flagOk = saved && (saved.roofSizeFromSatellite === answers.roofSizeFromSatellite || saved.roofSizeFromSatellite === "column not added yet");
+    if (!submitted || !saved || saved.roofSizeM2 !== answers.roofSizeM2 || !flagOk) {
+      console.log(`FAIL  solar ${variant}: saved lead ${JSON.stringify(saved)}`);
+      return false;
+    }
+  }
+  return ok;
+}
+
 const profile = mkdtempSync(join(tmpdir(), "smoke-estimate-"));
 const browser = spawn(
   findBrowser(),
@@ -555,6 +730,16 @@ try {
     if (!(await addressUiCheck(c, path, "typed", true))) allOk = false;
   }
   if (!(await calculatorCheck(c))) allOk = false;
+  if (!(await roofEstimateRouteCheck())) allOk = false;
+  for (const variant of ["use", "ignore", "none", "street"]) {
+    if (!(await solarCheck(c, variant))) allOk = false;
+  }
+  if (process.env.SMOKE_SOLAR_LIVE === "1") {
+    if (!process.env.SMOKE_SOLAR_ADDRESS) {
+      console.log("FAIL  solar live: set SMOKE_SOLAR_ADDRESS to the agreed test address");
+      allOk = false;
+    } else if (!(await solarCheck(c, "live", process.env.SMOKE_SOLAR_ADDRESS))) allOk = false;
+  }
   for (const [name, answers] of Object.entries(SAMPLES)) {
     if (!(await renderCheck(c, name, answers))) allOk = false;
   }

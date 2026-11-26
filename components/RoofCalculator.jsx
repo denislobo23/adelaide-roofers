@@ -11,7 +11,7 @@
 // Mobile + Timeframe are MANDATORY before they see any figure. Answers
 // (including jobType) are passed via sessionStorage.
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { normaliseAnswers, liveRange, ASBESTOS_RESTORE_MESSAGE, SLATE_PAINT_MESSAGE, RANGE_LABEL } from "@/lib/pricing";
@@ -108,6 +108,8 @@ const STEP_FIELD = {
 };
 
 const TYPICAL_ROOF_M2 = 200;
+// Job types with a roof-size step, where a satellite size suggestion helps.
+const SIZE_JOB_TYPES = ["restoration", "replacement", "painting"];
 const TYPICAL_GUTTER_M = 25;
 
 const MATERIALS = [
@@ -295,6 +297,9 @@ export default function RoofCalculator() {
     address: "",
     suburb: "",
     roofSizeM2: null,
+    // True only if the customer tapped "Use … m²" on the satellite
+    // suggestion and kept that size. Saved on the lead.
+    roofSizeFromSatellite: false,
     storeys: "",
     material: "",
     currentMaterial: "",
@@ -317,7 +322,7 @@ export default function RoofCalculator() {
         const address = tidyAddress(prefill.address);
         const suburb = prefill.suburb || suburbFromAddress(address);
         setForm((f) => ({ ...f, address, suburb }));
-        setAddressBox({ text: address, pick: { address, suburb, lat: prefill.lat ?? null, lon: prefill.lon ?? null }, manualOk: false });
+        setAddressBox({ text: address, pick: { address, suburb, lat: prefill.lat ?? null, lon: prefill.lon ?? null, exact: prefill.exact === true }, manualOk: false });
         if (prefill.lat && prefill.lon) {
           setSelectedCoords({ lat: prefill.lat, lon: prefill.lon });
         }
@@ -353,6 +358,40 @@ export default function RoofCalculator() {
   const next = () => setStepIndex((i) => Math.min(i + 1, steps.length - 1));
   const back = () => setStepIndex((i) => Math.max(i - 1, 0));
   const update = (field, value) => setForm((f) => ({ ...f, [field]: value }));
+
+  // ── Satellite roof-size suggestion (Google Solar, via /api/roof-estimate) ──
+  // Asked for once per picked address, only when OpenStreetMap had the
+  // house number (so the point is the house) and the job has a size step.
+  // It's only ever a suggestion: nothing is filled in until the customer
+  // taps "Use … m²". No answer, an error or the switch being off simply
+  // means no card. See docs/solar-autofill-plan.md.
+  const pick = addressBox.pick;
+  const solarKey = pick?.exact && pick.lat != null && pick.lon != null ? `${pick.lat},${pick.lon}` : null;
+  const wantsSize = SIZE_JOB_TYPES.includes(form.jobType);
+  const [roofSuggestion, setRoofSuggestion] = useState(null); // { key, areaM2, shape }
+  const solarAsked = useRef(null);
+  useEffect(() => {
+    if (!solarKey || !wantsSize || solarAsked.current === solarKey) return;
+    solarAsked.current = solarKey;
+    const [lat, lon] = solarKey.split(",");
+    fetch(`/api/roof-estimate?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`)
+      .then((res) => (res.ok ? res.json() : {}))
+      .then((d) => {
+        if (d?.areaM2) setRoofSuggestion({ key: solarKey, areaM2: d.areaM2, shape: d.shape || null });
+      })
+      .catch(() => {});
+  }, [solarKey, wantsSize]);
+  // Only for the address currently picked.
+  const suggestion = roofSuggestion && roofSuggestion.key === solarKey ? roofSuggestion : null;
+
+  // Setting the size any other way clears the satellite flag, unless the
+  // value is still exactly the suggested one.
+  const setRoofSize = (m2, fromSatellite = false) =>
+    setForm((f) => ({
+      ...f,
+      roofSizeM2: m2,
+      roofSizeFromSatellite: fromSatellite || (f.roofSizeFromSatellite && m2 === f.roofSizeM2),
+    }));
 
   const chooseJobType = (v) => {
     update("jobType", v);
@@ -503,6 +542,22 @@ export default function RoofCalculator() {
                 <p className="mt-1.5 text-sm text-ink/60">
                   Not sure exactly? A rough guess is fine — this is an estimate, not a measurement.
                 </p>
+                {suggestion && (
+                  <div className="mt-5 rounded-xl border-2 border-clay/40 bg-clay/5 p-4">
+                    <p className="text-sm text-ink">
+                      Satellite data suggests your roof is about{" "}
+                      <strong className="font-extrabold">{suggestion.areaM2} m²</strong>
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setRoofSize(suggestion.areaM2, true)}
+                      className="mt-3 rounded-lg bg-clay px-4 py-2.5 text-sm font-bold text-white shadow-sm hover:brightness-95"
+                    >
+                      Use {suggestion.areaM2} m²
+                    </button>
+                    <p className="mt-2 text-[11px] text-ink/50">Source: Includes solar data from Google</p>
+                  </div>
+                )}
                 <div className="mt-6">
                   <input
                     type="range"
@@ -510,8 +565,8 @@ export default function RoofCalculator() {
                     max={500}
                     step={10}
                     value={form.roofSizeM2 ?? TYPICAL_ROOF_M2}
-                    onChange={(e) => update("roofSizeM2", Number(e.target.value))}
-                    onClick={(e) => update("roofSizeM2", Number(e.currentTarget.value))}
+                    onChange={(e) => setRoofSize(Number(e.target.value))}
+                    onClick={(e) => setRoofSize(Number(e.currentTarget.value))}
                     aria-label="Roof size in square metres"
                     className={`w-full accent-clay ${form.roofSizeM2 == null ? "opacity-50" : ""}`}
                   />
@@ -524,7 +579,7 @@ export default function RoofCalculator() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => update("roofSizeM2", TYPICAL_ROOF_M2)}
+                    onClick={() => setRoofSize(TYPICAL_ROOF_M2)}
                     className="mx-auto mt-2 block text-xs font-semibold text-clay underline-offset-2 hover:underline"
                   >
                     Not sure? Use a typical {TYPICAL_ROOF_M2} m²
@@ -714,6 +769,11 @@ export default function RoofCalculator() {
                           <span className="text-clay">{o.tag}</span> — {o.label}
                         </span>
                         <span className="block text-xs text-ink/50">{o.technical}</span>
+                        {suggestion?.shape === o.v && (
+                          <span className="mt-1 inline-block rounded-full bg-ink/5 px-2 py-0.5 text-[11px] font-semibold text-ink/60">
+                            Looks like this from satellite
+                          </span>
+                        )}
                       </span>
                     </button>
                   ))}

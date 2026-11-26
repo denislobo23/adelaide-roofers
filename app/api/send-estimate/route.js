@@ -89,6 +89,9 @@ function buildCalculatorEmail({ customer, answers, estimate, timeframe, breakdow
     ["Address", answers.address || "(not provided)"],
     ["Suburb", answers.suburb || "(not provided)"],
     ["Job type", breakdown.jobTypeLabel],
+    ...(answers.roofSizeM2
+      ? [["Roof size", `${answers.roofSizeM2} m² (${answers.roofSizeFromSatellite === true ? "customer used the satellite suggestion" : "set by the customer"})`]]
+      : []),
     ["Estimate", `$${estimate.low} - $${estimate.high} (${RANGE_LABEL})`],
     ["Timeframe", timeframe || "(not provided)"],
     ["Ref number", refNumber],
@@ -236,22 +239,32 @@ export async function POST(request) {
     let leadSaved = false;
     if (supabaseAdmin) {
       try {
-        const { error: insertError } = await supabaseAdmin.from("leads").insert([
-          {
-            name: customer.name,
-            phone: customer.mobile,
-            address: answers.address,
-            suburb: answers.suburb || "",
-            timeframe,
-            job_type: breakdown.jobTypeLabel,
-            lead_source: smoke.active ? "smoke_test" : "roof_calculator",
-            pdf_url: publicUrl,
-            message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
-            source_page: "get-my-estimate",
-            ref_number: refNumber,
-            created_at: new Date().toISOString(),
-          },
-        ]);
+        const lead = {
+          name: customer.name,
+          phone: customer.mobile,
+          address: answers.address,
+          suburb: answers.suburb || "",
+          timeframe,
+          job_type: breakdown.jobTypeLabel,
+          lead_source: smoke.active ? "smoke_test" : "roof_calculator",
+          pdf_url: publicUrl,
+          message: `${JSON.stringify(answers)}. Estimate: $${estimate.low}-$${estimate.high} (${RANGE_LABEL}).`,
+          source_page: "get-my-estimate",
+          ref_number: refNumber,
+          created_at: new Date().toISOString(),
+          // true: customer tapped "Use … m²" on the satellite suggestion and
+          // kept it. false: they set the size themselves. null: no size step.
+          roof_size_from_satellite:
+            answers.roofSizeM2 ? answers.roofSizeFromSatellite === true : null,
+        };
+        let { error: insertError } = await supabaseAdmin.from("leads").insert([lead]);
+        // Until supabase/solar_usage.sql has added the column, save the lead
+        // without it rather than lose it (the flag is still in `message`).
+        if (insertError && /roof_size_from_satellite/.test(insertError.message || "")) {
+          console.error("leads.roof_size_from_satellite missing; run supabase/solar_usage.sql");
+          const { roof_size_from_satellite, ...withoutFlag } = lead;
+          ({ error: insertError } = await supabaseAdmin.from("leads").insert([withoutFlag]));
+        }
         if (insertError) throw insertError;
         leadSaved = true;
         checks.leadSaved = "ok";
@@ -272,13 +285,30 @@ export async function POST(request) {
         if (leadSaved && smoke.valid) {
           // Read the row back so the smoke test can show what was stored
           // (only ever with a valid SMOKE_TEST_TOKEN; see the 403 above).
-          const { data } = await supabaseAdmin
+          let { data, error } = await supabaseAdmin
             .from("leads")
-            .select("address, suburb")
+            .select("address, suburb, message, roof_size_from_satellite")
             .eq("ref_number", refNumber)
             .maybeSingle()
             .then((r) => r, () => ({ data: null }));
-          savedLead = data;
+          if (error) {
+            // Column not added yet: read back without it.
+            ({ data } = await supabaseAdmin
+              .from("leads")
+              .select("address, suburb, message")
+              .eq("ref_number", refNumber)
+              .maybeSingle()
+              .then((r) => r, () => ({ data: null })));
+          }
+          if (data) {
+            const size = String(data.message || "").match(/"roofSizeM2":(\d+)/);
+            savedLead = {
+              address: data.address,
+              suburb: data.suburb,
+              roofSizeM2: size ? Number(size[1]) : null,
+              roofSizeFromSatellite: "roof_size_from_satellite" in data ? data.roof_size_from_satellite : "column not added yet",
+            };
+          }
         }
         if (checks.storage === "ok") {
           await supabaseAdmin.storage.from("estimates").remove([filePath]).catch(() => {});

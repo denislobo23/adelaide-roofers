@@ -13,6 +13,9 @@ import { buildEstimateBreakdown, allocate } from "../lib/estimateBreakdown.js";
 import { formatNominatimAddress, suburbFromAddress, looksLikeAddress, tidyAddress, withTypedNumber } from "../lib/formatAddress.js";
 import { parseResults } from "../lib/nominatim.js";
 import { rankSuggestions } from "../lib/rankSuggestions.js";
+import { roofFromInsights, shapeFromSegments, distanceM } from "../lib/roofFromSolar.js";
+import { takeSolarCall, dailyLimit } from "../lib/solarBudget.js";
+import { solarEnabled } from "../lib/solar.js";
 
 const METALS = ["colorbond", "galvanised", "zincalume"];
 const TILES = ["concreteTile", "terracotta", "notSure"];
@@ -233,7 +236,7 @@ test("a typed address is accepted only if it looks like one", () => {
 
 test("Nominatim results become suggestions with a location", () => {
   assert.deepEqual(parseResults([TINTERN, { ...TINTERN, place_id: 2 }, { place_id: 3, lat: "x", lon: "y", address: {} }]), [
-    { id: "1", address: "4 Tintern Crescent, Morphett Vale SA 5162", suburb: "Morphett Vale", lat: -35.1327, lon: 138.5208 },
+    { id: "1", address: "4 Tintern Crescent, Morphett Vale SA 5162", suburb: "Morphett Vale", lat: -35.1327, lon: 138.5208, exact: true },
   ]);
   assert.deepEqual(parseResults({ error: "Access denied" }), []);
 });
@@ -368,4 +371,92 @@ test("gutters stay at $40–$80 per metre and say downpipes are included", () =>
   const { b } = breakdownFor({ jobType: "gutters", storeys: "single", gutterLengthM: 25 });
   assert.match(b.detailRows.map((r) => r.value).join(" "), /includes downpipes/);
   assert.match(labels(b), /Downpipes \(included\)/);
+});
+
+// ── Satellite roof-size suggestion (Google Solar) ─────────────────────────
+const HOUSE = { lat: -34.9, lon: 138.6 };
+const seg = (pitchDegrees, azimuthDegrees, areaMeters2) => ({ pitchDegrees, azimuthDegrees, stats: { areaMeters2 } });
+const insights = (over = {}) => ({
+  imageryQuality: "MEDIUM",
+  center: { latitude: HOUSE.lat + 0.00005, longitude: HOUSE.lon }, // ~5.6 m away
+  solarPotential: {
+    wholeRoofStats: { areaMeters2: 213.4 },
+    roofSegmentStats: [seg(22, 0, 100), seg(22, 180, 100), seg(20, 90, 8)],
+  },
+  ...over,
+});
+
+test("solar: roof area is rounded to 10 m² and kept within the slider's 80–500 m²", () => {
+  assert.equal(roofFromInsights(insights(), HOUSE).areaM2, 210);
+  const withArea = (areaMeters2) =>
+    roofFromInsights(insights({ solarPotential: { wholeRoofStats: { areaMeters2 } } }), HOUSE);
+  assert.equal(withArea(75), null);
+  assert.equal(withArea(620), null);
+  assert.equal(withArea(84).areaM2, 80);
+  assert.equal(withArea(497).areaM2, 500);
+  assert.equal(withArea(504), null);
+});
+
+test("solar: building must be within 25 m and imagery at least MEDIUM", () => {
+  const at = (metresNorth) =>
+    roofFromInsights(insights({ center: { latitude: HOUSE.lat + metresNorth / 111195, longitude: HOUSE.lon } }), HOUSE);
+  assert.ok(at(10));
+  assert.equal(at(40), null);
+  assert.ok(Math.abs(distanceM(HOUSE, { lat: HOUSE.lat + 0.001, lon: HOUSE.lon }) - 111.2) < 0.5);
+  assert.ok(roofFromInsights(insights({ imageryQuality: "HIGH" }), HOUSE));
+  assert.equal(roofFromInsights(insights({ imageryQuality: "LOW" }), HOUSE), null);
+});
+
+test("solar: missing or partial responses give no suggestion and never throw", () => {
+  for (const bad of [null, undefined, {}, "x", insights({ center: undefined }), insights({ solarPotential: undefined }),
+    insights({ solarPotential: { wholeRoofStats: {} } })]) {
+    assert.equal(roofFromInsights(bad, HOUSE), null);
+  }
+  // Area but no segments: size only, no shape.
+  assert.deepEqual(roofFromInsights(insights({ solarPotential: { wholeRoofStats: { areaMeters2: 200 } } }), HOUSE), { areaM2: 200, shape: null });
+});
+
+test("solar: shape is suggested only in clear cases", () => {
+  assert.equal(shapeFromSegments([seg(3, 10, 150), seg(5, 190, 40)]), "flat");
+  assert.equal(shapeFromSegments([seg(22, 0, 100), seg(22, 180, 100), seg(20, 90, 8)]), "gable");
+  assert.equal(shapeFromSegments([seg(22, 5, 60), seg(22, 95, 50), seg(22, 185, 60), seg(22, 275, 50)]), "hip");
+  // Two opposite faces but only 70% of the roof: too untidy.
+  assert.equal(shapeFromSegments([seg(22, 0, 70), seg(22, 180, 70), seg(22, 90, 30), seg(22, 270, 30)].slice(0, 3)), null);
+  // Six mixed faces (Dutch gable / multi-level look): no suggestion.
+  assert.equal(shapeFromSegments([seg(22, 0, 50), seg(22, 180, 50), seg(30, 90, 30), seg(30, 270, 30), seg(15, 45, 25), seg(15, 225, 25)]), null);
+  assert.equal(shapeFromSegments([]), null);
+  assert.equal(shapeFromSegments(undefined), null);
+});
+
+test("solar: daily cap allows calls up to the limit, then refuses; fails closed", async () => {
+  let count = 0;
+  const stub = { rpc: async (_name, { p_limit }) => ({ data: ++count <= p_limit, error: null }) };
+  const results = [];
+  for (let i = 0; i < 51; i++) results.push(await takeSolarCall(stub, 50));
+  assert.equal(results.filter(Boolean).length, 50);
+  assert.equal(results[50], false);
+  assert.equal(await takeSolarCall({ rpc: async () => ({ data: null, error: { message: "down" } }) }, 50), false);
+  assert.equal(await takeSolarCall({ rpc: async () => { throw new Error("network"); } }, 50), false);
+  assert.equal(await takeSolarCall(null, 50), false);
+  assert.equal(await takeSolarCall(stub, 0), false);
+  assert.equal(dailyLimit({}), 50);
+  assert.equal(dailyLimit({ SOLAR_DAILY_LIMIT: "20" }), 20);
+  assert.equal(dailyLimit({ SOLAR_DAILY_LIMIT: "nonsense" }), 50);
+});
+
+test("solar: switched off unless SOLAR_AUTOFILL_ENABLED=true and a key is set", () => {
+  assert.equal(solarEnabled({}), false);
+  assert.equal(solarEnabled({ GOOGLE_SOLAR_API_KEY: "k" }), false);
+  assert.equal(solarEnabled({ GOOGLE_SOLAR_API_KEY: "k", SOLAR_AUTOFILL_ENABLED: "false" }), false);
+  assert.equal(solarEnabled({ SOLAR_AUTOFILL_ENABLED: "true" }), false);
+  assert.equal(solarEnabled({ GOOGLE_SOLAR_API_KEY: "k", SOLAR_AUTOFILL_ENABLED: "true" }), true);
+});
+
+test("only suggestions with OpenStreetMap's own house number are exact", () => {
+  const [house] = parseResults([TINTERN]);
+  assert.equal(house.exact, true);
+  const [street] = parseResults([{ ...TINTERN, address: { ...TINTERN.address, house_number: undefined } }]);
+  assert.equal(street.exact, false);
+  // Putting the typed number back doesn't make the point the house.
+  assert.notEqual(withTypedNumber(street.address, "4 Tintern Crescent"), street.address);
 });

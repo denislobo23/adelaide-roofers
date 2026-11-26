@@ -16,7 +16,9 @@
 //
 // Reports every change to the parent through onChange({ text, pick,
 // manualOk, typedSuburb }):
-//   pick         { address, suburb, lat, lon } once a suggestion is chosen
+//   pick         { address, suburb, lat, lon, exact } once a suggestion is
+//                chosen; exact is true only if OpenStreetMap had the house
+//                number (not when we put the typed number back)
 //   manualOk     true when the typed text can be used without a suggestion
 //   typedSuburb  the suburb in the typed text, if we could tell ("" if not)
 
@@ -96,7 +98,8 @@ export default function AddressSearch({ initialText = "", initialPick = null, on
   const choose = (item) => {
     // Keep the customer's house number if OpenStreetMap only knows the street.
     const address = withTypedNumber(item.address, text);
-    setPick({ address, suburb: item.suburb, lat: item.lat, lon: item.lon });
+    const exact = Boolean(item.exact) && address === item.address;
+    setPick({ address, suburb: item.suburb, lat: item.lat, lon: item.lon, exact });
     setText(address);
     setSuggestions([]);
     setOpen(false);
