@@ -10,14 +10,20 @@
 // carry on with the address as typed. The calculator never gets stuck on
 // this step.
 //
+// Suggestions in the suburb the customer typed come first. If they typed
+// a suburb and no suggestion is in it, "Use exactly what I typed" is
+// offered at the top of the list (lib/rankSuggestions.js).
+//
 // Reports every change to the parent through onChange({ text, pick,
-// manualOk }):
-//   pick      { address, suburb, lat, lon } once a suggestion is chosen
-//   manualOk  true when the typed text can be used without a suggestion
+// manualOk, typedSuburb }):
+//   pick         { address, suburb, lat, lon } once a suggestion is chosen
+//   manualOk     true when the typed text can be used without a suggestion
+//   typedSuburb  the suburb in the typed text, if we could tell ("" if not)
 
 import { useEffect, useRef, useState } from "react";
 
 import { looksLikeAddress, withTypedNumber } from "@/lib/formatAddress";
+import { rankSuggestions } from "@/lib/rankSuggestions";
 import AddressCredit from "@/components/AddressCredit";
 
 // Wait for a pause in typing, so one customer sends roughly one lookup.
@@ -38,16 +44,21 @@ export default function AddressSearch({ initialText = "", initialPick = null, on
   const [suggestions, setSuggestions] = useState([]);
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | ok | empty | down
+  // From the last lookup: the suburb typed, and whether to offer the typed text.
+  const [typedInfo, setTypedInfo] = useState({ typedSuburb: "", offerTyped: false });
+  const [typedChosen, setTypedChosen] = useState(false);
   const boxRef = useRef(null);
   const onChangeRef = useRef(onChange);
   onChangeRef.current = onChange;
   const debounced = useDebouncedValue(text, DEBOUNCE_MS);
 
-  const manualOk = !pick && (status === "down" || status === "empty") && looksLikeAddress(text);
+  const manualOk =
+    !pick && (typedChosen || ((status === "down" || status === "empty") && looksLikeAddress(text)));
+  const typedSuburb = typedInfo.typedSuburb;
 
   useEffect(() => {
-    onChangeRef.current?.({ text, pick, manualOk });
-  }, [text, pick, manualOk]);
+    onChangeRef.current?.({ text, pick, manualOk, typedSuburb });
+  }, [text, pick, manualOk, typedSuburb]);
 
   useEffect(() => {
     const query = debounced.trim();
@@ -59,9 +70,10 @@ export default function AddressSearch({ initialText = "", initialPick = null, on
     fetch(`/api/address/suggest?q=${encodeURIComponent(query)}`, { signal: controller.signal })
       .then(async (res) => {
         if (!res.ok) throw new Error(`lookup ${res.status}`);
-        const list = (await res.json()).suggestions || [];
-        setSuggestions(list);
-        setStatus(list.length ? "ok" : "empty");
+        const ranked = rankSuggestions((await res.json()).suggestions || [], query);
+        setSuggestions(ranked.suggestions);
+        setTypedInfo({ typedSuburb: ranked.typedSuburb, offerTyped: ranked.offerTyped });
+        setStatus(ranked.suggestions.length ? "ok" : "empty");
         setOpen(true);
       })
       .catch((err) => {
@@ -99,6 +111,7 @@ export default function AddressSearch({ initialText = "", initialPick = null, on
           onChange={(e) => {
             setText(e.target.value);
             setPick(null);
+            setTypedChosen(false);
           }}
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           placeholder="Start typing your address"
@@ -113,6 +126,18 @@ export default function AddressSearch({ initialText = "", initialPick = null, on
 
         {open && suggestions.length > 0 && (
           <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border-2 border-mortar bg-white shadow-xl">
+            {typedInfo.offerTyped && (
+              <button
+                type="button"
+                onClick={() => {
+                  setTypedChosen(true);
+                  setOpen(false);
+                }}
+                className="block w-full border-b border-mortar/70 bg-paper/60 px-4 py-3 text-left font-body text-sm text-ink/85 hover:bg-paper"
+              >
+                <span className="font-semibold">Use exactly what I typed:</span> {text.trim()}
+              </button>
+            )}
             {suggestions.map((item) => (
               <button
                 key={item.id}

@@ -365,6 +365,11 @@ const MOCK_SUGGEST = {
   ],
 };
 
+// Only another suburb: typing a different suburb should offer the typed text.
+const MOCK_OTHER_SUBURB = {
+  suggestions: [{ id: "2", address: "287 Diagonal Road, Glengowrie SA 5044", suburb: "Glengowrie", lat: -34.99, lon: 138.53 }],
+};
+
 // Straight API check. Returns "live" (Nominatim answered via our route) or
 // "broken".
 async function addressApiCheck() {
@@ -409,10 +414,10 @@ async function wrongTokenCheck() {
 // with the lookup forced to fail ("down"), carries on with the typed text.
 async function addressUiCheck(c, path, mode, mock) {
   const { errors, off } = trackErrors(c);
-  const intercept = mode === "down" || mock;
+  const intercept = mode !== "pick" || mock;
   const offFetch = c.on(async (m) => {
     if (m.method !== "Fetch.requestPaused") return;
-    const body = mode === "down" ? { error: "smoke_forced_failure" } : MOCK_SUGGEST;
+    const body = mode === "down" ? { error: "smoke_forced_failure" } : mode === "typed" ? MOCK_OTHER_SUBURB : MOCK_SUGGEST;
     await c.send("Fetch.fulfillRequest", {
       requestId: m.params.requestId,
       responseCode: mode === "down" ? 503 : 200,
@@ -446,6 +451,16 @@ async function addressUiCheck(c, path, mode, mock) {
       if (!(await until(`${button("/That.s my roof/")}?.disabled === false`))) throw new Error(`"That's my roof" never enabled`);
       if (!(await until(`!!document.querySelector('iframe[src*="maps.google.com"]')`, 3000))) problems.push("no satellite view");
       await evaluate(c, `${button("/That.s my roof/")}.click()`);
+    } else if (mode === "typed") {
+      // The typed option must exist and be the first entry in the list.
+      if (!(await until(`(() => { const b = ${button("/Use exactly what I typed/")}; return !!b && b.parentElement.firstElementChild === b; })()`)))
+        throw new Error(`"Use exactly what I typed" not offered first`);
+      await evaluate(c, `${button("/Use exactly what I typed/")}.click()`);
+      if (!(await until(`${button("/Use this address/")}?.disabled === false`))) {
+        const seen = await evaluate(c, `[...document.querySelectorAll("button")].map((b) => b.innerText.trim().slice(0, 50) + (b.disabled ? " (disabled)" : "")).join(" | ")`);
+        throw new Error(`"Use this address" never enabled; buttons: ${seen}`);
+      }
+      await evaluate(c, `${button("/Use this address/")}.click()`);
     } else {
       if (!(await until(`/isn.t available right now/.test(document.body.innerText)`))) problems.push("no fallback message");
       if (!(await until(`${button("/Use this address/")}?.disabled === false`))) throw new Error(`"Use this address" never enabled`);
@@ -469,7 +484,12 @@ async function addressUiCheck(c, path, mode, mock) {
   }
   const unexpected = errors.filter((e) => !(mode === "down" && /Address lookup unavailable/.test(e)));
   const ok = !problems.length && !unexpected.length;
-  const label = mode === "pick" ? `pick a suggestion${mock ? " (mocked)" : ""}` : "lookup down, typed address";
+  const label =
+    mode === "pick"
+      ? `pick a suggestion${mock ? " (mocked)" : ""}`
+      : mode === "typed"
+      ? `other suburb typed, "Use exactly what I typed" (mocked)`
+      : "lookup down, typed address";
   console.log(
     `${ok ? "PASS" : "FAIL"}  address ${path === "/" ? "homepage" : path}: ${label}` +
       (problems.length ? ` — ${problems.join("; ")}` : "") +
@@ -532,6 +552,7 @@ try {
   for (const path of ["/calculator", "/"]) {
     if (!(await addressUiCheck(c, path, "pick", api !== "live"))) allOk = false;
     if (!(await addressUiCheck(c, path, "down", false))) allOk = false;
+    if (!(await addressUiCheck(c, path, "typed", true))) allOk = false;
   }
   if (!(await calculatorCheck(c))) allOk = false;
   for (const [name, answers] of Object.entries(SAMPLES)) {

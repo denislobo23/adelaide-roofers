@@ -22,7 +22,7 @@ import TrustStrip from "@/components/TrustStrip";
 
 export default function HeroCalculatorMini() {
   const router = useRouter();
-  // Latest state of the address box: { text, pick, manualOk }.
+  // Latest state of the address box: { text, pick, manualOk, typedSuburb }.
   const [box, setBox] = useState({ text: "", pick: null, manualOk: false });
   const ready = !!box.pick || box.manualOk;
 
@@ -37,7 +37,12 @@ export default function HeroCalculatorMini() {
       JSON.stringify(
         box.pick
           ? box.pick
-          : { address: tidyAddress(box.text), suburb: suburbFromAddress(box.text), lat: null, lon: null }
+          : {
+              address: tidyAddress(box.text),
+              suburb: box.typedSuburb || suburbFromAddress(box.text),
+              lat: null,
+              lon: null,
+            }
       )
     );
     router.push("/calculator");

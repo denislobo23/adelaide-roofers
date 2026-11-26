@@ -286,7 +286,7 @@ export default function RoofCalculator() {
   const router = useRouter();
   const isDesktop = useIsDesktop();
   const [stepIndex, setStepIndex] = useState(0);
-  // Latest state of the address box: { text, pick, manualOk }.
+  // Latest state of the address box: { text, pick, manualOk, typedSuburb }.
   const [addressBox, setAddressBox] = useState({ text: "", pick: null, manualOk: false });
   const [selectedCoords, setSelectedCoords] = useState(null);
 
@@ -363,7 +363,7 @@ export default function RoofCalculator() {
     setForm((f) => ({
       ...f,
       address: box.pick ? box.pick.address : tidyAddress(box.text),
-      suburb: box.pick ? box.pick.suburb : suburbFromAddress(box.text),
+      suburb: box.pick ? box.pick.suburb : box.typedSuburb || suburbFromAddress(box.text),
     }));
     setSelectedCoords(box.pick?.lat != null ? { lat: box.pick.lat, lon: box.pick.lon } : null);
   }, []);

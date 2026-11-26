@@ -12,6 +12,7 @@ import { estimateCost, liveRange, MAX_RANGE_RATIO } from "../lib/pricing.js";
 import { buildEstimateBreakdown, allocate } from "../lib/estimateBreakdown.js";
 import { formatNominatimAddress, suburbFromAddress, looksLikeAddress, tidyAddress, withTypedNumber } from "../lib/formatAddress.js";
 import { parseResults } from "../lib/nominatim.js";
+import { rankSuggestions } from "../lib/rankSuggestions.js";
 
 const METALS = ["colorbond", "galvanised", "zincalume"];
 const TILES = ["concreteTile", "terracotta", "notSure"];
@@ -255,6 +256,41 @@ test("the typed house number is kept when the suggestion has none", () => {
   // Nothing typed to restore, or the suggestion already has its number.
   assert.equal(withTypedNumber(street, "King William Street"), street);
   assert.equal(withTypedNumber("287 Diagonal Road, Oaklands Park SA 5046", "300 Diagonal"), "287 Diagonal Road, Oaklands Park SA 5046");
+});
+
+// As Nominatim returned them live: Kent Town first.
+const KING_WILLIAM = [
+  { id: "1", address: "King William Street, Kent Town SA 5067", suburb: "Kent Town", lat: -34.9207, lon: 138.6155 },
+  { id: "2", address: "King William Street, Adelaide SA 5000", suburb: "Adelaide", lat: -34.9297, lon: 138.6004 },
+];
+
+test("suggestions in the typed suburb come first: 128 King William Street Adelaide", () => {
+  const typed = "128 King William Street Adelaide";
+  const r = rankSuggestions(KING_WILLIAM, typed);
+  assert.equal(r.suggestions[0].suburb, "Adelaide");
+  assert.equal(withTypedNumber(r.suggestions[0].address, typed), "128 King William Street, Adelaide SA 5000");
+  assert.equal(r.typedSuburb, "Adelaide");
+  assert.equal(r.offerTyped, false);
+  // Also with commas, state and postcode, or a part-typed suburb.
+  assert.equal(rankSuggestions(KING_WILLIAM, "128 King William St, Adelaide SA 5000").suggestions[0].suburb, "Adelaide");
+  assert.equal(rankSuggestions(KING_WILLIAM, "128 King William Street Adel").suggestions[0].suburb, "Adelaide");
+  assert.equal(rankSuggestions(KING_WILLIAM, "128 king william st kent town").suggestions[0].suburb, "Kent Town");
+});
+
+test("no suburb typed: Nominatim's order is kept and nothing extra is offered", () => {
+  for (const typed of ["128 King William Street", "128 King Wil"]) {
+    const r = rankSuggestions(KING_WILLIAM, typed);
+    assert.deepEqual(r.suggestions.map((x) => x.suburb), ["Kent Town", "Adelaide"]);
+    assert.equal(r.offerTyped, false);
+  }
+});
+
+test("a typed suburb with no matching suggestion offers the typed address first", () => {
+  const r = rankSuggestions(KING_WILLIAM, "128 King William Street Glenelg");
+  assert.equal(r.offerTyped, true);
+  assert.equal(r.typedSuburb, "Glenelg");
+  assert.equal(r.suggestions.length, 2); // still shown, below the typed option
+  assert.equal(rankSuggestions([], "128 King William Street Glenelg").offerTyped, false);
 });
 
 // ── Replacement, repairs, leaks, gutters (2026 guide targets) ─────────────
