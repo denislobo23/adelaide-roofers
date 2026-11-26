@@ -4,9 +4,9 @@
 // Handles the ebook email capture on both the homepage's Ebook section
 // and /free-guide — extracted into its own client component because the
 // pages that use it are server components and can't hold form state or
-// call fetch() directly. Submits to /api/subscribe (Kit), then reveals
+// call fetch() directly. Submits to /api/subscribe (MailerLite), then reveals
 // an instant download link/button on success rather than only relying
-// on Kit's welcome email to deliver the PDF.
+// on MailerLite's welcome email to deliver the PDF.
 
 import { useState } from "react";
 

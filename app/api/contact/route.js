@@ -19,7 +19,7 @@
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { sendLeadEmail } from "@/lib/sendLeadEmail";
 
-async function sendLeadSms({ name, phone, suburb }) {
+async function sendLeadSms({ name, phone, suburb, formLabel }) {
   if (
     !process.env.CLICKSEND_USERNAME ||
     !process.env.CLICKSEND_API_KEY ||
@@ -45,7 +45,7 @@ async function sendLeadSms({ name, phone, suburb }) {
       messages: [
         {
           source: "adelaideroofers",
-          body: `New lead (contact form): ${name}, ${phone}${
+          body: `New lead (${formLabel}): ${name}, ${phone}${
             suburb ? `, ${suburb}` : ""
           }`,
           to: process.env.NOTIFY_PHONE_NUMBER,
@@ -63,8 +63,8 @@ async function sendLeadSms({ name, phone, suburb }) {
 const escapeHtml = (v) =>
   String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-function buildContactEmail({ name, phone, email, suburb, message, consent, problem = "" }) {
-  const subject = `${problem ? "ACTION NEEDED: " : ""}New lead (contact form): ${name}${suburb ? ` — ${suburb}` : ""}`;
+function buildContactEmail({ name, phone, email, suburb, message, consent, problem = "", formLabel = "contact form" }) {
+  const subject = `${problem ? "ACTION NEEDED: " : ""}New lead (${formLabel}): ${name}${suburb ? ` — ${suburb}` : ""}`;
 
   const rows = [
     ["Name", name],
@@ -80,7 +80,7 @@ function buildContactEmail({ name, phone, email, suburb, message, consent, probl
 
   const html = `
     <div style="font-family: sans-serif; font-size: 15px; color: #1a1a1a;">
-      <h2 style="margin: 0 0 16px;">New lead — contact form</h2>
+      <h2 style="margin: 0 0 16px;">New lead — ${escapeHtml(formLabel)}</h2>
       <table cellpadding="6" cellspacing="0">
         ${rows
           .map(
@@ -103,6 +103,13 @@ export async function POST(request) {
     const body = await request.json();
     const { name, phone, email, suburb, message, consent } = body;
 
+    // The region pages' form (components/LeadForm.js) posts here too, with
+    // form: "region" and the page's area name, so it's saved and notified
+    // the same way but can be told apart.
+    const fromRegion = body.form === "region";
+    const regionPage = fromRegion ? String(body.page || "general").replace(/[^\w\s-]/g, "").trim().slice(0, 60) || "general" : "";
+    const formLabel = fromRegion ? `region page: ${regionPage}` : "contact form";
+
     if (!name?.trim() || !phone?.trim()) {
       return Response.json({ success: false, reason: "missing_fields" }, { status: 400 });
     }
@@ -124,11 +131,11 @@ export async function POST(request) {
             suburb: suburb || "",
             timeframe: "",
             job_type: "General enquiry",
-            lead_source: "contact_form",
+            lead_source: fromRegion ? "website_form" : "contact_form",
             message: consent
               ? `${message || ""} [Consent given to be contacted by matched roofer]`
               : message || "",
-            source_page: "homepage",
+            source_page: fromRegion ? regionPage : "homepage",
             created_at: new Date().toISOString(),
           },
         ]);
@@ -144,7 +151,7 @@ export async function POST(request) {
     // over an SMS delivery problem.
     let smsSent = false;
     try {
-      await sendLeadSms({ name, phone, suburb });
+      await sendLeadSms({ name, phone, suburb, formLabel });
       smsSent = Boolean(
         process.env.CLICKSEND_USERNAME && process.env.CLICKSEND_API_KEY && process.env.NOTIFY_PHONE_NUMBER
       );
@@ -164,6 +171,7 @@ export async function POST(request) {
         message,
         consent,
         problem: saveProblem,
+        formLabel,
       });
       const emailResult = await sendLeadEmail({ subject, html, text });
       emailSent = Boolean(emailResult?.success);

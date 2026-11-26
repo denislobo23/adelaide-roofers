@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
 import { site } from "@/data/config";
 
 export default function LeadForm({ suburbName }) {
@@ -19,24 +18,16 @@ export default function LeadForm({ suburbName }) {
     setStatus("sending");
 
     try {
-      if (!supabase) {
-        // No keys yet — don't pretend it saved. Tell them to call.
-        setStatus("error");
-        return;
-      }
-      const { error } = await supabase.from("leads").insert([
-        {
-          name: form.name,
-          email: form.email,
-          phone: form.phone,
-          suburb: form.suburb,
-          message: form.message,
-          lead_source: "website_form",
-          source_page: suburbName || "general",
-          created_at: new Date().toISOString(),
-        },
-      ]);
-      if (error) throw error;
+      // Same route as the contact form: saves the lead and texts/emails the
+      // owner. (It used to insert straight into Supabase from the browser,
+      // which saved the lead but notified no one.)
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, form: "region", page: suburbName || "general" }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!data.success) throw new Error(data.reason || `HTTP ${res.status}`);
       setStatus("done");
       setForm({ name: "", email: "", phone: "", suburb: suburbName || "", message: "" });
     } catch (err) {
