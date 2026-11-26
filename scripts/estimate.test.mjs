@@ -8,7 +8,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { estimateCost, liveRange } from "../lib/pricing.js";
+import { estimateCost, liveRange, MAX_RANGE_RATIO } from "../lib/pricing.js";
 import { buildEstimateBreakdown, allocate } from "../lib/estimateBreakdown.js";
 import { formatNominatimAddress, tidyAddress } from "../lib/formatAddress.js";
 
@@ -210,4 +210,81 @@ test("addresses have no comma after the street number", () => {
     formatNominatimAddress({ display_name: "7, Some Lane, Aldinga, South Australia", address: { state: "South Australia" } }),
     "7 Some Lane, Aldinga, South Australia"
   );
+});
+
+// ── Replacement, repairs, leaks, gutters (2026 guide targets) ─────────────
+const REPLACE = { jobType: "replacement", roofSizeM2: 200, storeys: "single", complexity: "gable" };
+const rep = (currentMaterial, desiredMaterial, extra = {}) =>
+  estimateCost({ ...REPLACE, currentMaterial, desiredMaterial, ...extra });
+const inside = (r, [lo, hi], label) =>
+  assert.ok(r.low >= lo && r.high <= hi, `${label}: $${r.low}–$${r.high} outside $${lo}–$${hi}`);
+
+test("replacement prices sit inside the 2026 targets (200 m², gable)", () => {
+  inside(rep("concreteTile", "colorbond"), [18000, 30000], "tile → Colorbond");
+  inside(rep("concreteTile", "concreteTile"), [18500, 32000], "tile → tile");
+  inside(rep("terracotta", "terracotta"), [25000, 40000], "terracotta → terracotta");
+  inside(rep("colorbond", "colorbond"), [15000, 25000], "Colorbond → Colorbond");
+  inside(rep("pressedMetal", "colorbond"), [15000, 25000], "pressed metal → Colorbond");
+  inside(rep("asbestos", "colorbond"), [22000, 40000], "asbestos → Colorbond");
+  assert.deepEqual(rep("concreteTile", "colorbond"), { low: 18000, high: 28800 });
+  assert.deepEqual(rep("concreteTile", "slate"), { low: 37000, high: 50000 });
+});
+
+test("double storey and multi-level soften on replacements", () => {
+  const single = rep("concreteTile", "colorbond");
+  const double = rep("concreteTile", "colorbond", { storeys: "double" });
+  const step1 = double.low / single.low;
+  assert.ok(step1 >= 1.24 && step1 <= 1.36, `double storey low ×${step1}`);
+  const both = rep("concreteTile", "colorbond", { storeys: "double", complexity: "multiLevel" });
+  assert.ok(both.low / double.low < step1, "the second factor adds less than the first");
+});
+
+test("every replacement, repair, leak and gutter range is at most 1.6× wide", () => {
+  const all = [];
+  const mats = [...METALS, ...TILES, ...NEW, "asbestos"];
+  for (const storeys of ["single", "double"]) {
+    for (const roofSizeM2 of [50, 80, 200, 500]) {
+      for (const complexity of SHAPES) {
+        for (const currentMaterial of mats) {
+          for (const desiredMaterial of [...METALS, ...NEW, "concreteTile", "terracotta"]) {
+            all.push({ ...REPLACE, storeys, roofSizeM2, complexity, currentMaterial, desiredMaterial });
+          }
+        }
+      }
+    }
+    for (const material of mats) {
+      for (const repairAreas of ["one", "few", "many"]) all.push({ jobType: "repairs", material, storeys, repairAreas });
+      for (const leakDuration of ["just_noticed", "few_weeks", "months", "recurring"]) {
+        all.push({ jobType: "leak", material, storeys, leakDuration });
+      }
+    }
+    for (const gutterLengthM of [10, 25, 40, 80]) all.push({ jobType: "gutters", storeys, gutterLengthM });
+  }
+  for (const a of all) {
+    const r = estimateCost(a);
+    assert.ok(r.high <= r.low * MAX_RANGE_RATIO, `${JSON.stringify(a)}: $${r.low}–$${r.high}`);
+    assert.ok(r.high > r.low, `${JSON.stringify(a)}: empty range`);
+  }
+});
+
+test("single-storey repairs and leaks sit inside the targets for every material", () => {
+  const REP_T = { one: [300, 900], few: [700, 1800], many: [1500, 3500] };
+  const LEAK_T = { just_noticed: [250, 750], few_weeks: [400, 1200], months: [400, 1200], recurring: [600, 1500] };
+  for (const material of [...METALS, ...TILES, ...NEW, "asbestos"]) {
+    for (const [repairAreas, t] of Object.entries(REP_T)) {
+      inside(estimateCost({ jobType: "repairs", material, storeys: "single", repairAreas }), t, `repairs ${repairAreas} ${material}`);
+    }
+    for (const [leakDuration, t] of Object.entries(LEAK_T)) {
+      inside(estimateCost({ jobType: "leak", material, storeys: "single", leakDuration }), t, `leak ${leakDuration} ${material}`);
+    }
+  }
+});
+
+test("gutters stay at $40–$80 per metre and say downpipes are included", () => {
+  for (const m of [15, 25, 40]) {
+    inside(estimateCost({ jobType: "gutters", storeys: "single", gutterLengthM: m }), [40 * m, 80 * m], `gutters ${m} m`);
+  }
+  const { b } = breakdownFor({ jobType: "gutters", storeys: "single", gutterLengthM: 25 });
+  assert.match(b.detailRows.map((r) => r.value).join(" "), /includes downpipes/);
+  assert.match(labels(b), /Downpipes \(included\)/);
 });

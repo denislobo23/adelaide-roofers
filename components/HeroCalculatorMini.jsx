@@ -8,17 +8,16 @@
 // address pre-filled via sessionStorage, so the visitor lands straight on
 // the job-type question instead of re-entering their address.
 //
-// Colour pass #3: middle ground between the dark theme (too dark, two
-// attempts didn't land) and matching the main site exactly (lost the
-// tool's own identity). Light teal palette — teal-50/100/200 for
-// surfaces, teal-800/900 for text — keeps this feeling like a distinct
-// interactive tool without going dark-mode. Clay stays the one strong
-// accent colour: the button, the icon, and every focus state.
+// Styled to match the full calculator's first step: "Where's the roof?",
+// a large address box with a pin, the blurred Adelaide aerial until an
+// address is picked, solid buttons and the shared trust strip.
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import { formatNominatimAddress, suburbOf } from "@/lib/formatAddress";
+import TrustStrip from "@/components/TrustStrip";
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -40,7 +39,7 @@ export default function HeroCalculatorMini() {
 
   useEffect(() => {
     const query = debouncedQuery.trim();
-    if (query.length < 4) {
+    if (query.length < 4 || (selected && query === selected.address)) {
       setSuggestions([]);
       return;
     }
@@ -60,7 +59,7 @@ export default function HeroCalculatorMini() {
         if (err.name !== "AbortError") console.error("Address lookup failed:", err);
       });
     return () => controller.abort();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, selected]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -103,80 +102,88 @@ export default function HeroCalculatorMini() {
   };
 
   return (
-    <div className="rounded-2xl border-2 border-clay/50 bg-teal-50/50 p-6 shadow-xl md:p-8">
-      <p className="mb-3 font-body text-base font-semibold text-ink/80 md:text-lg">
-        <span className="text-clay">Step 1:</span> Bring Up The Satellite Image Of Your Roof
-      </p>
-      <div ref={suggestionsBoxRef} className="relative">
-        <input
-          type="text"
-          value={addressQuery}
-          onChange={(e) => {
-            setAddressQuery(e.target.value);
-            setSelected(null);
-          }}
-          onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-          placeholder="Start typing your address…"
-          autoComplete="off"
-          className="w-full rounded-xl border-2 border-teal-100 bg-white px-5 py-4 font-body text-base text-ink placeholder-ink/35 outline-none transition-all focus:border-clay"
-        />
+    <div className="overflow-hidden rounded-2xl border-2 border-clay/50 bg-white shadow-xl">
+      <div className="p-6 md:p-8">
+        <p className="text-xs font-semibold text-clay">Free roof price check · takes about a minute</p>
+        <h2 className="mt-2 font-display text-3xl font-extrabold leading-tight tracking-tight text-ink">
+          Where&apos;s the roof?
+        </h2>
+        <p className="mt-2 font-body text-base text-ink/70">
+          Start with your address. We&apos;ll pull up a satellite view of your roof, then ask a few
+          quick questions for a price range.
+        </p>
 
-        {showSuggestions && suggestions.length > 0 && (
-          <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-xl border border-teal-100 bg-white shadow-2xl">
-            {suggestions.map((item) => (
-              <button
-                key={item.place_id}
-                type="button"
-                onClick={() => selectSuggestion(item)}
-                className="block w-full border-b border-teal-50 px-4 py-3 text-left font-body text-sm text-ink/80 last:border-b-0 hover:bg-teal-50"
-              >
-                {formatNominatimAddress(item)}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {mapSrc ? (
-        <div className="mt-4 aspect-[16/10] w-full overflow-hidden rounded-xl border border-teal-100">
-          <iframe src={mapSrc} loading="lazy" title="Your roof" className="h-full w-full border-0" />
-        </div>
-      ) : (
-        <div className="mt-4 flex aspect-[16/10] w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-teal-100 bg-white/70 px-6 text-center">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-8 w-8 text-clay/60"
-          >
-            <path d="M3 11.5 12 4l9 7.5" />
-            <path d="M6 10v9.5h12V10" />
-            <circle cx="12" cy="14.5" r="2" />
+        <div ref={suggestionsBoxRef} className="relative mt-5">
+          <input
+            type="text"
+            value={addressQuery}
+            onChange={(e) => {
+              setAddressQuery(e.target.value);
+              setSelected(null);
+            }}
+            onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+            placeholder="Start typing your address"
+            autoComplete="off"
+            aria-label="Your address"
+            className="w-full rounded-xl border-2 border-ink/25 bg-white py-4 pl-12 pr-4 font-body text-lg text-ink shadow-sm outline-none transition-all placeholder:text-ink/40 focus:border-clay focus:ring-4 focus:ring-clay/15"
+          />
+          <svg className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-clay" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
           </svg>
-          <p className="font-body text-xs text-ink/45">
-            Your roof&apos;s satellite view will appear here once you enter an address
-          </p>
-        </div>
-      )}
 
-      <button
-        type="button"
-        disabled={!selected}
-        onClick={continueToCalculator}
-        className={`mt-5 w-full rounded-xl px-6 py-5 font-display text-lg font-bold tracking-tight transition-all ${
-          selected
-            ? "bg-clay text-white hover:brightness-95"
-            : "cursor-not-allowed bg-teal-100/70 text-ink/30"
-        }`}
-      >
-        Yes, That&apos;s My Roof! →
-      </button>
-      <p className="mt-3 text-center font-body text-xs text-ink/45">
-        Free, no obligation — takes about a minute.
-      </p>
+          {showSuggestions && suggestions.length > 0 && (
+            <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border-2 border-mortar bg-white shadow-xl">
+              {suggestions.map((item) => (
+                <button
+                  key={item.place_id}
+                  type="button"
+                  onClick={() => selectSuggestion(item)}
+                  className="block w-full border-b border-mortar/70 px-4 py-3 text-left font-body text-sm text-ink/85 last:border-b-0 hover:bg-paper"
+                >
+                  {formatNominatimAddress(item)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="relative mt-4 aspect-[16/10] w-full overflow-hidden rounded-xl border-2 border-mortar bg-mortar/40">
+          {mapSrc ? (
+            <iframe src={mapSrc} loading="lazy" title="Your roof" className="absolute inset-0 h-full w-full border-0" />
+          ) : (
+            <>
+              <Image src="/images/calculator-aerial-blur.webp" alt="" fill sizes="(min-width: 1024px) 520px, 100vw" className="object-cover" />
+              <div className="absolute inset-0 bg-ink/25" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-lg">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#BC5B3A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 1 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </span>
+                <p className="max-w-xs rounded-lg bg-white/90 px-4 py-2 font-body text-sm font-medium text-ink shadow">
+                  Pick your address and your roof appears here from above.
+                </p>
+              </div>
+            </>
+          )}
+        </div>
+
+        <button
+          type="button"
+          disabled={!selected}
+          onClick={continueToCalculator}
+          className={`mt-5 w-full rounded-xl px-6 py-4 font-display text-lg font-bold tracking-tight transition-all ${
+            selected
+              ? "bg-clay text-white shadow-md hover:brightness-95"
+              : "cursor-not-allowed bg-ink/10 text-ink/45"
+          }`}
+        >
+          {selected ? "That's my roof →" : "Pick your address first"}
+        </button>
+      </div>
+      <TrustStrip compact />
     </div>
   );
 }

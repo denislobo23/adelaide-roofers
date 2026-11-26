@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { normaliseAnswers, liveRange, ASBESTOS_RESTORE_MESSAGE, SLATE_PAINT_MESSAGE, RANGE_LABEL } from "@/lib/pricing";
 import { formatNominatimAddress, suburbOf, tidyAddress } from "@/lib/formatAddress";
+import TrustStrip from "@/components/TrustStrip";
 
 // Simple line icons (24×24, stroke = currentColor) for the job-type cards.
 const JOB_ICONS = {
@@ -64,7 +65,7 @@ const JOB_TYPES = [
   { v: "repairs", label: "Roof Repairs", note: "A specific problem, not a full job" },
   { v: "leak", label: "Roof Leak Repair", note: "Tracing and fixing an active leak" },
   { v: "painting", label: "Roof Painting / Re-Coating", note: "Sealing and refreshing the roof" },
-  { v: "gutters", label: "Gutter Repairs", note: "Gutters, downpipes and valleys" },
+  { v: "gutters", label: "Gutter Repairs", note: "Gutters and downpipes, priced together" },
 ];
 
 // Which questions each job type asks, after jobType and address.
@@ -248,24 +249,6 @@ function LivePrice({ form, locked }) {
   );
 }
 
-function TrustStrip() {
-  const items = [
-    "Licensed SA roofers only",
-    "Workmanship warranty in writing",
-    "No spam. We never share your details",
-  ];
-  return (
-    <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t-2 border-mortar bg-paper px-5 py-3.5">
-      {items.map((t) => (
-        <li key={t} className="flex items-center gap-2 text-xs font-semibold text-ink/75 sm:text-sm">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#BC5B3A" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 13l4 4L19 7" /></svg>
-          {t}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
 function PrimaryButton({ onClick, disabled, tone = "ink", children }) {
   const enabled =
     tone === "clay"
@@ -387,7 +370,7 @@ export default function RoofCalculator() {
 
   useEffect(() => {
     const query = debouncedQuery.trim();
-    if (query.length < 4) {
+    if (query.length < 4 || (selectedCoords && query === form.address)) {
       setSuggestions([]);
       return;
     }
@@ -407,7 +390,7 @@ export default function RoofCalculator() {
         if (err.name !== "AbortError") console.error("Address lookup failed:", err);
       });
     return () => controller.abort();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, selectedCoords, form.address]);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -885,7 +868,8 @@ export default function RoofCalculator() {
                   Roughly how many metres of guttering?
                 </h3>
                 <p className="mt-1.5 text-sm text-ink/60">
-                  Not sure? A typical single-storey Adelaide home has around 25–35 metres.
+                  Not sure? A typical single-storey Adelaide home has around 25–35 metres. The
+                  price includes downpipes.
                 </p>
                 <div className="mt-6">
                   <input
